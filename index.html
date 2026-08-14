@@ -127,13 +127,14 @@
     
     /* SCG GREEN โหลดจากภาพ scg_green.png และปรับขนาดเท่าโลโก้ซ้าย */
  /* SCG GREEN โหลดจากภาพ scg_green.png และปรับขนาดเท่าโลโก้ซ้าย */
+/* SCG GREEN โหลดจากภาพ scg_green.png และปรับให้สมดุลกับโลโก้ซ้าย */
     .scg-green-badge {
       display: inline-flex; align-items: center; justify-content: center; background: #ffffff;
       padding: 6px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-      width: 110px; /* บังคับความกว้างให้เท่าโลโก้ฝั่งซ้าย (110px) */
+      width: 85px; /* ลดความกว้างลงมา เพื่อกดความสูงไม่ให้ใหญ่เกินหน้าโลโก้หลัก */
     }
     .scg-green-badge img { 
-      width: 100%; /* ให้รูปขยายเต็มพื้นที่กว้าง 110px */
+      width: 100%; 
       height: auto; 
       border-radius: 4px; 
       display: block; 
