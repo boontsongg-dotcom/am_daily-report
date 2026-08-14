@@ -19,313 +19,17 @@
       color: #1e293b;
     }
 
-    /* ===================== LOADING OVERLAY (INFOGRAPHIC STYLE) ===================== */
+    /* ===================== LOADING OVERLAY ===================== */
     .loader-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 10000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background:
-        radial-gradient(circle at top left, rgba(224, 31, 38, 0.20), transparent 35%),
-        radial-gradient(circle at bottom right, rgba(0, 88, 168, 0.25), transparent 40%),
-        linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(30, 41, 59, 0.92));
-      backdrop-filter: blur(8px);
-      font-family: "Noto Sans Thai", sans-serif;
+      position: fixed; inset: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(4px);
+      z-index: 10000; display: none; align-items: center; justify-content: center; flex-direction: column;
+      color: #0a73a8; font-weight: 700; font-size: 16px;
     }
-
-    .loader-card {
-      width: min(460px, calc(100vw - 32px));
-      padding: 28px;
-      border-radius: 28px;
-      background:
-        linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.96));
-      box-shadow:
-        0 30px 80px rgba(0, 0, 0, 0.35),
-        inset 0 1px 0 rgba(255,255,255,0.9);
-      position: relative;
-      overflow: hidden;
-      animation: loaderCardIn 0.35s ease-out;
+    .spinner {
+      width: 48px; height: 48px; border: 5px solid #e2e8f0; border-top: 5px solid #0a73a8;
+      border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px;
     }
-
-    .loader-card::before {
-      content: "";
-      position: absolute;
-      width: 220px;
-      height: 220px;
-      right: -90px;
-      top: -90px;
-      background: radial-gradient(circle, rgba(224, 31, 38, 0.20), transparent 68%);
-      border-radius: 50%;
-    }
-
-    .loader-card::after {
-      content: "";
-      position: absolute;
-      width: 240px;
-      height: 240px;
-      left: -110px;
-      bottom: -120px;
-      background: radial-gradient(circle, rgba(0, 88, 168, 0.18), transparent 68%);
-      border-radius: 50%;
-    }
-
-    .loader-top,
-    .loader-visual,
-    .loader-progress,
-    .loader-steps,
-    .loader-note {
-      position: relative;
-      z-index: 1;
-    }
-
-    .loader-top {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .loader-icon {
-      width: 64px;
-      height: 64px;
-      border-radius: 22px;
-      background: linear-gradient(135deg, #e01f26, #0058a8);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 14px 30px rgba(0, 88, 168, 0.28);
-      animation: loaderPulse 1.6s ease-in-out infinite;
-    }
-
-    .loader-icon span {
-      color: white;
-      font-weight: 900;
-      font-size: 20px;
-      letter-spacing: 0.5px;
-    }
-
-    .loader-title {
-      font-size: 20px;
-      font-weight: 900;
-      color: #0f172a;
-      line-height: 1.25;
-    }
-
-    .loader-subtitle {
-      margin-top: 4px;
-      font-size: 13px;
-      font-weight: 600;
-      color: #64748b;
-    }
-
-    .loader-visual {
-      height: 170px;
-      border-radius: 24px;
-      background:
-        linear-gradient(135deg, rgba(0, 88, 168, 0.08), rgba(224, 31, 38, 0.08)),
-        #f8fafc;
-      border: 1px solid rgba(148, 163, 184, 0.25);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-      margin-bottom: 22px;
-    }
-
-    .loader-circle {
-      position: absolute;
-      border-radius: 50%;
-      opacity: 0.8;
-    }
-
-    .circle-one {
-      width: 90px;
-      height: 90px;
-      background: rgba(224, 31, 38, 0.12);
-      left: 38px;
-      top: 24px;
-      animation: floatOne 3s ease-in-out infinite;
-    }
-
-    .circle-two {
-      width: 70px;
-      height: 70px;
-      background: rgba(0, 88, 168, 0.13);
-      right: 52px;
-      bottom: 26px;
-      animation: floatTwo 3.4s ease-in-out infinite;
-    }
-
-    .circle-three {
-      width: 42px;
-      height: 42px;
-      background: rgba(245, 158, 11, 0.16);
-      right: 110px;
-      top: 34px;
-      animation: floatThree 2.8s ease-in-out infinite;
-    }
-
-    .loader-report-preview {
-      width: 210px;
-      padding: 16px;
-      border-radius: 18px;
-      background: white;
-      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.16);
-      transform: rotate(-2deg);
-      animation: reportPreview 2.2s ease-in-out infinite;
-    }
-
-    .preview-header {
-      height: 28px;
-      border-radius: 10px;
-      background: linear-gradient(90deg, #e01f26, #0058a8);
-      margin-bottom: 12px;
-    }
-
-    .preview-line {
-      height: 8px;
-      border-radius: 999px;
-      background: #cbd5e1;
-      margin-bottom: 8px;
-    }
-
-    .w-90 { width: 90%; }
-    .w-70 { width: 70%; }
-
-    .preview-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .preview-grid div {
-      height: 32px;
-      border-radius: 10px;
-      background: #e2e8f0;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .preview-grid div::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255,255,255,0.8),
-        transparent
-      );
-      transform: translateX(-100%);
-      animation: shimmer 1.4s infinite;
-    }
-
-    .loader-progress {
-      height: 12px;
-      border-radius: 999px;
-      background: #e2e8f0;
-      overflow: hidden;
-      margin-bottom: 18px;
-    }
-
-    .loader-progress-bar {
-      height: 100%;
-      width: 45%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #e01f26, #f97316, #0058a8);
-      animation: progressMove 1.45s ease-in-out infinite;
-    }
-
-    .loader-steps {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 16px;
-    }
-
-    .loader-step {
-      padding: 10px 8px;
-      border-radius: 14px;
-      background: #f1f5f9;
-      color: #475569;
-      font-size: 11px;
-      font-weight: 700;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .loader-step span {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: #94a3b8;
-    }
-
-    .loader-step.active span {
-      background: #16a34a;
-      box-shadow: 0 0 0 5px rgba(22, 163, 74, 0.12);
-      animation: stepBlink 1.2s ease-in-out infinite;
-    }
-
-    .loader-note {
-      text-align: center;
-      color: #64748b;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    @keyframes loaderCardIn {
-      from { opacity: 0; transform: translateY(18px) scale(0.96); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    @keyframes loaderPulse {
-      0%, 100% { transform: scale(1); box-shadow: 0 14px 30px rgba(0, 88, 168, 0.28); }
-      50% { transform: scale(1.06); box-shadow: 0 18px 38px rgba(224, 31, 38, 0.25); }
-    }
-    @keyframes progressMove {
-      0% { transform: translateX(-80%); width: 40%; }
-      50% { width: 62%; }
-      100% { transform: translateX(250%); width: 40%; }
-    }
-    @keyframes shimmer {
-      100% { transform: translateX(100%); }
-    }
-    @keyframes reportPreview {
-      0%, 100% { transform: rotate(-2deg) translateY(0); }
-      50% { transform: rotate(1deg) translateY(-8px); }
-    }
-    @keyframes floatOne {
-      0%, 100% { transform: translate(0, 0); }
-      50% { transform: translate(12px, 10px); }
-    }
-    @keyframes floatTwo {
-      0%, 100% { transform: translate(0, 0); }
-      50% { transform: translate(-10px, -12px); }
-    }
-    @keyframes floatThree {
-      0%, 100% { transform: translate(0, 0); }
-      50% { transform: translate(8px, -10px); }
-    }
-    @keyframes stepBlink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.45; }
-    }
-
-    @media (max-width: 480px) {
-      .loader-card { padding: 22px; border-radius: 24px; }
-      .loader-title { font-size: 19px; }
-      .loader-icon { width: 56px; height: 56px; border-radius: 18px; }
-      .loader-visual { height: 150px; }
-      .loader-report-preview { width: 185px; }
-      .loader-steps { grid-template-columns: 1fr; }
-      .loader-step { flex-direction: row; justify-content: center; }
-    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     /* ===================== TOOLBAR & SEARCH ===================== */
     .controls-container { width: calc(100% - 24px); max-width: 840px; margin: 16px auto; }
@@ -481,8 +185,9 @@
     .job-card {
       background: #fff; border-radius: 12px; border: 1px solid #e2e8f0;
       overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: all 0.25s ease; 
-      display: flex; flex-direction: column; 
+      display: flex; flex-direction: column; position: relative;
     }
+    .job-number { display: none; /* ซ่อนในโหมดปกติ */ }
     .job-code {
       background: #f1f5f9; color: #334155; font-weight: 700; font-size: 12px; padding: 8px 12px;
       display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0;
@@ -639,56 +344,245 @@
       .report { box-shadow: none; margin: 0 auto; border-radius: 0; width: 100% !important; max-width: none !important; }
       [contenteditable="true"] { outline: none !important; }
     }
+
+    /* ============================= */
+    /* Infographic Export Style (SCG Theme) */
+    /* ============================= */
+
+    #report.export-infographic {
+      width: 840px;
+      min-height: 594px; /* พอดีสัดส่วน A4 แนวนอน */
+      padding: 22px;
+      background:
+        radial-gradient(circle at top left, rgba(220, 38, 38, 0.12), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(15, 23, 42, 0.10), transparent 35%),
+        linear-gradient(135deg, #ffffff 0%, #f8fafc 45%, #eef2f7 100%);
+      border-radius: 0; 
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.18);
+      overflow: hidden;
+    }
+
+    #report.export-infographic .header {
+      background: linear-gradient(135deg, #b91c1c 0%, #dc2626 50%, #ef4444 100%);
+      color: white;
+      border-radius: 24px;
+      padding: 18px 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 14px 32px rgba(185, 28, 28, 0.25);
+      position: relative;
+      overflow: hidden;
+      border: none;
+    }
+
+    #report.export-infographic .header::after {
+      content: "";
+      position: absolute;
+      right: -50px;
+      top: -50px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    #report.export-infographic .title h1 {
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin: 0;
+    }
+
+    #report.export-infographic .title p {
+      font-size: 14px;
+      opacity: 0.92;
+      margin-top: 4px;
+    }
+
+    #report.export-infographic .logo-box {
+      background: transparent;
+      box-shadow: none;
+    }
+
+    #report.export-infographic .logo-box img {
+      max-height: 54px;
+      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2));
+    }
+
+    #report.export-infographic .summary {
+      background: transparent;
+      border: none;
+      box-shadow: none;
+      padding: 0;
+      margin-bottom: 16px;
+    }
+    
+    #report.export-infographic .section-label {
+      display: none;
+    }
+    
+    #report.export-infographic .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    
+    #report.export-infographic .metric {
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 20px;
+      padding: 14px;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+      position: relative;
+      overflow: hidden;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    #report.export-infographic .metric::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 12px;
+      width: 5px;
+      height: 42px;
+      border-radius: 0 8px 8px 0;
+      background: linear-gradient(180deg, #dc2626, #f97316);
+    }
+
+    #report.export-infographic .job-card {
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.10);
+      position: relative;
+      overflow: hidden;
+      min-height: 165px;
+    }
+
+    #report.export-infographic .job-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 7px;
+      background: linear-gradient(180deg, #dc2626, #fb923c);
+    }
+
+    #report.export-infographic .job-card::after {
+      content: "";
+      position: absolute;
+      right: -38px;
+      bottom: -38px;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: rgba(220, 38, 38, 0.07);
+      pointer-events: none; 
+    }
+
+    #report.export-infographic .job-code {
+      background: transparent;
+      border-bottom: none;
+      padding: 0;
+      margin-bottom: 8px;
+    }
+    
+    #report.export-infographic .job-code b {
+      font-size: 17px;
+      font-weight: 900;
+      color: #0f172a;
+    }
+    
+    #report.export-infographic .job-body {
+      padding: 0;
+    }
+    
+    #report.export-infographic .job-text {
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    #report.export-infographic .job-number {
+      position: absolute;
+      right: 14px;
+      top: 14px;
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #0f172a, #334155);
+      color: white;
+      font-size: 16px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.22);
+      z-index: 2;
+    }
+
+    #report.export-infographic .operator,
+    #report.export-infographic .safety {
+      background: rgba(255, 255, 255, 0.92);
+      border-radius: 22px;
+      border: 1px solid rgba(226, 232, 240, 0.95);
+      padding: 14px 16px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+      margin-top: 14px;
+      color: #0f172a; 
+    }
+
+    #report.export-infographic .safety-title {
+      color: #b91c1c;
+      text-shadow: none;
+      border-right-color: #cbd5e1;
+    }
+    
+    #report.export-infographic .safety-item {
+      background: transparent;
+      border-color: #e2e8f0;
+      color: #334155;
+    }
+    
+    #report.export-infographic .safety-icon {
+      background: #f1f5f9;
+      color: #b91c1c;
+    }
+    
+    #report.export-infographic .operator-header {
+      background: transparent;
+      border-bottom: none;
+      padding: 0 0 8px 0;
+      color: #b91c1c;
+      font-size: 15px;
+    }
+    
+    #report.export-infographic .operator-list {
+      padding: 0;
+    }
+
+    #report.export-infographic button,
+    #report.export-infographic input,
+    #report.export-infographic textarea,
+    #report.export-infographic select,
+    #report.export-infographic .job-actions,
+    #report.export-infographic .operator-add-btn,
+    #report.export-infographic .op-del {
+      display: none !important;
+    }
+
+    #report.export-infographic [contenteditable] {
+      outline: none !important;
+      border: none !important;
+      background: transparent !important;
+    }
   </style>
 </head>
 <body>
 
-  <!-- ========== LOADING OVERLAY (NEW INFOGRAPHIC STYLE) ========== -->
+  <!-- ========== LOADING OVERLAY ========== -->
   <div class="loader-overlay" id="loaderOverlay">
-    <div class="loader-card">
-      <div class="loader-top">
-        <div class="loader-icon">
-          <span>SCG</span>
-        </div>
-        <div>
-          <div class="loader-title" id="loaderText">กำลังประมวลผล...</div>
-          <div class="loader-subtitle">โปรดรอสักครู่ ระบบกำลังจัดเตรียมเอกสาร</div>
-        </div>
-      </div>
-
-      <div class="loader-visual">
-        <div class="loader-circle circle-one"></div>
-        <div class="loader-circle circle-two"></div>
-        <div class="loader-circle circle-three"></div>
-        <div class="loader-report-preview">
-          <div class="preview-header"></div>
-          <div class="preview-line w-90"></div>
-          <div class="preview-line w-70"></div>
-          <div class="preview-grid">
-            <div></div><div></div>
-            <div></div><div></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="loader-progress">
-        <div class="loader-progress-bar"></div>
-      </div>
-
-      <div class="loader-steps">
-        <div class="loader-step active">
-          <span></span> ดึงข้อมูล
-        </div>
-        <div class="loader-step active">
-          <span></span> จัดหน้า
-        </div>
-        <div class="loader-step active">
-          <span></span> สร้างไฟล์
-        </div>
-      </div>
-
-      <div class="loader-note">กรุณาอย่าปิดหน้าต่างนี้ขณะระบบกำลังทำงาน</div>
-    </div>
+    <div class="spinner"></div>
+    <div id="loaderText">กำลังประมวลผล...</div>
   </div>
 
   <!-- ========== CONTROLS (SEARCH & TOOLBAR) ========== -->
@@ -826,7 +720,7 @@
     let formPhotos = ["", "", "", ""];
     let operators = [];
 
-    /* ========== CHUNK FUNCTION (แบ่งหน้างาน) ========== */
+    /* ========== CHUNK FUNCTION (แบ่งกลุ่มงาน) ========== */
     function chunkJobs(list, size) {
       const chunks = [];
       for (let i = 0; i < list.length; i += size) {
@@ -1069,7 +963,8 @@
     }
 
     /* ========== RENDER JOBS ========== */
-    function renderJobs() {
+    // เพิ่ม startIndex เพื่อให้เวลารันลูปหน้าที่ 2 เลขงานจะเรียงต่อจากเดิม (5, 6, 7...) ไม่กลับไปเริ่ม 1 ใหม่
+    function renderJobs(startIndex = 0) {
       const jobList = document.getElementById("jobList");
 
       if (jobs.length === 0) {
@@ -1081,6 +976,7 @@
       let html = "";
       jobs.forEach((job, index) => {
         const percent = getPercent(job.status);
+        const realIndex = startIndex + index + 1; // ลำดับงานที่แท้จริง
         
         let badgeClass = "todo";
         if (percent >= 100) badgeClass = "done";
@@ -1093,8 +989,9 @@
 
         html += `
           <article class="job-card" data-status="${percent}">
+            <div class="job-number">${realIndex}</div>
             <div class="job-code">
-              <div><b>งานที่ ${index + 1}</b> | ${escapeHTML(job.code)}</div>
+              <div><b>งานที่ ${realIndex}</b> | ${escapeHTML(job.code)}</div>
               <div class="job-actions">
                 <button class="edit-job" onclick="openEditForm('${job.id}')">แก้ไข</button>
                 <button class="delete-job" onclick="deleteJob('${job.id}')">ลบ</button>
@@ -1120,9 +1017,14 @@
     }
 
     function updateSummary() {
-      const total = jobs.length;
+      // ตรงนี้ต้องนับจาก Original ถ้ามีการแบ่งหน้า แต่ถ้านับสดจาก jobs ปัจจุบัน หน้าย่อยจะนับผิด
+      // เราจึงใช้วิธีดึงจาก localStorage ชั่วคราวเพื่ออัปเดตตัวเลขรวมทั้งหมดให้เป๊ะเสมอ
+      const rawJobs = localStorage.getItem("am_daily_jobs");
+      const allJobs = rawJobs ? JSON.parse(rawJobs) : jobs;
+      
+      const total = allJobs.length;
       let done = 0, full = 0;
-      jobs.forEach(job => {
+      allJobs.forEach(job => {
         const p = getPercent(job.status);
         if (p > 0) done++;
         if (p >= 100) full++;
@@ -1134,7 +1036,7 @@
     }
 
     /* ==========================================================
-       DOWNLOAD IMAGE (PAGINATED - ทีละ 4 งาน)
+       DOWNLOAD IMAGE (PAGINATED - ทีละ 4 งาน + INFOGRAPHIC MODE)
        ========================================================== */
     async function downloadReportImage() {
       const loader = document.getElementById("loaderOverlay");
@@ -1144,6 +1046,8 @@
       await new Promise(resolve => setTimeout(resolve, 200));
 
       const report = document.getElementById("report");
+      report.classList.add("export-infographic"); // เปิดโหมด Infographic
+
       const originalJobs = [...jobs];
       const originalSearch = document.getElementById("searchInput").value;
 
@@ -1177,12 +1081,13 @@
 
         for (let i = 0; i < jobPages.length; i++) {
           document.getElementById("loaderText").innerText =
-            "กำลังสร้างหน้า " + (i + 1) + " จาก " + jobPages.length;
+            "กำลังสร้างรูปภาพหน้า " + (i + 1) + " จาก " + jobPages.length + "...";
 
           jobs = jobPages[i];
-          renderJobs();
+          const startIndex = i * jobsPerImage;
+          renderJobs(startIndex);
 
-          await new Promise(resolve => setTimeout(resolve, 300));
+          await new Promise(resolve => setTimeout(resolve, 400)); // รอให้ DOM เรียงตัวสมบูรณ์
 
           const canvas = await html2canvas(report, {
             scale: 3,
@@ -1215,7 +1120,7 @@
       } finally {
         jobs = originalJobs;
         document.getElementById("searchInput").value = originalSearch;
-        renderJobs();
+        renderJobs(0); // กลับมาใช้ index 0 สำหรับหน้าจอปกติ
 
         hiddenEls.forEach(({ el, prev }) => {
           el.style.display = prev;
@@ -1225,25 +1130,30 @@
           el.style.outline = "";
         });
 
+        report.classList.remove("export-infographic"); // ปิดโหมด Infographic
         loader.style.display = "none";
       }
     }
 
     /* ==========================================================
-       DOWNLOAD PDF (A4 LANDSCAPE - MULTI-PAGE AUTOMATIC)
+       DOWNLOAD PDF (A4 LANDSCAPE - MULTI-PAGE + INFOGRAPHIC MODE)
        ========================================================== */
     async function downloadReportPDF() {
       const loader = document.getElementById("loaderOverlay");
-      document.getElementById("loaderText").innerText = "กำลังสร้างไฟล์ PDF...";
+      document.getElementById("loaderText").innerText = "กำลังสร้างไฟล์ PDF และแบ่งหน้าอัตโนมัติ...";
       loader.style.display = "flex";
       
       await new Promise(resolve => setTimeout(resolve, 200)); 
 
-      renderJobs(); 
       const report = document.getElementById("report");
+      report.classList.add("export-infographic"); // เปิดโหมด Infographic
+
+      const originalJobs = [...jobs];
+      const originalSearch = document.getElementById("searchInput").value;
 
       const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
       const hiddenEls = [];
+      
       hideSelectors.forEach(sel => {
         report.querySelectorAll(sel).forEach(el => {
           hiddenEls.push({ el, prev: el.style.display });
@@ -1255,17 +1165,12 @@
       editables.forEach(el => { el.style.outline = "none"; });
 
       try {
-        const canvas = await html2canvas(report, {
-          scale: 2,
-          useCORS: true,
-          allowTaint: false,
-          backgroundColor: "#f8fafc",
-          logging: false,
-          width: 840,
-          windowWidth: 840
-        });
+        document.getElementById("searchInput").value = "";
 
-        const imgData = canvas.toDataURL("image/jpeg", 0.85);
+        const jobsPerImage = 4;
+        const jobPages = originalJobs.length > 0
+          ? chunkJobs(originalJobs, jobsPerImage)
+          : [[]];
 
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF({
@@ -1276,21 +1181,34 @@
 
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = pdf.internal.pageSize.getHeight();
-        
-        const imgHeight = (canvas.height * pdfWidth) / canvas.width;
-        let heightLeft = imgHeight;
-        let position = 0;
 
-        // วาดหน้าแรก
-        pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
-        heightLeft -= pdfHeight;
+        for (let i = 0; i < jobPages.length; i++) {
+          document.getElementById("loaderText").innerText =
+            "กำลังสร้าง PDF หน้า " + (i + 1) + " จาก " + jobPages.length + "...";
 
-        // หากเนื้อหาเกิน 1 หน้า ให้สร้างหน้าใหม่เพิ่มอัตโนมัติทีละหน้าจนครบ
-        while (heightLeft > 0) {
-          position = heightLeft - imgHeight;
-          pdf.addPage();
-          pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
-          heightLeft -= pdfHeight;
+          jobs = jobPages[i];
+          const startIndex = i * jobsPerImage;
+          renderJobs(startIndex);
+
+          await new Promise(resolve => setTimeout(resolve, 400));
+
+          const canvas = await html2canvas(report, {
+            scale: 2,
+            useCORS: true,
+            allowTaint: false,
+            backgroundColor: "#f8fafc",
+            logging: false,
+            width: 840,
+            windowWidth: 840
+          });
+
+          const imgData = canvas.toDataURL("image/jpeg", 0.85);
+          const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
+          if (i > 0) pdf.addPage();
+          
+          // แปะรูปแต่ละหน้าลงใน PDF
+          pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, imgHeight);
         }
 
         const now = new Date();
@@ -1304,9 +1222,14 @@
         console.error(err);
         alert("ไม่สามารถสร้าง PDF ได้ กรุณาลองใหม่อีกครั้ง");
       } finally {
+        jobs = originalJobs;
+        document.getElementById("searchInput").value = originalSearch;
+        renderJobs(0);
+
         hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
         editables.forEach(el => { el.style.outline = ""; });
         
+        report.classList.remove("export-infographic"); // ปิดโหมด Infographic
         loader.style.display = "none"; 
       }
     }
