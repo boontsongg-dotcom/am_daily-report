@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AM Daily Report CRUD (1080px Portrait)</title>
+  <title>AM Daily Report CRUD (1080px Portrait - Smart Grid)</title>
   
   <!-- Google Fonts: Noto Sans Thai -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -101,21 +101,16 @@
       border-radius: 8px; margin-bottom: 8px; background: #e2e8f0;
     }
 
-    /* ===================== REPORT VIEWPORT ===================== */
+    /* ===================== REPORT VIEWPORT (1080px) ===================== */
     .report-viewport { 
       width: 100%; display: flex; justify-content: center; padding: 0 16px 40px; 
     }
-    
-    /* 
-      การตั้งค่านี้คือ "หัวใจหลัก" 
-      ล็อกความกว้างที่ 1080px และ Min-Height ที่ 1920px เป๊ะๆ 
-    */
     .report {
       width: 1080px; 
-      min-height: 1920px; /* การันตีสัดส่วนจอ 9:16 ถ้างานน้อย */
+      min-height: 1920px; 
       flex: 0 0 1080px; 
       background: #f8fafc;
-      border-radius: 0; /* ลบความโค้งออกเพื่อให้เป็นภาพหน้าจอแนวตั้งเต็มเปี่ยม */
+      border-radius: 0;
       box-shadow: 0 20px 60px rgba(0,0,0,0.15); 
       position: relative;
       transform-origin: top center; 
@@ -125,7 +120,7 @@
     [contenteditable="true"] { outline: 2px dashed transparent; border-radius: 8px; transition: 0.2s; }
     [contenteditable="true"]:focus { outline-color: #fcd34d; background: rgba(255,255,255,0.8); }
 
-    /* ===================== HEADER (1080px Scale) ===================== */
+    /* ===================== HEADER ===================== */
     .header {
       background: linear-gradient(135deg, #0284c7, #0369a1); 
       color: #fff; padding: 48px 56px 64px 56px; position: relative; 
@@ -149,7 +144,7 @@
     .header-main p { margin: 0 0 32px; font-size: 32px; font-weight: 600; opacity: 0.9; text-transform: uppercase; letter-spacing: 1px; }
     .date { display: inline-flex; align-items: center; gap: 12px; background: rgba(255,255,255,0.2); border-radius: 40px; padding: 16px 40px; font-size: 36px; font-weight: 700; backdrop-filter: blur(8px); border: 2px solid rgba(255,255,255,0.3); }
 
-    /* ===================== CONTENT (1080px Scale) ===================== */
+    /* ===================== CONTENT ===================== */
     .content { padding: 0 48px 48px; margin-top: -32px; position: relative; z-index: 2; flex: 1; display: flex; flex-direction: column; }
     
     /* SUMMARY */
@@ -173,16 +168,21 @@
     .metric .text { font-size: 26px; line-height: 1.2; font-weight: 700; color: #64748b; }
     .metric .num { display: block; font-size: 44px; color: #0f172a; margin-top: 8px; font-weight: 900; }
 
-    /* ===================== JOB CARDS (1 COLUMN - MOBILE OPTIMIZED) ===================== */
+    /* ===================== JOB CARDS (DYNAMIC GRID) ===================== */
     #jobList {
-      display: flex;
-      flex-direction: column;
+      display: grid;
       gap: 32px;
       margin-bottom: 48px;
     }
+    
+    /* ถ้างามมี 1 งาน ให้แสดง 1 คอลัมน์ */
+    #jobList.grid-cols-1 { grid-template-columns: 1fr; }
+    
+    /* ถ้างามมี > 1 งาน ให้แสดง 2 คอลัมน์คู่แนวนอน */
+    #jobList.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
 
     .empty-job {
-      background: #ffffff; border: 4px dashed #cbd5e1; border-radius: 32px;
+      grid-column: 1 / -1; background: #ffffff; border: 4px dashed #cbd5e1; border-radius: 32px;
       padding: 64px; text-align: center; color: #64748b; font-size: 36px; font-weight: 600;
     }
 
@@ -191,40 +191,60 @@
       overflow: hidden; box-shadow: 0 8px 24px rgba(0,0,0,0.06); 
       display: flex; flex-direction: column; 
     }
+    
     .job-code {
-      background: #f1f5f9; color: #1e293b; font-weight: 800; font-size: 36px; padding: 24px 32px;
+      background: #f1f5f9; color: #1e293b; font-weight: 800; 
       display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #e2e8f0;
     }
     .job-actions { display: flex; gap: 12px; }
-    .job-actions button {
-      color: #fff; border: none; border-radius: 12px; font-size: 26px;
-      padding: 10px 24px; cursor: pointer; font-weight: 700; 
-    }
+    .job-actions button { color: #fff; border: none; font-weight: 700; cursor: pointer; }
     .edit-job { background: #f59e0b; } 
     .delete-job { background: #ef4444; } 
     
-    .job-body { display: flex; flex-direction: column; gap: 24px; padding: 32px; flex: 1; }
-    .job-text { font-size: 32px; line-height: 1.6; font-weight: 500; color: #334155; }
+    .job-body { display: flex; flex-direction: column; flex: 1; }
+    .job-text { font-weight: 500; color: #334155; }
     .job-text div { margin-bottom: 8px; }
     .job-text b { color: #0284c7; font-weight: 800; }
     
-    .status-row { display: flex; align-items: center; gap: 20px; margin-top: 16px; font-size: 28px; font-weight: 800; }
-    .progress { flex: 1; height: 24px; background: #e2e8f0; border-radius: 40px; overflow: hidden; }
+    .status-row { display: flex; align-items: center; font-weight: 800; }
+    .progress { flex: 1; background: #e2e8f0; border-radius: 40px; overflow: hidden; }
     .progress div { height: 100%; background: #10b981; border-radius: 40px; }
     
-    .status-badge { padding: 8px 24px; border-radius: 24px; color: #fff; font-size: 26px; font-weight: 800; letter-spacing: 1px; }
+    .status-badge { color: #fff; font-weight: 800; letter-spacing: 1px; }
     .status-badge.done { background-color: #10b981; } 
     .status-badge.progress { background-color: #f59e0b; } 
     .status-badge.todo { background-color: #ef4444; } 
 
-    /* ระบบ 4 รูปภาพ 2x2 ขนาดใหญ่เต็มตา */
-    .photos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 16px; }
+    /* ระบบ 4 รูปภาพ 2x2 */
+    .photos { display: grid; grid-template-columns: repeat(2, 1fr); margin-top: auto; }
     .photo-box {
-      border-radius: 16px; background: #e2e8f0; border: 2px solid #cbd5e1;
+      background: #e2e8f0; border: 2px solid #cbd5e1;
       overflow: hidden; position: relative; display: grid; place-items: center;
-      height: 320px; font-size: 28px; color: #64748b; text-align: center; font-weight: 700;
+      color: #64748b; text-align: center; font-weight: 700;
     }
     .photo-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /* === Sizing สำหรับ 1 คอลัมน์ (งานเดียว) === */
+    .grid-cols-1 .job-code { font-size: 36px; padding: 24px 32px; }
+    .grid-cols-1 .job-actions button { font-size: 26px; padding: 10px 24px; border-radius: 12px; }
+    .grid-cols-1 .job-body { padding: 32px; gap: 24px; }
+    .grid-cols-1 .job-text { font-size: 32px; line-height: 1.6; }
+    .grid-cols-1 .status-row { gap: 20px; margin-top: 16px; font-size: 28px; }
+    .grid-cols-1 .progress { height: 24px; }
+    .grid-cols-1 .status-badge { padding: 8px 24px; border-radius: 24px; font-size: 26px; }
+    .grid-cols-1 .photos { gap: 16px; margin-top: 16px; }
+    .grid-cols-1 .photo-box { height: 320px; font-size: 28px; border-radius: 16px; }
+
+    /* === Sizing สำหรับ 2 คอลัมน์ (> 1 งาน) === */
+    .grid-cols-2 .job-code { font-size: 26px; padding: 20px 24px; }
+    .grid-cols-2 .job-actions button { font-size: 20px; padding: 8px 16px; border-radius: 8px; }
+    .grid-cols-2 .job-body { padding: 24px; gap: 20px; }
+    .grid-cols-2 .job-text { font-size: 24px; line-height: 1.5; }
+    .grid-cols-2 .status-row { gap: 16px; margin-top: 12px; font-size: 22px; }
+    .grid-cols-2 .progress { height: 16px; }
+    .grid-cols-2 .status-badge { padding: 6px 16px; border-radius: 16px; font-size: 20px; }
+    .grid-cols-2 .photos { gap: 12px; margin-top: 12px; }
+    .grid-cols-2 .photo-box { height: 180px; font-size: 20px; border-radius: 12px; }
 
     /* ===================== OPERATOR ===================== */
     .operator {
@@ -254,8 +274,7 @@
     .operator-item .op-role.orange { background: #f59e0b; }
     .operator-item .op-del {
       background: #ef4444; color: #fff; border: none; border-radius: 50%;
-      font-size: 24px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
+      font-size: 24px; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer;
     }
 
     /* ===================== SAFETY ===================== */
@@ -263,12 +282,13 @@
       background: #0284c7; color: #fff; border-radius: 32px; 
       padding: 40px; margin-top: auto; box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
     }
-    .safety-grid { display: grid; grid-template-columns: 200px repeat(5, 1fr); gap: 24px; align-items: center; }
-    .safety-title { font-size: 64px; line-height: 0.95; font-weight: 900; text-shadow: 0 4px 8px rgba(0,0,0,0.2); }
-    .safety-item { text-align: center; font-size: 24px; line-height: 1.2; font-weight: 800; }
+    /* แก้ไขการเว้นวรรคและแก้คำว่า Safety First ให้ไม่ตกบรรทัด */
+    .safety-grid { display: grid; grid-template-columns: 260px repeat(5, 1fr); gap: 16px; align-items: center; }
+    .safety-title { font-size: 56px; line-height: 1; font-weight: 900; text-shadow: 0 4px 8px rgba(0,0,0,0.2); white-space: nowrap; }
+    .safety-item { text-align: center; font-size: 22px; line-height: 1.2; font-weight: 800; }
     .safety-icon {
-      width: 90px; height: 90px; border-radius: 50%; background: rgba(255,255,255,0.2);
-      color: #fff; display: grid; place-items: center; margin: 0 auto 16px; font-size: 44px; backdrop-filter: blur(4px); border: 2px solid rgba(255,255,255,0.4);
+      width: 80px; height: 80px; border-radius: 50%; background: rgba(255,255,255,0.2);
+      color: #fff; display: grid; place-items: center; margin: 0 auto 16px; font-size: 38px; backdrop-filter: blur(4px); border: 2px solid rgba(255,255,255,0.4);
     }
 
     /* ===================== PRINT ===================== */
@@ -381,7 +401,7 @@
           </div>
         </div>
 
-        <!-- JOB LIST (1 COLUMN FOR 1080px) -->
+        <!-- JOB LIST -->
         <div id="jobList">
           <div class="empty-job">ยังไม่มีรายการงาน<br>กดปุ่ม "+ เพิ่มงาน" ด้านบนเพื่อเริ่ม</div>
         </div>
@@ -625,15 +645,24 @@
       return Math.max(0, Math.min(100, value));
     }
 
-    /* ========== RENDER JOBS (1 COLUMN FOR 1080px) ========== */
+    /* ========== RENDER JOBS (SMART GRID: 1 OR 2 COLUMNS) ========== */
     function renderJobs() {
       const jobList = document.getElementById("jobList");
+      jobList.className = ""; 
 
       if (jobs.length === 0) {
+        jobList.classList.add("grid-cols-1");
         jobList.innerHTML = `<div class="empty-job">ยังไม่มีรายการงาน<br>กดปุ่ม "+ เพิ่มงาน" ด้านบนเพื่อเริ่ม</div>`;
         updateSummary();
         setTimeout(scaleReport, 50);
         return;
+      }
+
+      // เช็คจำนวนงานเพื่อเปลี่ยน Layout 
+      if (jobs.length > 1) {
+        jobList.classList.add("grid-cols-2");
+      } else {
+        jobList.classList.add("grid-cols-1");
       }
 
       let html = "";
@@ -675,7 +704,7 @@
       jobList.innerHTML = html;
       updateSummary();
       filterJobs(); 
-      setTimeout(scaleReport, 50);
+      setTimeout(scaleReport, 50); 
     }
 
     function updateSummary() {
@@ -724,7 +753,7 @@
 
       try {
         const canvas = await html2canvas(report, {
-          scale: 1, // บังคับสเกล 1 เพื่อให้ได้ไฟล์ขนาด 1080px พอดีเป๊ะตามต้องการ
+          scale: 1, 
           useCORS: true,
           allowTaint: false,
           backgroundColor: "#f8fafc",
