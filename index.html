@@ -125,17 +125,15 @@
     }
     .title h1 { margin: 0; font-size: 28px; line-height: 1.1; font-weight: 900; letter-spacing: -0.5px; }
     
-    /* SCG GREEN โหลดจากภาพ scg_green.png และปรับขนาดเท่าโลโก้ซ้าย */
- /* SCG GREEN โหลดจากภาพ scg_green.png และปรับขนาดเท่าโลโก้ซ้าย */
-/* SCG GREEN โหลดจากภาพ scg_green.png และปรับให้สมดุลกับโลโก้ซ้าย */
+/* SCG GREEN โหลดจากภาพ scg_green.png และคุมความสูงให้เสมอโลโก้หลัก */
     .scg-green-badge {
       display: inline-flex; align-items: center; justify-content: center; background: #ffffff;
       padding: 6px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-      width: 75px; /* ลดความกว้างลงมา เพื่อกดความสูงไม่ให้ใหญ่เกินหน้าโลโก้หลัก */
+      height: 52px; /* ลบ width ออก แล้วใช้ height คุมแทน (ปรับตัวเลขนี้เพื่อให้ขอบกรอบเท่าฝั่งซ้าย) */
     }
     .scg-green-badge img { 
-      width: 100%; 
-      height: auto; 
+      height: 100%; /* บังคับให้รูปสูงพอดีกับกรอบ */
+      width: auto;  /* ปล่อยความกว้างให้ยืดหดตามสัดส่วนจริง ภาพจะไม่เบี้ยว */
       border-radius: 4px; 
       display: block; 
     }
