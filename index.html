@@ -259,7 +259,6 @@
     
     .operator-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 16px; }
     
-    /* ตัดตำแหน่งออก ให้ชื่อและสถานะอยู่แถวเดียวกันแบบกระชับ */
     .operator-item {
       display: inline-flex; align-items: center; background: #f1f5f9;
       padding: 6px 12px; border-radius: 20px; border: 1px solid #cbd5e1; gap: 8px; transition: 0.2s;
@@ -274,7 +273,7 @@
     }
     .operator-item .op-del:hover { background: #dc2626; transform: scale(1.1); }
 
-    /* ===================== SAFETY (COMPACT DESIGN) ===================== */
+    /* ===================== SAFETY ===================== */
     .safety {
       background: #0284c7; color: #fff; border-radius: 12px; 
       padding: 10px 16px; margin-top: 4px; box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
@@ -417,12 +416,10 @@
 
       <!-- ===== HEADER ===== -->
       <section class="header">
-        <!-- ซ้าย: โลโก้ SCG -->
         <div class="logo-box">
           <img id="headerLogo" src="images/scg-logo.png" alt="SCG Logo" crossorigin="anonymous" onerror="this.style.display='none';">
         </div>
         
-        <!-- กลาง: ข้อความ -->
         <div class="title">
           <div class="header-top-row">
             <h1 contenteditable="true">สรุปงาน AM บดซีเมนต์</h1>
@@ -431,7 +428,6 @@
           <div class="date">📅 <span contenteditable="true" id="reportDate"></span></div>
         </div>
 
-        <!-- ขวา: โลโก้ SCG GREEN -->
         <div class="logo-box" contenteditable="true">
           <img src="images/scg_green.png" alt="SCG GREEN" crossorigin="anonymous" onerror="this.style.display='none';">
         </div>
@@ -465,7 +461,7 @@
           <div class="operator-list" id="operatorList"></div>
         </div>
 
-        <!-- SAFETY (COMPACT) -->
+        <!-- SAFETY -->
         <section class="safety">
           <div class="safety-grid">
             <div class="safety-title" contenteditable="true">Safety First</div>
@@ -540,7 +536,7 @@
       });
     }
 
-    /* ========== OPERATOR CRUD (NO ROLE) ========== */
+    /* ========== OPERATOR CRUD ========== */
     function renderOperators() {
       const list = document.getElementById("operatorList");
       let html = "";
@@ -792,11 +788,11 @@
     }
 
     /* ==========================================================
-       DOWNLOAD PDF (A4 LANDSCAPE - OPTIMIZED & MULTI-PAGE)
+       DOWNLOAD PDF (A4 LANDSCAPE - MULTI-PAGE AUTOMATIC)
        ========================================================== */
     async function downloadReportPDF() {
       const loader = document.getElementById("loaderOverlay");
-      document.getElementById("loaderText").innerText = "กำลังสร้างไฟล์ PDF และลดขนาด...";
+      document.getElementById("loaderText").innerText = "กำลังสร้างไฟล์ PDF และแบ่งหน้าอัตโนมัติ...";
       loader.style.display = "flex";
       
       await new Promise(resolve => setTimeout(resolve, 200)); 
@@ -843,9 +839,11 @@
         let heightLeft = imgHeight;
         let position = 0;
 
+        // วาดหน้าแรก
         pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
         heightLeft -= pdfHeight;
 
+        // หากเนื้อหาเกิน 1 หน้า ให้สร้างหน้าใหม่เพิ่มอัตโนมัติทีละหน้าจนครบ
         while (heightLeft > 0) {
           position = heightLeft - imgHeight;
           pdf.addPage();
