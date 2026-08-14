@@ -14,9 +14,8 @@
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      /* เปลี่ยนฟอนต์ทั้งหน้าเว็บ */
       font-family: 'Noto Sans Thai', Tahoma, sans-serif; 
-      background: #f0f4f8; /* ปรับพื้นหลังให้ดู Clean ขึ้น */
+      background: #f0f4f8; 
       color: #1e293b;
     }
 
@@ -91,10 +90,8 @@
       font-size: 13px;
       flex: 1 1 auto;
       min-width: 78px;
-      /* เพิ่ม Transition ความนุ่มนวล */
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    /* เพิ่ม Hover Effect ให้ปุ่ม */
     .toolbar button:hover, .form-panel button:hover {
       transform: translateY(-2px);
       box-shadow: 0 4px 10px rgba(0,0,0,0.15);
@@ -104,10 +101,10 @@
       transform: translateY(0);
     }
 
-    .btn-blue   { background: #0ea5e9; } /* สีฟ้า Modern */
-    .btn-green  { background: #10b981; } /* สีเขียว Modern */
-    .btn-orange { background: #f59e0b; } /* สีส้ม Modern */
-    .btn-red    { background: #ef4444; } /* สีแดง Modern */
+    .btn-blue   { background: #0ea5e9; } 
+    .btn-green  { background: #10b981; } 
+    .btn-orange { background: #f59e0b; } 
+    .btn-red    { background: #ef4444; } 
     .btn-gray   { background: #64748b; }
 
     /* ===================== FORM OVERLAY ===================== */
@@ -176,11 +173,17 @@
 
     /* ===================== HEADER ===================== */
     .header {
-      height: 110px; background: linear-gradient(135deg, #0284c7, #0369a1); /* ไล่สีให้มีมิติ */
+      height: 110px; background: linear-gradient(135deg, #0284c7, #0369a1); 
       color: #fff; padding: 12px 16px; position: relative; display: grid;
       grid-template-columns: 90px 1fr; gap: 16px; align-items: center;
     }
     .logo-img { width: 90px; height: auto; border-radius: 8px; background: #fff; padding: 6px; display: block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .logo-fallback {
+      display: none; background: #fff; color: #008344; border-radius: 4px;
+      padding: 5px 6px; font-weight: 900; font-size: 18px; line-height: 1; text-align: left;
+    }
+    .logo-fallback span { display: block; color: #e2231a; font-size: 11px; letter-spacing: 0.3px; }
+    
     .title h1 { margin: 0 0 4px; font-size: 24px; line-height: 1.1; font-weight: 900; letter-spacing: -0.5px; }
     .title p { margin: 0 0 8px; font-size: 10px; font-weight: 600; opacity: 0.9; }
     .date { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.2); border-radius: 16px; padding: 4px 12px; font-size: 12px; font-weight: 600; backdrop-filter: blur(4px); }
@@ -216,7 +219,7 @@
     .job-card {
       background: #fff; border-radius: 12px; border: 1px solid #e2e8f0;
       margin-bottom: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-      transition: all 0.25s ease; /* Transition สำหรับ Card */
+      transition: all 0.25s ease; 
     }
     .job-card:hover {
       transform: translateY(-2px);
@@ -247,13 +250,13 @@
     .progress { flex: 1; height: 10px; background: #e2e8f0; border-radius: 20px; overflow: hidden; }
     .progress div { height: 100%; background: #10b981; border-radius: 20px; transition: width 0.5s ease; }
     
-    /* === STATUS BADGE (ของใหม่) === */
+    /* === STATUS BADGE === */
     .status-badge {
       padding: 2px 8px; border-radius: 12px; color: #fff; font-size: 9px; font-weight: 700; letter-spacing: 0.5px;
     }
-    .status-badge.done { background-color: #10b981; } /* เขียว */
-    .status-badge.progress { background-color: #f59e0b; } /* ส้ม */
-    .status-badge.todo { background-color: #ef4444; } /* แดง */
+    .status-badge.done { background-color: #10b981; } 
+    .status-badge.progress { background-color: #f59e0b; } 
+    .status-badge.todo { background-color: #ef4444; } 
 
     .photos { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-content: start; }
     .photo-box {
@@ -262,7 +265,7 @@
       font-size: 9px; color: #64748b; text-align: center; font-weight: 600;
     }
     .photo-box img { width: 100%; height: 100%; object-fit: cover; display: block; transition: 0.3s; }
-    .photo-box:hover img { transform: scale(1.05); } /* ซูมรูปนิดๆ ตอน hover */
+    .photo-box:hover img { transform: scale(1.05); } 
     .photo-box:nth-child(1) { grid-column: 1 / -1; height: 75px; }
     .photo-box:nth-child(2), .photo-box:nth-child(3) { height: 45px; }
 
@@ -308,7 +311,7 @@
 
     /* ===================== FOOTER ===================== */
     .footer {
-      background: #0f172a; /* พื้นหลัง Footer เข้มๆ แบบ Modern */
+      background: #0f172a; 
       color: #fff; display: grid; grid-template-columns: repeat(5, 1fr);
       padding: 12px 8px; gap: 4px; font-size: 7.5px; text-align: center; font-weight: 700; letter-spacing: 0.2px;
     }
@@ -537,7 +540,7 @@
       if (!confirm("ต้องการลบข้อมูลงานทั้งหมดเพื่อเริ่มต้นวันใหม่ใช่หรือไม่? (ข้อมูลจะหายไปถาวร)")) return;
       localStorage.removeItem("am_daily_jobs");
       jobs = [];
-      document.getElementById('searchInput').value = ""; // เคลียร์ช่องค้นหา
+      document.getElementById('searchInput').value = "";
       renderJobs();
     }
     function createId() { return Date.now().toString() + Math.floor(Math.random() * 1000).toString(); }
@@ -678,7 +681,7 @@
       else { jobs.push(jobData); }
       
       saveData();
-      document.getElementById('searchInput').value = ""; // รีเซ็ตการค้นหาหลังบันทึก
+      document.getElementById('searchInput').value = ""; 
       renderJobs();
       closeForm();
       clearForm();
@@ -711,7 +714,6 @@
       jobs.forEach((job, index) => {
         const percent = getPercent(job.status);
         
-        // ประมวลผล Status Badge
         let badgeClass = "todo";
         if (percent >= 100) badgeClass = "done";
         else if (percent > 0) badgeClass = "progress";
@@ -747,7 +749,7 @@
       });
       jobList.innerHTML = html;
       updateSummary();
-      filterJobs(); // ตรวจสอบ Search อีกครั้งตอน Render ใหม่
+      filterJobs(); 
     }
 
     function updateSummary() {
@@ -765,17 +767,15 @@
     }
 
     /* ==========================================================
-       DOWNLOAD IMAGE (ใส่ระบบ Loading ป้องกันค้าง)
+       DOWNLOAD IMAGE 
        ========================================================== */
     async function downloadReportImage() {
-      // เปิดจอ Loading วนลูปรอให้ UI อัปเดตก่อน
       const loader = document.getElementById("loaderOverlay");
       loader.style.display = "flex";
       
-      // หน่วงเวลาให้ CSS ทำงานก่อนโดน JS แช่แข็งจอ
       await new Promise(resolve => setTimeout(resolve, 200)); 
 
-      renderJobs(); // รีเซ็ตทุกอย่างให้เป็นปกติก่อนเรนเดอร์ภาพ
+      renderJobs(); 
       const report = document.getElementById("report");
 
       const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
@@ -824,7 +824,6 @@
         hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
         editables.forEach(el => { el.style.outline = ""; });
         
-        // ปิดจอ Loading
         loader.style.display = "none"; 
       }
     }
