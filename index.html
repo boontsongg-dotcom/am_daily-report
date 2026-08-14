@@ -100,11 +100,12 @@
       border-radius: 8px; margin-bottom: 6px; background: #e2e8f0;
     }
 
-    /* ===================== REPORT VIEWPORT ===================== */
-    .report-viewport { width: 100%; display: flex; justify-content: center; padding: 0 8px 32px; }
+    /* ===================== REPORT VIEWPORT (RESPONSIVE) ===================== */
+    .report-viewport { width: 100%; display: flex; justify-content: center; padding: 0 8px 32px; overflow-x: auto; }
     .report {
       width: 100%;
       max-width: 840px; 
+      min-width: 320px;
       background: #f8fafc;
       border-radius: 12px; overflow: hidden; box-shadow: 0 12px 32px rgba(0,0,0,0.1); position: relative;
     }
@@ -174,9 +175,6 @@
       grid-template-columns: repeat(2, 1fr); 
       gap: 12px;
       margin-bottom: 16px;
-    }
-    @media (max-width: 768px) {
-      #jobList { grid-template-columns: 1fr; } 
     }
 
     .empty-job {
@@ -290,6 +288,24 @@
     .safety-icon {
       width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.2);
       color: #fff; display: grid; place-items: center; margin: 0 auto 6px; font-size: 15px; backdrop-filter: blur(2px); border: 1px solid rgba(255,255,255,0.4);
+    }
+
+    /* ===================== RESPONSIVE MEDIA QUERIES ===================== */
+    @media (max-width: 768px) {
+      .header {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+        gap: 12px;
+        padding: 16px;
+      }
+      .header-top-row { justify-content: center; }
+      .title h1 { font-size: 22px; }
+      #jobList { grid-template-columns: 1fr; }
+      .metrics { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+      .metric { border-right: none; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
+      .safety-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .safety-title { grid-column: span 2; font-size: 20px; }
     }
 
     /* ===================== PRINT ===================== */
