@@ -100,7 +100,7 @@
       border-radius: 8px; margin-bottom: 6px; background: #e2e8f0;
     }
 
-    /* ===================== REPORT VIEWPORT (RESPONSIVE LANDSCAPE) ===================== */
+    /* ===================== REPORT VIEWPORT ===================== */
     .report-viewport { width: 100%; display: flex; justify-content: center; padding: 0 8px 32px; }
     .report {
       width: 100%;
@@ -113,27 +113,48 @@
 
     /* ===================== HEADER ===================== */
     .header {
-      min-height: 110px; height: auto; background: linear-gradient(135deg, #0284c7, #0369a1); 
+      min-height: 100px; height: auto; background: linear-gradient(135deg, #0284c7, #0369a1); 
       color: #fff; padding: 16px 24px 26px 24px; position: relative; display: grid;
-      /* เปลี่ยนเป็น 3 คอลัมน์ บังคับซ้ายขวากว้าง 110px ตรงกลางยืดหยุ่น */
       grid-template-columns: 110px 1fr 110px; 
       gap: 24px; align-items: center; 
     }
+    
     .logo-container { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-    .logo-img { width: 110px; height: auto; border-radius: 8px; background: #fff; padding: 6px; display: block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    
+    /* ซ้าย: โลโก้ SCG */
+    .logo-img { 
+      width: 110px; 
+      height: 54px; /* ล็อกความสูง */
+      object-fit: contain; /* ป้องกันภาพเบี้ยว */
+      border-radius: 8px; 
+      background: #fff; 
+      padding: 6px; 
+      display: block; 
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+    }
     
     .header-top-row {
       display: flex; align-items: center; width: 100%; margin-bottom: 6px;
     }
     .title h1 { margin: 0; font-size: 28px; line-height: 1.1; font-weight: 900; letter-spacing: -0.5px; }
     
-    /* SCG GREEN ปรับขนาดและดีไซน์กล่องให้เทียบเท่าโลโก้ SCG ด้านซ้าย */
+    /* ขวา: โลโก้ SCG GREEN */
     .scg-green-badge {
-      display: flex; align-items: center; justify-content: center; background: #ffffff;
-      padding: 6px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+      display: flex; align-items: center; justify-content: center; 
+      background: #ffffff;
+      padding: 6px; 
+      border-radius: 8px; 
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
       width: 110px; 
+      height: 54px; /* ล็อกความสูงให้เท่ากับฝั่งซ้าย */
     }
-    .scg-green-badge img { width: 100%; height: auto; border-radius: 4px; display: block; }
+    .scg-green-badge img { 
+      width: 100%; 
+      height: 100%; 
+      object-fit: contain; /* ย่อรูปให้อยู่ตรงกลางกรอบ */
+      border-radius: 4px; 
+      display: block; 
+    }
 
     .title p { margin: 0 0 8px; font-size: 11px; font-weight: 600; opacity: 0.9; }
     .date { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.2); border-radius: 16px; padding: 4px 14px; font-size: 13px; font-weight: 600; backdrop-filter: blur(4px); }
@@ -169,7 +190,7 @@
       margin-bottom: 16px;
     }
     @media (max-width: 768px) {
-      #jobList { grid-template-columns: 1fr; } /* หน้าจอเล็กปรับเป็น 1 คอลัมน์อัตโนมัติ */
+      #jobList { grid-template-columns: 1fr; } 
     }
 
     .empty-job {
