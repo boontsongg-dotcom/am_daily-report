@@ -118,25 +118,28 @@
       grid-template-columns: auto 1fr; gap: 24px; align-items: center; 
     }
     .logo-container { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-    .logo-img { width: 110px; height: auto; border-radius: 8px; background: #fff; padding: 6px; display: block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    
+    /* โลโก้ SCG ฝั่งซ้าย บังคับความสูง 48px */
+    .logo-img { 
+      height: 48px; width: auto; border-radius: 8px; background: #fff; 
+      padding: 6px; display: block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+    }
     
     .header-top-row {
       display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 6px; flex-wrap: wrap; gap: 10px;
     }
     .title h1 { margin: 0; font-size: 28px; line-height: 1.1; font-weight: 900; letter-spacing: -0.5px; }
     
-/* SCG GREEN โหลดจากภาพ scg_green.png และคุมความสูงให้เสมอโลโก้หลัก */
+    /* SCG GREEN โหลดจากภาพ scg_green.png และบังคับความสูง 48px เท่าฝั่งซ้าย */
     .scg-green-badge {
       display: inline-flex; align-items: center; justify-content: center; background: #ffffff;
       padding: 6px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-      height: 40px; /* ลดความสูงลงมาให้เหลือ 40px เพื่อให้เตี้ยลงเท่าโลโก้ซ้าย */
+      height: 48px;
     }
     .scg-green-badge img { 
-      height: 100%; 
-      width: auto; 
-      border-radius: 4px; 
-      display: block; 
+      height: 100%; width: auto; border-radius: 4px; display: block; 
     }
+
     .title p { margin: 0 0 8px; font-size: 11px; font-weight: 600; opacity: 0.9; }
     .date { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.2); border-radius: 16px; padding: 4px 14px; font-size: 13px; font-weight: 600; backdrop-filter: blur(4px); }
 
@@ -375,7 +378,6 @@
         <div class="title">
           <div class="header-top-row">
             <h1 contenteditable="true">สรุปงาน AM บดซีเมนต์</h1>
-            <!-- ใช้รูป scg_green.png และปรับขนาดให้เทียบเท่าโลโก้ซ้าย -->
             <div class="scg-green-badge" contenteditable="true">
               <img src="images/scg_green.png" alt="SCG GREEN" crossorigin="anonymous" onerror="this.style.display='none';">
             </div>
