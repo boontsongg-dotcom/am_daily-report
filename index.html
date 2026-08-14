@@ -4,579 +4,353 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AM Daily Report CRUD</title>
+  
+  <!-- เพิ่ม Google Fonts: Noto Sans Thai -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: Tahoma, Arial, sans-serif;
-      background: #e8eef3;
-      color: #123;
+      /* เปลี่ยนฟอนต์ทั้งหน้าเว็บ */
+      font-family: 'Noto Sans Thai', Tahoma, sans-serif; 
+      background: #f0f4f8; /* ปรับพื้นหลังให้ดู Clean ขึ้น */
+      color: #1e293b;
     }
-    /* ===================== TOOLBAR ===================== */
-    .toolbar {
+
+    /* ===================== LOADING OVERLAY ===================== */
+    .loader-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(4px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: #0a73a8;
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .spinner {
+      width: 48px; height: 48px;
+      border: 5px solid #e2e8f0;
+      border-top: 5px solid #0a73a8;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 16px;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* ===================== TOOLBAR & SEARCH ===================== */
+    .controls-container {
       width: calc(100% - 24px);
       max-width: 480px;
-      margin: 12px auto;
+      margin: 16px auto;
+    }
+    .search-box {
+      margin-bottom: 12px;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid #cbd5e1;
+      border-radius: 24px;
+      font-family: 'Noto Sans Thai', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    }
+    .search-box input:focus {
+      border-color: #0a73a8;
+      box-shadow: 0 4px 12px rgba(10,115,168,0.15);
+    }
+    .toolbar {
       background: #ffffff;
-      padding: 10px;
-      border-radius: 12px;
+      padding: 12px;
+      border-radius: 16px;
       display: flex;
       gap: 8px;
       justify-content: center;
       flex-wrap: wrap;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
     }
+
     button { font-family: inherit; }
-    .toolbar button,
-    .form-panel button {
+    .toolbar button, .form-panel button {
       border: none;
       color: white;
-      padding: 9px 12px;
-      border-radius: 8px;
-      font-weight: bold;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 600;
       cursor: pointer;
       font-size: 13px;
       flex: 1 1 auto;
       min-width: 78px;
+      /* เพิ่ม Transition ความนุ่มนวล */
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .btn-blue   { background: #0a73a8; }
-    .btn-green  { background: #16a05d; }
-    .btn-orange { background: #f28c00; }
-    .btn-red    { background: #c0392b; }
-    .btn-gray   { background: #657786; }
+    /* เพิ่ม Hover Effect ให้ปุ่ม */
+    .toolbar button:hover, .form-panel button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      filter: brightness(1.05);
+    }
+    .toolbar button:active, .form-panel button:active {
+      transform: translateY(0);
+    }
+
+    .btn-blue   { background: #0ea5e9; } /* สีฟ้า Modern */
+    .btn-green  { background: #10b981; } /* สีเขียว Modern */
+    .btn-orange { background: #f59e0b; } /* สีส้ม Modern */
+    .btn-red    { background: #ef4444; } /* สีแดง Modern */
+    .btn-gray   { background: #64748b; }
+
     /* ===================== FORM OVERLAY ===================== */
     .form-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.45);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      padding: 16px;
+      position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(2px);
+      display: none; align-items: center; justify-content: center; z-index: 9999; padding: 16px;
     }
     .form-overlay.show { display: flex; }
     .form-panel {
-      width: 100%;
-      max-width: 430px;
-      max-height: 92vh;
-      overflow-y: auto;
-      background: #ffffff;
-      border-radius: 14px;
-      padding: 12px;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.35);
-      font-size: 13px;
-      animation: popupIn 0.18s ease-out;
+      width: 100%; max-width: 430px; max-height: 92vh; overflow-y: auto;
+      background: #ffffff; border-radius: 20px; padding: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2); font-size: 13px;
+      animation: popupIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
     @keyframes popupIn {
-      from { opacity: 0; transform: translateY(12px) scale(0.98); }
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
       to   { opacity: 1; transform: translateY(0) scale(1); }
     }
-    .form-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-    .form-header h3 { margin: 0; color: #0a73a8; }
+    .form-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .form-header h3 { margin: 0; color: #0f172a; font-size: 18px; font-weight: 700; }
     .close-btn {
-      width: 30px; height: 30px;
-      border: none; border-radius: 50%;
-      background: #c0392b; color: #fff;
-      font-size: 22px; line-height: 1;
-      font-weight: bold; cursor: pointer;
+      width: 32px; height: 32px; border: none; border-radius: 50%;
+      background: #f1f5f9; color: #64748b; font-size: 20px; line-height: 1;
+      cursor: pointer; transition: 0.2s;
     }
-    .form-panel input,
-    .form-panel textarea {
-      width: 100%;
-      padding: 8px;
-      margin: 5px 0;
-      border: 1px solid #cfd6db;
-      border-radius: 8px;
-      font-family: inherit;
-      font-size: 13px;
+    .close-btn:hover { background: #ef4444; color: white; transform: rotate(90deg); }
+    
+    .form-panel input, .form-panel textarea {
+      width: 100%; padding: 10px 12px; margin: 6px 0;
+      border: 1.5px solid #e2e8f0; border-radius: 10px;
+      font-family: inherit; font-size: 13.5px; transition: 0.2s;
     }
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 95px;
-      gap: 6px;
+    .form-panel input:focus, .form-panel textarea:focus {
+      border-color: #0ea5e9; outline: none; box-shadow: 0 0 0 3px rgba(14,165,233,0.15);
     }
-    .form-buttons {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-    }
-    .form-buttons button { flex: 1; }
-    .photo-form-title {
-      margin: 8px 0 4px;
-      font-weight: bold;
-      color: #0a73a8;
-    }
-    .photo-form-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-    }
+    .form-row { display: grid; grid-template-columns: 1fr 95px; gap: 8px; }
+    .form-buttons { display: flex; gap: 8px; margin-top: 16px; }
+
+    .photo-form-title { margin: 12px 0 6px; font-weight: 600; color: #334155; }
+    .photo-form-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     .photo-form-box {
-      border: 1px dashed #b7c4cc;
-      border-radius: 8px;
-      padding: 6px;
-      background: #f8fafb;
-      text-align: center;
-      font-size: 11px;
-      color: #567;
+      border: 1.5px dashed #cbd5e1; border-radius: 12px; padding: 8px;
+      background: #f8fafc; text-align: center; font-size: 11px; color: #64748b; transition: 0.2s;
     }
+    .photo-form-box:hover { border-color: #0ea5e9; background: #f0f9ff; }
     .photo-form-box img {
-      width: 100%;
-      height: 60px;
-      object-fit: cover;
-      display: none;
-      border-radius: 6px;
-      margin-bottom: 4px;
-      background: #ddd;
+      width: 100%; height: 60px; object-fit: cover; display: none;
+      border-radius: 8px; margin-bottom: 6px; background: #e2e8f0;
     }
+
     /* ===================== REPORT VIEWPORT ===================== */
-    .report-viewport {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      padding: 0 8px 24px;
-    }
+    .report-viewport { width: 100%; display: flex; justify-content: center; padding: 0 8px 32px; }
     .report {
-      width: 390px;
-      flex: 0 0 390px;
-      background: #f4f6f7;
-      border-radius: 6px;
-      overflow: hidden;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.22);
-      position: relative;
+      width: 390px; flex: 0 0 390px; background: #f8fafc;
+      border-radius: 12px; overflow: hidden; box-shadow: 0 12px 32px rgba(0,0,0,0.1); position: relative;
     }
     @media (max-width: 410px) {
-      .report-viewport {
-        padding: 0 0 24px;
-        overflow: hidden;
-      }
+      .report-viewport { padding: 0 0 24px; overflow: hidden; }
       .report {
-        transform: scale(calc((100vw - 16px) / 390));
-        transform-origin: top center;
+        transform: scale(calc((100vw - 16px) / 390)); transform-origin: top center;
         margin-bottom: calc((1 - ((100vw - 16px) / 390)) * -1600px);
       }
     }
-    /* ===================== CONTENTEDITABLE ===================== */
-    [contenteditable="true"] {
-      outline: 1px dashed transparent;
-      border-radius: 4px;
-    }
-    [contenteditable="true"]:focus {
-      outline-color: #ffcc00;
-      background: rgba(255,255,255,0.5);
-    }
+    [contenteditable="true"] { outline: 1px dashed transparent; border-radius: 4px; transition: 0.2s; }
+    [contenteditable="true"]:focus { outline-color: #fcd34d; background: rgba(255,255,255,0.8); }
+
     /* ===================== HEADER ===================== */
     .header {
-      height: 110px; /* ลดความสูงลงเล็กน้อยเพราะไม่มีกรอบรูปด้านขวาแล้ว */
-      background: #0b78ae;
-      color: #fff;
-      padding: 10px 15px;
-      position: relative;
-      display: grid;
-      grid-template-columns: 95px 1fr; /* ปรับให้เหลือแค่ 2 คอลัมน์ (โลโก้ + ตัวหนังสือ) */
-      gap: 15px;
-      align-items: center; /* จัดให้อยู่กึ่งกลางแนวตั้ง */
+      height: 110px; background: linear-gradient(135deg, #0284c7, #0369a1); /* ไล่สีให้มีมิติ */
+      color: #fff; padding: 12px 16px; position: relative; display: grid;
+      grid-template-columns: 90px 1fr; gap: 16px; align-items: center;
     }
-    .logo-container {
-      position: relative;
-    }
-    .logo-img {
-      width: 90px;
-      height: auto;
-      border-radius: 4px;
-      background: #fff;
-      padding: 4px;
-      display: block;
-    }
-    .logo-fallback {
-      display: none;
-      background: #fff;
-      color: #008344;
-      border-radius: 4px;
-      padding: 5px 6px;
-      font-weight: 900;
-      font-size: 18px;
-      line-height: 1;
-      text-align: left;
-    }
-    .logo-fallback span {
-      display: block;
-      color: #e2231a;
-      font-size: 11px;
-      letter-spacing: 0.3px;
-    }
-    .title h1 {
-      margin: 0 0 4px;
-      font-size: 24px; /* ขยายขนาดฟอนต์ให้ใหญ่ขึ้นเพราะมีพื้นที่มากขึ้น */
-      line-height: 1.05;
-      font-weight: 900;
-    }
-    .title p {
-      margin: 0 0 8px;
-      font-size: 10px;
-      letter-spacing: 0.4px;
-      font-weight: bold;
-    }
-    .date {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      background: rgba(255,255,255,0.18);
-      border-radius: 12px;
-      padding: 2px 8px;
-      font-size: 12px;
-      font-weight: bold;
-    }
+    .logo-img { width: 90px; height: auto; border-radius: 8px; background: #fff; padding: 6px; display: block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    .title h1 { margin: 0 0 4px; font-size: 24px; line-height: 1.1; font-weight: 900; letter-spacing: -0.5px; }
+    .title p { margin: 0 0 8px; font-size: 10px; font-weight: 600; opacity: 0.9; }
+    .date { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.2); border-radius: 16px; padding: 4px 12px; font-size: 12px; font-weight: 600; backdrop-filter: blur(4px); }
+
     /* ===================== CONTENT ===================== */
-    .content {
-      padding: 0 10px 8px;
-      margin-top: -15px; /* ดันกล่องสรุปผลงานขึ้นไปทับ Header เล็กน้อย */
-      position: relative;
-      z-index: 2;
-    }
+    .content { padding: 0 12px 12px; margin-top: -12px; position: relative; z-index: 2; }
+    
     .summary {
-      background: #ffffff;
-      border-radius: 9px;
-      border: 2px solid #d9e0e4;
-      padding: 8px 8px 6px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.18);
-      margin-bottom: 8px;
+      background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;
+      padding: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 12px;
     }
     .section-label {
-      display: inline-block;
-      background: #0b78ae;
-      color: #fff;
-      padding: 5px 13px;
-      border-radius: 8px 8px 0 0;
-      font-size: 13px;
-      font-weight: 900;
-      margin-bottom: 6px;
+      display: inline-block; background: #0284c7; color: #fff;
+      padding: 6px 14px; border-radius: 8px 8px 0 0; font-size: 13px; font-weight: 700; margin-bottom: 8px;
     }
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      text-align: center;
-    }
-    .metric {
-      border-right: 1px solid #d7d7d7;
-      min-height: 44px;
-    }
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center; }
+    .metric { border-right: 1px solid #e2e8f0; min-height: 48px; display: flex; flex-direction: column; justify-content: center; }
     .metric:last-child { border-right: none; }
     .metric .icon {
-      width: 26px; height: 26px;
-      margin: 0 auto 2px;
-      border-radius: 50%;
-      background: #0b78ae;
-      color: white;
-      display: grid;
-      place-items: center;
-      font-size: 14px;
+      width: 28px; height: 28px; margin: 0 auto 4px; border-radius: 50%;
+      background: #e0f2fe; color: #0284c7; display: grid; place-items: center; font-size: 14px; font-weight: bold;
     }
-    .metric.red .icon   { background: #d63a2f; }
-    .metric.green .icon { background: #0aa859; }
-    .metric .text {
-      font-size: 9px;
-      line-height: 1.05;
-      font-weight: 900;
-    }
-    .metric .num {
-      display: block;
-      font-size: 12px;
-      color: #111;
-    }
+    .metric.red .icon   { background: #fee2e2; color: #dc2626; }
+    .metric.green .icon { background: #d1fae5; color: #059669; }
+    .metric .text { font-size: 9px; line-height: 1.1; font-weight: 700; color: #64748b; }
+    .metric .num { display: block; font-size: 13px; color: #0f172a; margin-top: 2px; }
+
     /* ===================== JOB CARDS ===================== */
     .empty-job {
-      background: #ffffff;
-      border: 2px dashed #b7c4cc;
-      border-radius: 9px;
-      padding: 14px;
-      text-align: center;
-      color: #678;
-      font-size: 13px;
-      margin-bottom: 8px;
+      background: #ffffff; border: 2px dashed #cbd5e1; border-radius: 12px;
+      padding: 20px; text-align: center; color: #64748b; font-size: 13px; margin-bottom: 12px; font-weight: 500;
     }
     .job-card {
-      background: #fff;
-      border-radius: 9px;
-      border: 2px solid #d7dde0;
-      margin-bottom: 7px;
-      overflow: hidden;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.18);
+      background: #fff; border-radius: 12px; border: 1px solid #e2e8f0;
+      margin-bottom: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      transition: all 0.25s ease; /* Transition สำหรับ Card */
+    }
+    .job-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+      border-color: #bae6fd;
     }
     .job-code {
-      background: #0b78ae;
-      color: #fff;
-      font-weight: 900;
-      font-size: 13px;
-      padding: 5px 8px 5px 10px;
-      display: flex;
-      justify-content: space-between;
-      gap: 6px;
-      align-items: center;
+      background: #f1f5f9; color: #334155; font-weight: 700; font-size: 13px;
+      padding: 8px 12px; display: flex; justify-content: space-between; gap: 6px; align-items: center;
+      border-bottom: 1px solid #e2e8f0;
     }
     .job-code-text { flex: 1; }
-    .job-actions {
-      display: flex;
-      gap: 4px;
-    }
+    .job-actions { display: flex; gap: 4px; }
     .job-actions button {
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.5);
-      border-radius: 6px;
-      font-size: 10px;
-      padding: 2px 6px;
-      cursor: pointer;
-      font-weight: bold;
+      color: #fff; border: none; border-radius: 6px; font-size: 10px;
+      padding: 4px 8px; cursor: pointer; font-weight: 600; transition: 0.2s;
     }
-    .edit-job   { background: rgba(242,140,0,0.95); }
-    .delete-job { background: rgba(192,57,43,0.95); }
-    .job-body {
-      display: grid;
-      grid-template-columns: 1fr 116px;
-      gap: 6px;
-      padding: 7px;
-    }
-    .job-text {
-      font-size: 10.5px;
-      line-height: 1.38;
-      font-weight: 600;
-    }
-    .job-text b { color: #064567; }
-    .status-row {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: 4px;
-      font-size: 10px;
-      font-weight: 900;
-    }
-    .progress {
-      flex: 1;
-      height: 9px;
-      background: #dce7dd;
-      border-radius: 20px;
-      overflow: hidden;
-    }
-    .progress div {
-      height: 100%;
-      background: #1aae55;
-      border-radius: 20px;
-    }
+    .edit-job   { background: #f59e0b; }
+    .edit-job:hover { background: #d97706; }
+    .delete-job { background: #ef4444; }
+    .delete-job:hover { background: #dc2626; }
     
-    /* === ดีไซน์ Layout รูปภาพ 3 รูป === */
-    .photos {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4px;
-      align-content: start;
+    .job-body { display: grid; grid-template-columns: 1fr 116px; gap: 10px; padding: 10px 12px; }
+    .job-text { font-size: 11px; line-height: 1.5; font-weight: 500; color: #334155; }
+    .job-text b { color: #0284c7; font-weight: 700; }
+    
+    .status-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 10.5px; font-weight: 700; }
+    .progress { flex: 1; height: 10px; background: #e2e8f0; border-radius: 20px; overflow: hidden; }
+    .progress div { height: 100%; background: #10b981; border-radius: 20px; transition: width 0.5s ease; }
+    
+    /* === STATUS BADGE (ของใหม่) === */
+    .status-badge {
+      padding: 2px 8px; border-radius: 12px; color: #fff; font-size: 9px; font-weight: 700; letter-spacing: 0.5px;
     }
-    .photo-box {
-      border-radius: 5px;
-      background: linear-gradient(135deg, #d6d6d6, #8e9a90);
-      border: 1px solid #c8c8c8;
-      overflow: hidden;
-      position: relative;
-      display: grid;
-      place-items: center;
-      font-size: 9px;
-      color: #fff;
-      text-align: center;
-    }
-    .photo-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .photo-box:nth-child(1) {
-      grid-column: 1 / -1;
-      height: 70px;
-    }
-    .photo-box:nth-child(2),
-    .photo-box:nth-child(3) {
-      height: 45px;
-    }
+    .status-badge.done { background-color: #10b981; } /* เขียว */
+    .status-badge.progress { background-color: #f59e0b; } /* ส้ม */
+    .status-badge.todo { background-color: #ef4444; } /* แดง */
 
-    /* ===================== OPERATOR ===================== */
+    .photos { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-content: start; }
+    .photo-box {
+      border-radius: 6px; background: #e2e8f0; border: 1px solid #cbd5e1;
+      overflow: hidden; position: relative; display: grid; place-items: center;
+      font-size: 9px; color: #64748b; text-align: center; font-weight: 600;
+    }
+    .photo-box img { width: 100%; height: 100%; object-fit: cover; display: block; transition: 0.3s; }
+    .photo-box:hover img { transform: scale(1.05); } /* ซูมรูปนิดๆ ตอน hover */
+    .photo-box:nth-child(1) { grid-column: 1 / -1; height: 75px; }
+    .photo-box:nth-child(2), .photo-box:nth-child(3) { height: 45px; }
+
+    /* ===================== OPERATOR & SAFETY ===================== */
     .operator {
-      background: #fff;
-      border-radius: 9px;
-      border: 2px solid #d7dde0;
-      overflow: hidden;
-      margin-bottom: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+      background: #fff; border-radius: 12px; border: 1px solid #e2e8f0;
+      overflow: hidden; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);
     }
     .operator-header {
-      background: #0b78ae;
-      color: #fff;
-      font-weight: 900;
-      padding: 6px 10px;
-      font-size: 13px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      background: #f8fafc; color: #0f172a; font-weight: 800; padding: 8px 12px;
+      font-size: 13px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #e2e8f0;
     }
     .operator-add-btn {
-      background: rgba(255,255,255,0.25);
-      border: 1px solid rgba(255,255,255,0.5);
-      color: #fff;
-      border-radius: 6px;
-      font-size: 11px;
-      padding: 2px 8px;
-      cursor: pointer;
-      font-weight: bold;
-      font-family: inherit;
+      background: #0ea5e9; color: #fff; border: none; border-radius: 6px;
+      font-size: 11px; padding: 4px 10px; cursor: pointer; font-weight: 600; transition: 0.2s;
     }
-    .operator-list {
-      padding: 6px 8px;
-      font-size: 11px;
-      font-weight: 700;
-    }
-    .operator-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 4px 4px 4px 6px;
-      border-bottom: 1px solid #eef1f3;
-      gap: 6px;
-    }
+    .operator-add-btn:hover { background: #0284c7; }
+    
+    .operator-list { padding: 6px 10px; font-size: 11px; font-weight: 600; }
+    .operator-item { display: flex; align-items: center; justify-content: space-between; padding: 6px; border-bottom: 1px solid #f1f5f9; gap: 8px; transition: 0.2s; }
+    .operator-item:hover { background: #f8fafc; border-radius: 6px; }
     .operator-item:last-child { border-bottom: none; }
     .operator-item .op-icon { font-size: 14px; flex-shrink: 0; }
-    .operator-item .op-name {
-      flex: 1;
-      font-size: 10.5px;
-      line-height: 1.3;
-    }
-    .operator-item .op-role {
-      font-size: 9px;
-      color: #fff;
-      background: #0b78ae;
-      border-radius: 4px;
-      padding: 1px 6px;
-      flex-shrink: 0;
-      font-weight: 800;
-    }
-    .operator-item .op-role.green  { background: #16a05d; }
-    .operator-item .op-role.orange { background: #e67e00; }
-    .operator-item .op-del {
-      background: #c0392b;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      font-size: 10px;
-      width: 20px; height: 20px;
-      cursor: pointer;
-      font-weight: bold;
-      line-height: 1;
-      flex-shrink: 0;
-      font-family: inherit;
-    }
-    /* ===================== SAFETY ===================== */
+    .operator-item .op-name { flex: 1; font-size: 11px; color: #334155; }
+    .operator-item .op-role { font-size: 9px; color: #fff; background: #64748b; border-radius: 6px; padding: 2px 8px; flex-shrink: 0; }
+    .operator-item .op-role.green  { background: #10b981; }
+    .operator-item .op-role.orange { background: #f59e0b; }
+    .operator-item .op-del { background: #ef4444; color: #fff; border: none; border-radius: 6px; font-size: 11px; width: 22px; height: 22px; cursor: pointer; transition: 0.2s; }
+    .operator-item .op-del:hover { background: #dc2626; transform: scale(1.1); }
+
     .safety {
-      background: #0b78ae;
-      color: #fff;
-      border-radius: 9px 9px 0 0;
-      padding: 7px 8px 5px;
-      margin-top: 2px;
+      background: #0284c7; color: #fff; border-radius: 12px 12px 0 0;
+      padding: 10px 10px 8px; margin-top: 4px;
     }
-    .safety-grid {
-      display: grid;
-      grid-template-columns: 73px repeat(5, 1fr);
-      gap: 5px;
-      align-items: center;
-    }
-    .safety-title {
-      font-size: 22px;
-      line-height: 0.9;
-      font-weight: 900;
-    }
-    .safety-item {
-      text-align: center;
-      font-size: 7.5px;
-      line-height: 1.05;
-      font-weight: 800;
-    }
+    .safety-grid { display: grid; grid-template-columns: 75px repeat(5, 1fr); gap: 6px; align-items: center; }
+    .safety-title { font-size: 22px; line-height: 0.95; font-weight: 900; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .safety-item { text-align: center; font-size: 7.5px; line-height: 1.1; font-weight: 700; }
     .safety-icon {
-      width: 26px; height: 26px;
-      border-radius: 50%;
-      background: #fff;
-      color: #0b78ae;
-      display: grid;
-      place-items: center;
-      margin: 0 auto 3px;
-      font-size: 14px;
+      width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.2);
+      color: #fff; display: grid; place-items: center; margin: 0 auto 4px; font-size: 14px; backdrop-filter: blur(2px); border: 1px solid rgba(255,255,255,0.4);
     }
+
     /* ===================== FOOTER ===================== */
     .footer {
-      background: #0a73a8;
-      color: #fff;
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      padding: 8px;
-      gap: 4px;
-      font-size: 7.5px;
-      text-align: center;
-      font-weight: 800;
+      background: #0f172a; /* พื้นหลัง Footer เข้มๆ แบบ Modern */
+      color: #fff; display: grid; grid-template-columns: repeat(5, 1fr);
+      padding: 12px 8px; gap: 4px; font-size: 7.5px; text-align: center; font-weight: 700; letter-spacing: 0.2px;
     }
-    /* จัดการ Layout ในแต่ละช่องของ Footer */
     .footer div {
-      border-right: 1px solid rgba(255,255,255,0.35);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-end; /* ดันข้อความทั้งหมดให้ตรงกันด้านล่างสุด */
-      gap: 4px;
-      padding-bottom: 2px;
+      border-right: 1px solid rgba(255,255,255,0.15); display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-end; gap: 6px; padding-bottom: 2px; transition: 0.3s;
     }
+    .footer div:hover { transform: translateY(-2px); opacity: 0.9; }
     .footer div:last-child { border-right: none; }
-    
-    .footer-logo {
-      height: 28px;
-      width: auto;
-      border-radius: 3px;
-    }
-    
-    /* ควบคุมรูป Safety ใน Footer ให้ตัดลายน้ำออก */
-    .footer-safety-img {
-      width: 32px;
-      height: 32px;
-      object-fit: cover;
-      object-position: top;
-      border-radius: 6px;
-      background: #fff;
-      border: 1px solid #fff;
-    }
-    
+    .footer-logo { height: 32px; width: auto; border-radius: 4px; }
+    .footer-icon { width: 30px; height: 30px; object-fit: contain; margin-bottom: 2px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3)); }
+    .footer-safety-img { width: 34px; height: 34px; object-fit: cover; object-position: top; border-radius: 8px; background: #fff; border: 2px solid #fff; }
+
     /* ===================== PRINT ===================== */
     @media print {
       body { background: white; }
-      .toolbar, .form-overlay, .job-actions, .operator-add-btn, .op-del { display: none !important; }
+      .controls-container, .form-overlay, .job-actions, .operator-add-btn, .op-del, .loader-overlay { display: none !important; }
       .report-viewport { padding: 0; }
-      .report {
-        box-shadow: none; margin: 0 auto;
-        border-radius: 0; transform: none !important;
-        margin-bottom: 0 !important;
-      }
+      .report { box-shadow: none; margin: 0 auto; border-radius: 0; transform: none !important; margin-bottom: 0 !important; }
       [contenteditable="true"] { outline: none !important; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ========== TOOLBAR ========== -->
-  <div class="toolbar">
-    <button class="btn-green" onclick="openCreateForm()">+ เพิ่มงาน</button>
-    <button class="btn-red" onclick="resetAllData()">เริ่มวันใหม่</button>
-    <button class="btn-orange" onclick="downloadReportImage()">ดาวน์โหลดภาพ</button>
-    <button class="btn-blue" onclick="window.print()">PDF</button>
+  <!-- ========== LOADING OVERLAY ========== -->
+  <div class="loader-overlay" id="loaderOverlay">
+    <div class="spinner"></div>
+    <div>กำลังประมวลผลรูปภาพ...</div>
+  </div>
+
+  <!-- ========== CONTROLS (SEARCH & TOOLBAR) ========== -->
+  <div class="controls-container">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="🔍 ค้นหางาน, เครื่องจักร หรือรหัสงาน..." onkeyup="filterJobs()">
+    </div>
+    <div class="toolbar">
+      <button class="btn-green" onclick="openCreateForm()">+ เพิ่มงาน</button>
+      <button class="btn-red" onclick="resetAllData()">เริ่มวันใหม่</button>
+      <button class="btn-orange" onclick="downloadReportImage()">ดาวน์โหลดภาพ</button>
+      <button class="btn-blue" onclick="window.print()">PDF</button>
+    </div>
   </div>
 
   <!-- ========== FORM OVERLAY (JOB) ========== -->
@@ -589,7 +363,7 @@
       <input type="hidden" id="editId">
       <div class="form-row">
         <input id="newCode" placeholder="รหัสงาน เช่น 3152">
-        <input id="newStatus" placeholder="สถานะ" value="100%">
+        <input id="newStatus" placeholder="สถานะ (0-100%)" value="100%">
       </div>
       <input id="newMachine" placeholder="เครื่อง/ตำแหน่ง">
       <textarea id="newDetail" rows="3" placeholder="สรุปรายละเอียดงาน"></textarea>
@@ -598,22 +372,21 @@
       <div class="photo-form-title">แนบรูปภาพงาน (สูงสุด 3 รูป)</div>
       <div class="photo-form-grid">
         <div class="photo-form-box">
-          <img id="preview1"><div>รูปที่ 1 (ภาพรวม)</div>
+          <img id="preview1"><div>+ ภาพรวม</div>
           <input type="file" accept="image/*" onchange="handleFormPhoto(this, 0)">
         </div>
         <div class="photo-form-box">
-          <img id="preview2"><div>รูปที่ 2</div>
+          <img id="preview2"><div>+ รูป 2</div>
           <input type="file" accept="image/*" onchange="handleFormPhoto(this, 1)">
         </div>
         <div class="photo-form-box">
-          <img id="preview3"><div>รูปที่ 3</div>
+          <img id="preview3"><div>+ รูป 3</div>
           <input type="file" accept="image/*" onchange="handleFormPhoto(this, 2)">
         </div>
       </div>
       <div class="form-buttons">
-        <button class="btn-green" onclick="saveJob()">บันทึก</button>
-        <button class="btn-gray" onclick="clearForm()">ล้างข้อมูล</button>
-        <button class="btn-red" onclick="closeForm()">ยกเลิก</button>
+        <button class="btn-green" onclick="saveJob()">บันทึกข้อมูล</button>
+        <button class="btn-gray" onclick="clearForm()">ล้างค่า</button>
       </div>
     </section>
   </div>
@@ -628,8 +401,7 @@
       <input id="opName" placeholder="ชื่อผู้ปฏิบัติงาน">
       <input id="opRole" placeholder="ตำแหน่ง เช่น ช่างฟิต, ช่างไฟฟ้า">
       <div class="form-buttons">
-        <button class="btn-green" onclick="addOperator()">เพิ่ม</button>
-        <button class="btn-red" onclick="closeOpForm()">ยกเลิก</button>
+        <button class="btn-green" onclick="addOperator()">เพิ่มรายชื่อ</button>
       </div>
     </section>
   </div>
@@ -641,19 +413,9 @@
       <!-- ===== HEADER ===== -->
       <section class="header">
         <div class="logo-container">
-          <img
-            class="logo-img"
-            id="headerLogo"
-            src="images/scg-logo.png"
-            alt="SCG Logo"
-            crossorigin="anonymous"
-            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-          >
-          <div class="logo-fallback" id="logoFallback">
-            <span>SCG</span>GREEN
-          </div>
+          <img class="logo-img" id="headerLogo" src="images/scg-logo.png" alt="SCG Logo" crossorigin="anonymous" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <div class="logo-fallback" id="logoFallback"><span>SCG</span>GREEN</div>
         </div>
-
         <div class="title">
           <h1 contenteditable="true">สรุปงาน AM บดซีเมนต์</h1>
           <p contenteditable="true">CEMENT MILL AM DAILY REPORT</p>
@@ -678,18 +440,18 @@
             </div>
             <div class="metric red">
               <div class="icon">○</div>
-              <div class="text">งานไม่สำเร็จ<span class="num" id="notDoneJobs">0 งาน</span></div>
+              <div class="text">ไม่สำเร็จ<span class="num" id="notDoneJobs">0 งาน</span></div>
             </div>
             <div class="metric green">
               <div class="icon">✓</div>
-              <div class="text">งานเสร็จ 100%<span class="num" id="fullJobs">0 งาน</span></div>
+              <div class="text">เสร็จ 100%<span class="num" id="fullJobs">0 งาน</span></div>
             </div>
           </div>
         </div>
 
         <!-- JOB LIST -->
         <div id="jobList">
-          <div class="empty-job">ยังไม่มีรายการงาน<br>กดปุ่ม "เพิ่มงาน" เพื่อเพิ่มรายการ</div>
+          <div class="empty-job">ยังไม่มีรายการงาน<br>กดปุ่ม "+ เพิ่มงาน" ด้านบนเพื่อเริ่ม</div>
         </div>
 
         <!-- OPERATOR -->
@@ -705,26 +467,11 @@
         <section class="safety">
           <div class="safety-grid">
             <div class="safety-title" contenteditable="true">Safety<br>First</div>
-            <div class="safety-item">
-              <div class="safety-icon">⛑</div>
-              <div contenteditable="true">สวม PPE<br>ทุกครั้ง</div>
-            </div>
-            <div class="safety-item">
-              <div class="safety-icon">🔒</div>
-              <div contenteditable="true">Lockout /<br>Tagout</div>
-            </div>
-            <div class="safety-item">
-              <div class="safety-icon">🔎</div>
-              <div contenteditable="true">ตรวจสอบพื้นที่<br>ก่อนทำงาน</div>
-            </div>
-            <div class="safety-item">
-              <div class="safety-icon">👥</div>
-              <div contenteditable="true">ทำงาน<br>เป็นทีม</div>
-            </div>
-            <div class="safety-item">
-              <div class="safety-icon">0</div>
-              <div contenteditable="true">Zero<br>Accident</div>
-            </div>
+            <div class="safety-item"><div class="safety-icon">⛑</div><div contenteditable="true">สวม PPE<br>ทุกครั้ง</div></div>
+            <div class="safety-item"><div class="safety-icon">🔒</div><div contenteditable="true">Lockout /<br>Tagout</div></div>
+            <div class="safety-item"><div class="safety-icon">🔎</div><div contenteditable="true">ตรวจสอบพื้นที่<br>ก่อนทำงาน</div></div>
+            <div class="safety-item"><div class="safety-icon">👥</div><div contenteditable="true">ทำงาน<br>เป็นทีม</div></div>
+            <div class="safety-item"><div class="safety-icon">0</div><div contenteditable="true">Zero<br>Accident</div></div>
           </div>
         </section>
 
@@ -733,32 +480,23 @@
       <!-- ===== FOOTER ===== -->
       <footer class="footer">
         <div>
-          <img
-            class="footer-logo"
-            src="images/scg_green.png"
-            alt="SCG"
-            crossorigin="anonymous"
-            onerror="this.style.display='none';"
-          >
+          <img class="footer-logo" src="images/scg_green.png" alt="SCG" crossorigin="anonymous" onerror="this.style.display='none';">
           <span contenteditable="true">SCG GREEN</span>
         </div>
         <div>
+          <img class="footer-icon" src="images/reliability.png" alt="Reliability" crossorigin="anonymous" onerror="this.style.display='none';">
           <span contenteditable="true">Reliability</span>
         </div>
         <div>
-          <img
-            class="footer-safety-img"
-            src="images/safety.png"
-            alt="Safety Worker"
-            crossorigin="anonymous"
-            onerror="this.style.display='none';"
-          >
+          <img class="footer-safety-img" src="images/safety.png" alt="Safety" crossorigin="anonymous" onerror="this.style.display='none';">
           <span contenteditable="true">Safety</span>
         </div>
         <div>
+          <img class="footer-icon" src="images/teamwork.png" alt="Teamwork" crossorigin="anonymous" onerror="this.style.display='none';">
           <span contenteditable="true">Teamwork</span>
         </div>
         <div>
+          <img class="footer-icon" src="images/improvement.png" alt="Improvement" crossorigin="anonymous" onerror="this.style.display='none';">
           <span contenteditable="true">Continuous<br>Improvement</span>
         </div>
       </footer>
@@ -778,37 +516,31 @@
     /* ========== LOCAL STORAGE SYSTEM ========== */
     function loadData() {
       const savedJobs = localStorage.getItem("am_daily_jobs");
-      if (savedJobs) {
-        jobs = JSON.parse(savedJobs);
-      }
+      if (savedJobs) jobs = JSON.parse(savedJobs);
 
       const savedOps = localStorage.getItem("am_daily_operators");
       if (savedOps) {
         operators = JSON.parse(savedOps);
       } else {
         operators = [
-          { id: "op1", name: "ธีระศักดิ์ บ.",     role: "ผู้ปฏิบัติงานประจำ", fixed: true, color: "" },
-          { id: "op2", name: "ช่างฟิตมิตรสกุณา",   role: "ช่างฟิต",          fixed: true, color: "green" },
-          { id: "op3", name: "ช่างฟิตบ้านแพรก",    role: "ช่างฟิต",          fixed: true, color: "orange" }
+          { id: "op1", name: "ธีระศักดิ์ บ.", role: "ผู้ปฏิบัติงานประจำ", fixed: true, color: "" },
+          { id: "op2", name: "ช่างฟิตมิตรสกุณา", role: "ช่างฟิต", fixed: true, color: "green" },
+          { id: "op3", name: "ช่างฟิตบ้านแพรก", role: "ช่างฟิต", fixed: true, color: "orange" }
         ];
       }
     }
-
     function saveData() {
       localStorage.setItem("am_daily_jobs", JSON.stringify(jobs));
       localStorage.setItem("am_daily_operators", JSON.stringify(operators));
     }
-
     function resetAllData() {
       if (!confirm("ต้องการลบข้อมูลงานทั้งหมดเพื่อเริ่มต้นวันใหม่ใช่หรือไม่? (ข้อมูลจะหายไปถาวร)")) return;
       localStorage.removeItem("am_daily_jobs");
       jobs = [];
+      document.getElementById('searchInput').value = ""; // เคลียร์ช่องค้นหา
       renderJobs();
     }
-
-    function createId() {
-      return Date.now().toString() + Math.floor(Math.random() * 1000).toString();
-    }
+    function createId() { return Date.now().toString() + Math.floor(Math.random() * 1000).toString(); }
 
     /* ========== AUTO DATE ========== */
     function setTodayDate() {
@@ -819,15 +551,27 @@
       document.getElementById("reportDate").innerText = dd + "/" + mm + "/" + yyyy;
     }
 
+    /* ========== SEARCH (ฟังก์ชันกรองงาน) ========== */
+    function filterJobs() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const cards = document.querySelectorAll(".job-card");
+      cards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        if (text.includes(query)) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    }
+
     /* ========== OPERATOR CRUD ========== */
     function renderOperators() {
       const list = document.getElementById("operatorList");
       let html = "";
       operators.forEach((op) => {
         const roleClass = op.color ? ` ${op.color}` : "";
-        const delBtn = op.fixed
-          ? ""
-          : `<button class="op-del" onclick="removeOperator('${op.id}')" title="ลบ">✕</button>`;
+        const delBtn = op.fixed ? "" : `<button class="op-del" onclick="removeOperator('${op.id}')" title="ลบ">✕</button>`;
         html += `
           <div class="operator-item">
             <span class="op-icon">👤</span>
@@ -838,33 +582,25 @@
       });
       list.innerHTML = html;
     }
-
     function openOpForm() {
       document.getElementById("opName").value = "";
       document.getElementById("opRole").value = "";
       document.getElementById("opFormOverlay").classList.add("show");
       setTimeout(() => document.getElementById("opName").focus(), 100);
     }
-    function closeOpForm() {
-      document.getElementById("opFormOverlay").classList.remove("show");
-    }
-    function closeOpFormByBackdrop(event) {
-      if (event.target.id === "opFormOverlay") closeOpForm();
-    }
+    function closeOpForm() { document.getElementById("opFormOverlay").classList.remove("show"); }
+    function closeOpFormByBackdrop(event) { if (event.target.id === "opFormOverlay") closeOpForm(); }
     function addOperator() {
       const name = document.getElementById("opName").value.trim();
       const role = document.getElementById("opRole").value.trim() || "ผู้ปฏิบัติงาน";
       if (!name) { alert("กรุณาระบุชื่อ"); return; }
       operators.push({ id: createId(), name, role, fixed: false, color: "" });
-      saveData();
-      renderOperators();
-      closeOpForm();
+      saveData(); renderOperators(); closeOpForm();
     }
     function removeOperator(id) {
       if (!confirm("ต้องการลบผู้ปฏิบัติงานนี้ใช่หรือไม่?")) return;
       operators = operators.filter(op => op.id !== id);
-      saveData();
-      renderOperators();
+      saveData(); renderOperators();
     }
 
     /* ========== JOB FORM ========== */
@@ -888,17 +624,12 @@
       
       formPhotos = [...job.photos.slice(0, 3)];
       while (formPhotos.length < 3) formPhotos.push("");
-
       updateFormPhotoPreviews();
       document.getElementById("formOverlay").classList.add("show");
       setTimeout(() => document.getElementById("newCode").focus(), 100);
     }
-    function closeForm() {
-      document.getElementById("formOverlay").classList.remove("show");
-    }
-    function closeFormByBackdrop(event) {
-      if (event.target.id === "formOverlay") closeForm();
-    }
+    function closeForm() { document.getElementById("formOverlay").classList.remove("show"); }
+    function closeFormByBackdrop(event) { if (event.target.id === "formOverlay") closeForm(); }
     function clearForm() {
       document.getElementById("editId").value = "";
       document.getElementById("newCode").value = "";
@@ -924,11 +655,9 @@
       for (let i = 0; i < 3; i++) {
         const img = document.getElementById("preview" + (i + 1));
         if (formPhotos[i]) {
-          img.src = formPhotos[i];
-          img.style.display = "block";
+          img.src = formPhotos[i]; img.style.display = "block";
         } else {
-          img.removeAttribute("src");
-          img.style.display = "none";
+          img.removeAttribute("src"); img.style.display = "none";
         }
       }
     }
@@ -943,15 +672,13 @@
       const purpose = document.getElementById("newPurpose").value.trim() || "-";
       const jobData = {
         id: editId || createId(),
-        code, status, machine, detail, purpose,
-        photos: [...formPhotos]
+        code, status, machine, detail, purpose, photos: [...formPhotos]
       };
-      if (editId) {
-        jobs = jobs.map(item => item.id === editId ? jobData : item);
-      } else {
-        jobs.push(jobData);
-      }
+      if (editId) { jobs = jobs.map(item => item.id === editId ? jobData : item); } 
+      else { jobs.push(jobData); }
+      
       saveData();
+      document.getElementById('searchInput').value = ""; // รีเซ็ตการค้นหาหลังบันทึก
       renderJobs();
       closeForm();
       clearForm();
@@ -959,22 +686,14 @@
     function deleteJob(id) {
       if (!confirm("ต้องการลบงานนี้ใช่หรือไม่?")) return;
       jobs = jobs.filter(item => item.id !== id);
-      saveData();
-      renderJobs();
+      saveData(); renderJobs();
     }
 
     /* ========== HELPERS ========== */
     function escapeHTML(text) {
-      return String(text)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+      return String(text).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
     }
-    function nl2br(text) {
-      return escapeHTML(text).replace(/\n/g, "<br>");
-    }
+    function nl2br(text) { return escapeHTML(text).replace(/\n/g, "<br>"); }
     function getPercent(status) {
       const value = parseInt(String(status).replace("%", "")) || 0;
       return Math.max(0, Math.min(100, value));
@@ -984,7 +703,7 @@
     function renderJobs() {
       const jobList = document.getElementById("jobList");
       if (jobs.length === 0) {
-        jobList.innerHTML = `<div class="empty-job">ยังไม่มีรายการงาน<br>กดปุ่ม "เพิ่มงาน" เพื่อเพิ่มรายการ</div>`;
+        jobList.innerHTML = `<div class="empty-job">ยังไม่มีรายการงาน<br>กดปุ่ม "+ เพิ่มงาน" ด้านบนเพื่อเริ่ม</div>`;
         updateSummary();
         return;
       }
@@ -992,6 +711,11 @@
       jobs.forEach((job, index) => {
         const percent = getPercent(job.status);
         
+        // ประมวลผล Status Badge
+        let badgeClass = "todo";
+        if (percent >= 100) badgeClass = "done";
+        else if (percent > 0) badgeClass = "progress";
+
         const photoHTML = job.photos.slice(0, 3).map(photo => {
           if (photo) return `<div class="photo-box"><img src="${photo}"></div>`;
           return `<div class="photo-box">ไม่มีรูป</div>`;
@@ -1000,7 +724,7 @@
         html += `
           <article class="job-card" data-status="${percent}">
             <div class="job-code">
-              <span class="job-code-text">งานที่ ${index + 1} | รหัสงาน : ${escapeHTML(job.code)}</span>
+              <span class="job-code-text">งานที่ ${index + 1} | รหัส: ${escapeHTML(job.code)}</span>
               <div class="job-actions">
                 <button class="edit-job" onclick="openEditForm('${job.id}')">แก้ไข</button>
                 <button class="delete-job" onclick="deleteJob('${job.id}')">ลบ</button>
@@ -1009,12 +733,12 @@
             <div class="job-body">
               <div class="job-text">
                 <div><b>เครื่อง/ตำแหน่ง:</b> ${escapeHTML(job.machine)}</div>
-                <div><b>สรุปรายละเอียดงาน:</b> ${nl2br(job.detail)}</div>
+                <div><b>รายละเอียดงาน:</b> ${nl2br(job.detail)}</div>
                 <div><b>วัตถุประสงค์:</b> ${escapeHTML(job.purpose)}</div>
                 <div class="status-row">
                   <span>สถานะ:</span>
                   <div class="progress"><div style="width:${percent}%"></div></div>
-                  <span>${escapeHTML(job.status)}</span>
+                  <span class="status-badge ${badgeClass}">${escapeHTML(job.status)}</span>
                 </div>
               </div>
               <div class="photos">${photoHTML}</div>
@@ -1023,6 +747,7 @@
       });
       jobList.innerHTML = html;
       updateSummary();
+      filterJobs(); // ตรวจสอบ Search อีกครั้งตอน Render ใหม่
     }
 
     function updateSummary() {
@@ -1033,18 +758,24 @@
         if (p > 0) done++;
         if (p >= 100) full++;
       });
-      document.getElementById("totalJobs").innerText   = total + " งาน";
-      document.getElementById("doneJobs").innerText     = done + " งาน";
-      document.getElementById("notDoneJobs").innerText  = (total - done) + " งาน";
-      document.getElementById("fullJobs").innerText     = full + " งาน";
+      document.getElementById("totalJobs").innerText = total + " งาน";
+      document.getElementById("doneJobs").innerText = done + " งาน";
+      document.getElementById("notDoneJobs").innerText = (total - done) + " งาน";
+      document.getElementById("fullJobs").innerText = full + " งาน";
     }
 
     /* ==========================================================
-       DOWNLOAD IMAGE - ใช้ html2canvas
+       DOWNLOAD IMAGE (ใส่ระบบ Loading ป้องกันค้าง)
        ========================================================== */
     async function downloadReportImage() {
-      renderJobs();
+      // เปิดจอ Loading วนลูปรอให้ UI อัปเดตก่อน
+      const loader = document.getElementById("loaderOverlay");
+      loader.style.display = "flex";
+      
+      // หน่วงเวลาให้ CSS ทำงานก่อนโดน JS แช่แข็งจอ
+      await new Promise(resolve => setTimeout(resolve, 200)); 
 
+      renderJobs(); // รีเซ็ตทุกอย่างให้เป็นปกติก่อนเรนเดอร์ภาพ
       const report = document.getElementById("report");
 
       const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
@@ -1069,7 +800,7 @@
           scale: 3,
           useCORS: true,
           allowTaint: false,
-          backgroundColor: "#ffffff",
+          backgroundColor: "#f8fafc",
           logging: false,
           width: 390,
           windowWidth: 390
@@ -1092,6 +823,9 @@
         report.style.marginBottom = origMarginBottom;
         hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
         editables.forEach(el => { el.style.outline = ""; });
+        
+        // ปิดจอ Loading
+        loader.style.display = "none"; 
       }
     }
 
