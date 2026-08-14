@@ -145,15 +145,18 @@
     /* ===================== HEADER ===================== */
     .header {
       min-height: 110px; height: auto; background: linear-gradient(135deg, #0284c7, #0369a1); 
-      color: #fff; padding: 16px; position: relative; display: grid;
-      grid-template-columns: auto 1fr; /* ปรับเป็น auto เพื่อให้คอลัมน์แรกฟิตพอดีกับความกว้างโลโก้ */
-      gap: 16px; align-items: center; /* จัดกึ่งกลางแนวตั้ง */
+      color: #fff; 
+      /* ปรับเพิ่ม padding ด้านล่างเป็น 26px เพื่อให้มีที่ว่างพอสำหรับการ์ดที่ลอยทับขึ้นมา */
+      padding: 16px 16px 26px 16px; 
+      position: relative; display: grid;
+      grid-template-columns: auto 1fr; 
+      gap: 16px; align-items: center; 
     }
     
     .logo-container {
       display: flex;
       flex-direction: column;
-      align-items: center; /* จัดให้โลโก้และป้ายอยู่ตรงกลางกัน */
+      align-items: center; 
       gap: 8px;
     }
     
@@ -164,12 +167,12 @@
     }
     .logo-fallback span { display: block; color: #e2231a; font-size: 11px; letter-spacing: 0.3px; }
     
-    /* === SCG GREEN BADGE ย้ายมาอยู่ใต้โลโก้ === */
+    /* === SCG GREEN BADGE === */
     .scg-green-badge {
       display: inline-flex; align-items: center; justify-content: center; gap: 4px; background: #ffffff;
       color: #059669; padding: 3px 8px; border-radius: 20px; font-size: 9px;
       font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,0.15); letter-spacing: 0.2px;
-      white-space: nowrap; /* ป้องกันข้อความตกบรรทัด */
+      white-space: nowrap; 
     }
     .scg-green-badge img { height: 14px; width: auto; border-radius: 3px; }
 
@@ -178,7 +181,11 @@
     .date { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.2); border-radius: 16px; padding: 4px 12px; font-size: 12px; font-weight: 600; backdrop-filter: blur(4px); }
 
     /* ===================== CONTENT ===================== */
-    .content { padding: 0 12px 12px; margin-top: -16px; position: relative; z-index: 2; }
+    .content { 
+      padding: 0 12px 12px; 
+      margin-top: -12px; /* ลดระยะที่ดึงการ์ดขึ้นไปทับ Header เพื่อให้พอดีกับพื้นที่ใหม่ */
+      position: relative; z-index: 2; 
+    }
     
     .summary {
       background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;
@@ -383,7 +390,6 @@
           <img class="logo-img" id="headerLogo" src="images/scg-logo.png" alt="SCG Logo" crossorigin="anonymous" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
           <div class="logo-fallback" id="logoFallback"><span>SCG</span>GREEN</div>
           
-          <!-- ย้าย SCG GREEN BADGE มาไว้ใต้โลโก้ฝั่งซ้าย -->
           <div class="scg-green-badge" contenteditable="true">
             <img src="images/scg_green.png" alt="SCG GREEN" crossorigin="anonymous" onerror="this.style.display='none';">
             SCG GREEN
