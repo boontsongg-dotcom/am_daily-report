@@ -119,7 +119,6 @@
       gap: 24px; align-items: center; 
     }
     
-    /* กล่องใส่โลโก้ซ้ายและขวา (จัดกึ่งกลางและล็อกความสูง) */
     .logo-box { 
       display: flex; align-items: center; justify-content: center; 
       background: #ffffff;
@@ -130,7 +129,6 @@
       height: 54px; 
     }
     
-    /* รูปโลโก้ด้านในกล่อง (กันยืดเวลาแปลงเป็นภาพด้วย html2canvas) */
     .logo-box img { 
       max-width: 100%; 
       max-height: 100%; 
@@ -229,7 +227,7 @@
       border: 1px solid #cbd5e1;
       overflow: hidden; 
       position: relative; 
-      display: flex; /* ใช้ flex เพื่อดึงรูปให้อยู่ตรงกลาง */
+      display: flex; 
       align-items: center;
       justify-content: center;
       aspect-ratio: 4 / 3; 
@@ -238,7 +236,6 @@
       text-align: center; 
       font-weight: 600;
     }
-    /* ป้องกันรูปถ่ายหน้างานโดน html2canvas ยืดเช่นกัน */
     .photo-box img { 
       max-width: 100%; 
       max-height: 100%; 
@@ -311,7 +308,7 @@
   <!-- ========== LOADING OVERLAY ========== -->
   <div class="loader-overlay" id="loaderOverlay">
     <div class="spinner"></div>
-    <div>กำลังประมวลผลรูปภาพ (A4 แนวนอน)...</div>
+    <div id="loaderText">กำลังประมวลผล...</div>
   </div>
 
   <!-- ========== CONTROLS (SEARCH & TOOLBAR) ========== -->
@@ -323,7 +320,7 @@
       <button class="btn-green" onclick="openCreateForm()">+ เพิ่มงาน</button>
       <button class="btn-red" onclick="resetAllData()">เริ่มวันใหม่</button>
       <button class="btn-orange" onclick="downloadReportImage()">ดาวน์โหลดภาพ</button>
-      <button class="btn-blue" onclick="window.print()">PDF (A4 แนวนอน)</button>
+      <button class="btn-blue" onclick="downloadReportPDF()">PDF (A4 แนวนอน)</button>
     </div>
   </div>
 
@@ -443,8 +440,9 @@
     </main>
   </div>
 
-  <!-- ========== html2canvas ========== -->
+  <!-- ========== Libraries ========== -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <!-- ========== JAVASCRIPT ========== -->
   <script>
@@ -704,6 +702,7 @@
        ========================================================== */
     async function downloadReportImage() {
       const loader = document.getElementById("loaderOverlay");
+      document.getElementById("loaderText").innerText = "กำลังสร้างรูปภาพ...";
       loader.style.display = "flex";
       
       await new Promise(resolve => setTimeout(resolve, 200)); 
@@ -746,6 +745,86 @@
 
       } catch (err) {
         alert("ไม่สามารถสร้างภาพได้ กรุณาลองใหม่อีกครั้ง");
+      } finally {
+        hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
+        editables.forEach(el => { el.style.outline = ""; });
+        
+        loader.style.display = "none"; 
+      }
+    }
+
+    /* ==========================================================
+       DOWNLOAD PDF (A4 LANDSCAPE - OPTIMIZED & MULTI-PAGE)
+       ========================================================== */
+    async function downloadReportPDF() {
+      const loader = document.getElementById("loaderOverlay");
+      document.getElementById("loaderText").innerText = "กำลังสร้างไฟล์ PDF และลดขนาด...";
+      loader.style.display = "flex";
+      
+      await new Promise(resolve => setTimeout(resolve, 200)); 
+
+      renderJobs(); 
+      const report = document.getElementById("report");
+
+      const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
+      const hiddenEls = [];
+      hideSelectors.forEach(sel => {
+        report.querySelectorAll(sel).forEach(el => {
+          hiddenEls.push({ el, prev: el.style.display });
+          el.style.display = "none";
+        });
+      });
+
+      const editables = report.querySelectorAll("[contenteditable]");
+      editables.forEach(el => { el.style.outline = "none"; });
+
+      try {
+        const canvas = await html2canvas(report, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: false,
+          backgroundColor: "#f8fafc",
+          logging: false,
+          width: 840,
+          windowWidth: 840
+        });
+
+        const imgData = canvas.toDataURL("image/jpeg", 0.85);
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+          orientation: 'landscape',
+          unit: 'mm',
+          format: 'a4'
+        });
+
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        
+        const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
+        heightLeft -= pdfHeight;
+
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
+          heightLeft -= pdfHeight;
+        }
+
+        const now = new Date();
+        const dateStr = now.getFullYear() + "-"
+          + String(now.getMonth() + 1).padStart(2, "0") + "-"
+          + String(now.getDate()).padStart(2, "0");
+
+        pdf.save("AM-Daily-Report-Landscape-" + dateStr + ".pdf");
+
+      } catch (err) {
+        console.error(err);
+        alert("ไม่สามารถสร้าง PDF ได้ กรุณาลองใหม่อีกครั้ง");
       } finally {
         hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
         editables.forEach(el => { el.style.outline = ""; });
