@@ -511,7 +511,7 @@
       } catch (e) {
         alert("❌ ไม่สามารถบันทึกได้! พื้นที่ความจำเต็ม\n\nสาเหตุ: รูปภาพมีขนาดใหญ่เกินไป หรือจำนวนงานมากเกินไป\nวิธีแก้: ลบงานเก่าก่อน หรือกดเริ่มวันใหม่");
         console.error("Storage Quota Exceeded:", e);
-        throw e; // หยุดการทำงานถ้าเซฟไม่ผ่าน
+        throw e;
       }
     }
     function resetAllData() {
@@ -573,9 +573,7 @@
         saveData(); 
         renderOperators(); 
         closeOpForm();
-      } catch (e) {
-        // จัดการ Error ไว้ใน saveData() แล้ว
-      }
+      } catch (e) {}
     }
     function removeOperator(id) {
       if (!confirm("ต้องการลบผู้ปฏิบัติงานนี้ใช่หรือไม่?")) return;
@@ -625,7 +623,6 @@
       updateFormPhotoPreviews();
     }
     
-    /* ระบบย่อและบีบอัดรูปภาพก่อนเซฟ (แก้ปัญหาเมมเต็ม) */
     function handleFormPhoto(input, index) {
       const file = input.files && input.files[0];
       if (!file) return;
@@ -636,7 +633,6 @@
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
           
-          // กำหนดขนาดสูงสุดของรูปที่จะเซฟเข้าเครื่อง (800px ก็เพียงพอต่อการดูในรายงาน)
           const MAX_WIDTH = 800; 
           const MAX_HEIGHT = 800;
           let width = img.width;
@@ -657,7 +653,6 @@
           canvas.height = height;
           ctx.drawImage(img, 0, 0, width, height);
 
-          // แปลงเป็น base64 แบบบีบอัดเป็น jpeg quality 70% 
           formPhotos[index] = canvas.toDataURL('image/jpeg', 0.7);
           updateFormPhotoPreviews();
         };
@@ -690,20 +685,19 @@
         code, status, machine, detail, purpose, photos: [...formPhotos]
       };
       
-      // เก็บสำรองข้อมูลเก่าเผื่อพัง
       const backupJobs = [...jobs];
 
       if (editId) { jobs = jobs.map(item => item.id === editId ? jobData : item); } 
       else { jobs.push(jobData); }
       
       try {
-        saveData(); // ถ้าตรงนี้พัง จะข้ามบรรทัดล่างๆ ไปเข้า catch
+        saveData(); 
         document.getElementById('searchInput').value = ""; 
         renderJobs();
         closeForm();
         clearForm();
       } catch (e) {
-        jobs = backupJobs; // ถ้าเซฟไม่ผ่านให้ดึงข้อมูลเก่ากลับมา
+        jobs = backupJobs; 
       }
     }
     
@@ -799,7 +793,9 @@
       document.getElementById("loaderText").innerText = "กำลังสร้างรูปภาพ...";
       loader.style.display = "flex";
       
-      await new Promise(resolve => setTimeout(resolve, 200)); 
+      // บังคับ Scroll เลื่อนกลับขึ้นบนสุดก่อนทำการแคปภาพ
+      window.scrollTo(0, 0);
+      await new Promise(resolve => setTimeout(resolve, 300)); 
 
       renderJobs(); 
       const report = document.getElementById("report");
@@ -822,9 +818,8 @@
           useCORS: true,
           allowTaint: false,
           backgroundColor: "#f8fafc",
-          logging: false,
-          width: 840,
-          windowWidth: 840
+          scrollY: 0,
+          windowHeight: report.scrollHeight // บังคับอ่านความสูงเต็ม 100%
         });
 
         const now = new Date();
@@ -855,7 +850,9 @@
       document.getElementById("loaderText").innerText = "กำลังสร้างไฟล์ PDF และแบ่งหน้าอัตโนมัติ...";
       loader.style.display = "flex";
       
-      await new Promise(resolve => setTimeout(resolve, 200)); 
+      // บังคับ Scroll เลื่อนกลับขึ้นบนสุด เพื่อไม่ให้บัก html2canvas ตัดภาพขาด
+      window.scrollTo(0, 0);
+      await new Promise(resolve => setTimeout(resolve, 300)); 
 
       renderJobs(); 
       const report = document.getElementById("report");
@@ -878,12 +875,11 @@
           useCORS: true,
           allowTaint: false,
           backgroundColor: "#f8fafc",
-          logging: false,
-          width: 840,
-          windowWidth: 840
+          scrollY: 0,
+          windowHeight: report.scrollHeight // บังคับอ่านความสูงเต็ม 100%
         });
 
-        const imgData = canvas.toDataURL("image/jpeg", 0.85);
+        const imgData = canvas.toDataURL("image/jpeg", 0.9);
 
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF({
@@ -903,8 +899,8 @@
         pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
         heightLeft -= pdfHeight;
 
-        // หากเนื้อหาเกิน 1 หน้า ให้สร้างหน้าใหม่เพิ่มอัตโนมัติทีละหน้าจนครบ
-        while (heightLeft > 0) {
+        // หากความยาวภาพยาวกว่า 1 หน้ากระดาษ ให้ตัดแบ่งสร้างหน้าใหม่ต่อไปเรื่อยๆ
+        while (heightLeft > 1) {
           position = heightLeft - imgHeight;
           pdf.addPage();
           pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
