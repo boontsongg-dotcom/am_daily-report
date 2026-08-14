@@ -180,7 +180,7 @@
       padding: 10px 12px;
       position: relative;
       display: grid;
-      grid-template-columns: 95px 1fr 80px;
+      grid-template-columns: 95px 1fr; /* เปลี่ยนเป็น 2 คอลัมน์ให้ข้อความเต็มพื้นที่ */
       gap: 6px;
       align-items: start;
     }
@@ -233,37 +233,6 @@
       padding: 2px 8px;
       font-size: 12px;
       font-weight: bold;
-    }
-    /* === ปรับแก้ Worker Badge ให้เข้ากับรูปใหม่ === */
-    .worker {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-      width: 74px;
-      height: 98px;
-      background: #ffffff;
-      border-radius: 12px;
-      border: 2px solid #0b78ae;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      color: #053b5f;
-      font-weight: 900;
-      font-size: 11px;
-      gap: 2px;
-      overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    }
-    .worker-img {
-      width: 100%;
-      height: 72px;
-      object-fit: cover;
-      object-position: top; /* ดันภาพขึ้นเพื่อซ่อนลายน้ำด้านล่าง */
-    }
-    .worker-emoji {
-      font-size: 44px;
-      line-height: 1;
     }
     /* ===================== CONTENT ===================== */
     .content {
@@ -427,12 +396,10 @@
       object-fit: cover;
       display: block;
     }
-    /* รูปที่ 1 ขยายกว้างเป็นภาพหลัก */
     .photo-box:nth-child(1) {
       grid-column: 1 / -1;
       height: 70px;
     }
-    /* รูปที่ 2 และ 3 อยู่ด้านล่าง */
     .photo-box:nth-child(2),
     .photo-box:nth-child(3) {
       height: 45px;
@@ -526,10 +493,17 @@
       gap: 5px;
       align-items: center;
     }
-    .safety-title {
-      font-size: 22px;
-      line-height: 0.9;
-      font-weight: 900;
+    /* === ปรับแต่งรูปภาพ Safety ด้านล่าง === */
+    .bottom-safety-img {
+      width: 100%;
+      max-width: 65px;
+      height: 65px;
+      background: #ffffff;
+      border-radius: 8px;
+      border: 2px solid #fff;
+      object-fit: cover;
+      object-position: top; /* ดันภาพขึ้นเพื่อซ่อนลายน้ำเหมือนเดิม */
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
     .safety-item {
       text-align: center;
@@ -614,7 +588,6 @@
       <textarea id="newDetail" rows="3" placeholder="สรุปรายละเอียดงาน"></textarea>
       <input id="newPurpose" placeholder="วัตถุประสงค์">
       
-      <!-- อัปเดตช่องอัปโหลดเป็น 3 รูป -->
       <div class="photo-form-title">แนบรูปภาพงาน (สูงสุด 3 รูป)</div>
       <div class="photo-form-grid">
         <div class="photo-form-box">
@@ -661,7 +634,6 @@
       <!-- ===== HEADER ===== -->
       <section class="header">
         <div class="logo-container">
-          <!-- เปลี่ยนเป็น scg-logo.png -->
           <img
             class="logo-img"
             id="headerLogo"
@@ -680,20 +652,7 @@
           <p contenteditable="true">CEMENT MILL AM DAILY REPORT</p>
           <div class="date">📅 <span contenteditable="true" id="reportDate"></span></div>
         </div>
-
-        <div class="worker" id="workerBadge">
-          <!-- เปลี่ยนเป็น safety.png -->
-          <img
-            class="worker-img"
-            id="safetyIcon"
-            src="images/safety.png"
-            alt="Safety"
-            crossorigin="anonymous"
-            onerror="this.style.display='none'; document.getElementById('workerEmoji').style.display='block';"
-          >
-          <span class="worker-emoji" id="workerEmoji" style="display:none;">👷</span>
-          <span>SAFETY</span>
-        </div>
+        <!-- นำ Worker (Safety Badge) ออกจากส่วนนี้แล้ว -->
       </section>
 
       <!-- ===== CONTENT ===== -->
@@ -739,7 +698,16 @@
         <!-- SAFETY -->
         <section class="safety">
           <div class="safety-grid">
-            <div class="safety-title" contenteditable="true">Safety<br>First</div>
+            <!-- นำรูป Safety มาใส่ตรงนี้แทนข้อความ Safety First -->
+            <div style="text-align: center;">
+              <img 
+                class="bottom-safety-img" 
+                src="images/safety.png" 
+                alt="Safety First" 
+                crossorigin="anonymous"
+                onerror="this.style.display='none';"
+              >
+            </div>
             <div class="safety-item">
               <div class="safety-icon">⛑</div>
               <div contenteditable="true">สวม PPE<br>ทุกครั้ง</div>
@@ -768,7 +736,6 @@
       <!-- ===== FOOTER ===== -->
       <footer class="footer">
         <div class="footer-brand">
-          <!-- เปลี่ยนเป็น scg_green.png -->
           <img
             src="images/scg_green.png"
             alt="SCG"
@@ -792,7 +759,7 @@
   <!-- ========== JAVASCRIPT ========== -->
   <script>
     let jobs = [];
-    let formPhotos = ["", "", ""]; // ลดเหลือ Array 3 ช่อง
+    let formPhotos = ["", "", ""];
     let operators = [];
 
     /* ========== LOCAL STORAGE SYSTEM ========== */
@@ -906,9 +873,8 @@
       document.getElementById("newDetail").value = job.detail;
       document.getElementById("newPurpose").value = job.purpose;
       
-      // ดึงข้อมูลรูปภาพ (ตัดมาแค่ 3 เผื่อของเก่ามี 4)
       formPhotos = [...job.photos.slice(0, 3)];
-      while (formPhotos.length < 3) formPhotos.push(""); // เติมช่องว่างให้ครบ 3
+      while (formPhotos.length < 3) formPhotos.push("");
 
       updateFormPhotoPreviews();
       document.getElementById("formOverlay").classList.add("show");
@@ -927,7 +893,7 @@
       document.getElementById("newDetail").value = "";
       document.getElementById("newPurpose").value = "";
       document.getElementById("newStatus").value = "100%";
-      formPhotos = ["", "", ""]; // รีเซ็ตเป็น 3 ช่อง
+      formPhotos = ["", "", ""]; 
       document.querySelectorAll(".photo-form-box input").forEach(input => input.value = "");
       updateFormPhotoPreviews();
     }
@@ -1013,7 +979,6 @@
       jobs.forEach((job, index) => {
         const percent = getPercent(job.status);
         
-        // ตัดข้อมูลรูปภาพมาแค่ 3 รูป (ป้องกันข้อมูลจากระบบเก่าที่อาจมี 4)
         const photoHTML = job.photos.slice(0, 3).map(photo => {
           if (photo) return `<div class="photo-box"><img src="${photo}"></div>`;
           return `<div class="photo-box">ไม่มีรูป</div>`;
@@ -1069,7 +1034,6 @@
 
       const report = document.getElementById("report");
 
-      /* --- ซ่อนปุ่มที่ไม่ต้องการในภาพ --- */
       const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
       const hiddenEls = [];
       hideSelectors.forEach(sel => {
@@ -1079,11 +1043,9 @@
         });
       });
 
-      /* --- ปิด contenteditable outline --- */
       const editables = report.querySelectorAll("[contenteditable]");
       editables.forEach(el => { el.style.outline = "none"; });
 
-      /* --- รีเซ็ต transform (สำหรับมือถือ) --- */
       const origTransform = report.style.transform;
       const origMarginBottom = report.style.marginBottom;
       report.style.transform = "none";
@@ -1100,7 +1062,6 @@
           windowWidth: 390
         });
 
-        /* --- สร้างชื่อไฟล์พร้อมวันที่ --- */
         const now = new Date();
         const dateStr = now.getFullYear() + "-"
           + String(now.getMonth() + 1).padStart(2, "0") + "-"
@@ -1114,7 +1075,6 @@
       } catch (err) {
         alert("ไม่สามารถสร้างภาพได้ กรุณาลองใหม่อีกครั้ง");
       } finally {
-        /* --- คืนค่าทั้งหมด --- */
         report.style.transform = origTransform;
         report.style.marginBottom = origMarginBottom;
         hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
