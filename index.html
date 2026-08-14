@@ -1,24 +1,21 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AM Daily Report Infographic</title>
-
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: Tahoma, Arial, sans-serif;
+      font-family: 'Noto Sans Thai', Tahoma, sans-serif;
       background: radial-gradient(circle at top, #e0f2fe 0, #f0f4f8 38%, #e2e8f0 100%);
       color: #1e293b;
     }
-
-    /* ===================== LOADING ===================== */
-
+    /* ===================== LOADING OVERLAY ===================== */
     .loader-overlay {
       position: fixed;
       inset: 0;
@@ -33,7 +30,6 @@
       font-weight: 700;
       font-size: 16px;
     }
-
     .spinner {
       width: 48px;
       height: 48px;
@@ -43,25 +39,19 @@
       animation: spin 1s linear infinite;
       margin-bottom: 16px;
     }
-
     @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
-
     /* ===================== TOOLBAR ===================== */
-
     .controls-container {
       width: calc(100% - 24px);
       max-width: 920px;
       margin: 16px auto;
     }
-
     .search-box {
       margin-bottom: 12px;
     }
-
     .search-box input {
       width: 100%;
       padding: 12px 18px;
@@ -70,15 +60,14 @@
       font-family: inherit;
       font-size: 14px;
       outline: none;
+      transition: all 0.3s ease;
       box-shadow: 0 4px 14px rgba(15,23,42,0.05);
       background: rgba(255,255,255,0.95);
     }
-
     .search-box input:focus {
       border-color: #0ea5e9;
       box-shadow: 0 6px 18px rgba(14,165,233,0.18);
     }
-
     .toolbar {
       background: rgba(255,255,255,0.95);
       padding: 12px;
@@ -90,11 +79,9 @@
       box-shadow: 0 10px 28px rgba(15,23,42,0.08);
       border: 1px solid rgba(226,232,240,0.9);
     }
-
     button {
       font-family: inherit;
     }
-
     .toolbar button,
     .form-panel button {
       border: none;
@@ -106,38 +93,24 @@
       font-size: 13px;
       flex: 1 1 auto;
       min-width: 84px;
-      transition: all 0.25s ease;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
     .toolbar button:hover,
     .form-panel button:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 14px rgba(15,23,42,0.18);
       filter: brightness(1.05);
     }
-
-    .btn-blue {
-      background: linear-gradient(135deg, #0ea5e9, #0284c7);
+    .toolbar button:active,
+    .form-panel button:active {
+      transform: translateY(0);
     }
-
-    .btn-green {
-      background: linear-gradient(135deg, #10b981, #059669);
-    }
-
-    .btn-orange {
-      background: linear-gradient(135deg, #f59e0b, #d97706);
-    }
-
-    .btn-red {
-      background: linear-gradient(135deg, #ef4444, #dc2626);
-    }
-
-    .btn-gray {
-      background: linear-gradient(135deg, #64748b, #475569);
-    }
-
-    /* ===================== FORM ===================== */
-
+    .btn-blue   { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
+    .btn-green  { background: linear-gradient(135deg, #10b981, #059669); }
+    .btn-orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
+    .btn-red    { background: linear-gradient(135deg, #ef4444, #dc2626); }
+    .btn-gray   { background: linear-gradient(135deg, #64748b, #475569); }
+    /* ===================== FORM OVERLAY ===================== */
     .form-overlay {
       position: fixed;
       inset: 0;
@@ -149,11 +122,9 @@
       z-index: 9999;
       padding: 16px;
     }
-
     .form-overlay.show {
       display: flex;
     }
-
     .form-panel {
       width: 100%;
       max-width: 460px;
@@ -164,34 +135,24 @@
       padding: 20px;
       box-shadow: 0 24px 48px rgba(15,23,42,0.24);
       font-size: 13px;
-      animation: popupIn 0.25s ease;
+      animation: popupIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
-
     @keyframes popupIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px) scale(0.96);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
-
     .form-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 12px;
     }
-
     .form-header h3 {
       margin: 0;
       color: #0f172a;
       font-size: 18px;
       font-weight: 800;
     }
-
     .close-btn {
       width: 34px;
       height: 34px;
@@ -202,14 +163,14 @@
       font-size: 22px;
       line-height: 1;
       cursor: pointer;
+      transition: 0.2s;
       padding: 0;
     }
-
     .close-btn:hover {
       background: #ef4444;
       color: white;
+      transform: rotate(90deg);
     }
-
     .form-panel input,
     .form-panel textarea {
       width: 100%;
@@ -219,39 +180,34 @@
       border-radius: 12px;
       font-family: inherit;
       font-size: 13.5px;
+      transition: 0.2s;
     }
-
     .form-panel input:focus,
     .form-panel textarea:focus {
       border-color: #0ea5e9;
       outline: none;
       box-shadow: 0 0 0 3px rgba(14,165,233,0.15);
     }
-
     .form-row {
       display: grid;
       grid-template-columns: 1fr 105px;
       gap: 8px;
     }
-
     .form-buttons {
       display: flex;
       gap: 8px;
       margin-top: 16px;
     }
-
     .photo-form-title {
       margin: 12px 0 6px;
       font-weight: 700;
       color: #334155;
     }
-
     .photo-form-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 8px;
     }
-
     .photo-form-box {
       border: 1.5px dashed #cbd5e1;
       border-radius: 14px;
@@ -260,33 +216,32 @@
       text-align: center;
       font-size: 11px;
       color: #64748b;
+      transition: 0.2s;
     }
-
+    .photo-form-box:hover {
+      border-color: #0ea5e9;
+      background: #f0f9ff;
+    }
     .photo-form-box img {
       width: 100%;
-      height: 72px;
-      object-fit: contain;
-      object-position: center;
+      height: 56px;
+      object-fit: contain; /* ปรับแก้ไขตรงนี้ */
       display: none;
       border-radius: 10px;
       margin-bottom: 6px;
       background: #e2e8f0;
     }
-
     .photo-form-box input {
       font-size: 10px;
       padding: 6px;
     }
-
     /* ===================== REPORT ===================== */
-
     .report-viewport {
       width: 100%;
       display: flex;
       justify-content: center;
       padding: 0 8px 32px;
     }
-
     .report {
       width: 100%;
       max-width: 920px;
@@ -297,19 +252,19 @@
       position: relative;
       border: 1px solid rgba(226,232,240,0.9);
     }
-
     [contenteditable="true"] {
       outline: 1px dashed transparent;
       border-radius: 4px;
+      transition: 0.2s;
     }
-
     [contenteditable="true"]:focus {
       outline-color: #fcd34d;
       background: rgba(255,255,255,0.8);
     }
-
+    /* ===================== HEADER INFOGRAPHIC ===================== */
     .header {
       min-height: 128px;
+      height: auto;
       background:
         radial-gradient(circle at 92% 20%, rgba(255,255,255,0.22), transparent 20%),
         linear-gradient(135deg, #0284c7, #0369a1 55%, #075985);
@@ -322,7 +277,26 @@
       align-items: center;
       overflow: hidden;
     }
-
+    .header::before {
+      content: "";
+      position: absolute;
+      right: -70px;
+      top: -75px;
+      width: 240px;
+      height: 240px;
+      background: rgba(255,255,255,0.12);
+      border-radius: 50%;
+    }
+    .header::after {
+      content: "";
+      position: absolute;
+      right: 110px;
+      bottom: -55px;
+      width: 150px;
+      height: 150px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 50%;
+    }
     .logo-container {
       position: relative;
       z-index: 1;
@@ -331,25 +305,19 @@
       align-items: center;
       gap: 8px;
     }
-
-    .logo-text {
+    .logo-img {
       width: 118px;
-      height: 58px;
+      height: auto;
       border-radius: 12px;
-      background: #ffffff;
-      color: #dc2626;
-      display: grid;
-      place-items: center;
-      font-weight: 900;
-      font-size: 28px;
+      background: #fff;
+      padding: 7px;
+      display: block;
       box-shadow: 0 8px 18px rgba(15,23,42,0.18);
     }
-
     .title {
       position: relative;
       z-index: 1;
     }
-
     .header-top-row {
       display: flex;
       justify-content: space-between;
@@ -359,7 +327,6 @@
       flex-wrap: wrap;
       gap: 10px;
     }
-
     .title h1 {
       margin: 0;
       font-size: 32px;
@@ -368,7 +335,6 @@
       letter-spacing: -0.6px;
       text-shadow: 0 3px 8px rgba(15,23,42,0.2);
     }
-
     .title p {
       display: inline-block;
       margin: 0 0 9px;
@@ -381,21 +347,22 @@
       border-radius: 999px;
       backdrop-filter: blur(4px);
     }
-
     .scg-green-badge {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       background: #ffffff;
-      color: #16a34a;
-      padding: 10px 14px;
+      padding: 7px 12px;
       border-radius: 12px;
       box-shadow: 0 6px 16px rgba(15,23,42,0.18);
       white-space: nowrap;
-      font-weight: 900;
-      font-size: 14px;
     }
-
+    .scg-green-badge img {
+      height: 38px;
+      width: auto;
+      border-radius: 4px;
+      display: block;
+    }
     .date {
       display: inline-flex;
       align-items: center;
@@ -408,14 +375,13 @@
       backdrop-filter: blur(4px);
       border: 1px solid rgba(255,255,255,0.22);
     }
-
+    /* ===================== CONTENT ===================== */
     .content {
       padding: 0 18px 18px;
       margin-top: -14px;
       position: relative;
       z-index: 2;
     }
-
     .summary {
       background: #ffffff;
       border-radius: 16px;
@@ -424,7 +390,6 @@
       box-shadow: 0 8px 20px rgba(15,23,42,0.08);
       margin-bottom: 16px;
     }
-
     .section-label {
       position: relative;
       display: inline-block;
@@ -437,26 +402,34 @@
       margin-bottom: 10px;
       box-shadow: 0 5px 12px rgba(2,132,199,0.25);
     }
-
+    .section-label::after {
+      content: "";
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      width: 86px;
+      height: 3px;
+      background: #bae6fd;
+      transform: translateY(-50%);
+      border-radius: 999px;
+    }
     .metrics {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 12px;
       text-align: center;
     }
-
     .metric {
       border-right: 1px solid #e2e8f0;
       min-height: 66px;
       display: flex;
       flex-direction: column;
       justify-content: center;
+      position: relative;
     }
-
     .metric:last-child {
       border-right: none;
     }
-
     .metric .icon {
       width: 36px;
       height: 36px;
@@ -468,47 +441,46 @@
       place-items: center;
       font-size: 16px;
       font-weight: 900;
+      box-shadow: inset 0 0 0 1px rgba(2,132,199,0.12);
     }
-
     .metric.red .icon {
       background: #fee2e2;
       color: #dc2626;
     }
-
     .metric.green .icon {
       background: #d1fae5;
       color: #059669;
     }
-
     .metric.orange .icon {
       background: #fef3c7;
       color: #d97706;
     }
-
     .metric .text {
       font-size: 10px;
       line-height: 1.15;
       font-weight: 800;
       color: #64748b;
     }
-
     .metric .num {
       display: block;
       font-size: 24px;
       color: #0f172a;
       margin-top: 2px;
       font-weight: 900;
+      letter-spacing: -0.5px;
     }
-
-    /* ===================== JOB ===================== */
-
+    /* ===================== JOB CARDS ===================== */
     #jobList {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 12px;
       margin-bottom: 16px;
     }
-
+    @media (max-width: 768px) {
+      #jobList {
+        grid-template-columns: 1fr;
+      }
+    }
     .empty-job {
       grid-column: 1 / -1;
       background: #ffffff;
@@ -520,18 +492,17 @@
       font-size: 14px;
       font-weight: 600;
     }
-
     .job-card {
       background: #fff;
       border-radius: 16px;
       border: 1px solid #e2e8f0;
       overflow: hidden;
       box-shadow: 0 6px 16px rgba(15,23,42,0.07);
+      transition: all 0.25s ease;
       display: flex;
       flex-direction: column;
       position: relative;
     }
-
     .job-card::before {
       content: "";
       position: absolute;
@@ -542,19 +513,19 @@
       background: #94a3b8;
       z-index: 2;
     }
-
     .job-card.job-done::before {
       background: linear-gradient(180deg, #22c55e, #10b981);
     }
-
     .job-card.job-progress::before {
       background: linear-gradient(180deg, #fbbf24, #f59e0b);
     }
-
     .job-card.job-todo::before {
       background: linear-gradient(180deg, #f87171, #ef4444);
     }
-
+    .job-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(15,23,42,0.1);
+    }
     .job-code {
       background: linear-gradient(135deg, #f8fafc, #eef6ff);
       color: #334155;
@@ -565,18 +536,14 @@
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid #e2e8f0;
-      gap: 8px;
     }
-
     .job-code b {
       color: #0f172a;
     }
-
     .job-actions {
       display: flex;
       gap: 4px;
     }
-
     .job-actions button {
       color: #fff;
       border: none;
@@ -585,16 +552,12 @@
       padding: 4px 8px;
       cursor: pointer;
       font-weight: 700;
+      transition: 0.2s;
     }
-
-    .edit-job {
-      background: #f59e0b;
-    }
-
-    .delete-job {
-      background: #ef4444;
-    }
-
+    .edit-job { background: #f59e0b; }
+    .edit-job:hover { background: #d97706; }
+    .delete-job { background: #ef4444; }
+    .delete-job:hover { background: #dc2626; }
     .job-body {
       display: flex;
       flex-direction: column;
@@ -602,23 +565,19 @@
       padding: 12px 12px 12px 16px;
       flex: 1;
     }
-
     .job-text {
       font-size: 11.5px;
       line-height: 1.55;
-      font-weight: 600;
+      font-weight: 550;
       color: #334155;
     }
-
     .job-text b {
       color: #0284c7;
       font-weight: 800;
     }
-
     .job-info-row {
       margin-bottom: 2px;
     }
-
     .status-row {
       display: flex;
       align-items: center;
@@ -627,7 +586,6 @@
       font-size: 10px;
       font-weight: 800;
     }
-
     .progress {
       flex: 1;
       height: 12px;
@@ -635,53 +593,48 @@
       border-radius: 999px;
       overflow: hidden;
     }
-
     .progress div {
       height: 100%;
       border-radius: 999px;
+      transition: width 0.5s ease;
     }
-
     .job-done .progress div {
       background: linear-gradient(90deg, #22c55e, #14b8a6);
+      box-shadow: 0 0 8px rgba(16,185,129,0.45);
     }
-
     .job-progress .progress div {
       background: linear-gradient(90deg, #fbbf24, #f59e0b);
+      box-shadow: 0 0 8px rgba(245,158,11,0.38);
     }
-
     .job-todo .progress div {
       background: linear-gradient(90deg, #f87171, #ef4444);
+      box-shadow: 0 0 8px rgba(239,68,68,0.35);
     }
-
     .status-badge {
       padding: 3px 8px;
       border-radius: 999px;
       color: #fff;
       font-size: 9px;
       font-weight: 900;
+      letter-spacing: 0.3px;
       min-width: 42px;
       text-align: center;
     }
-
     .status-badge.done {
       background-color: #10b981;
     }
-
     .status-badge.progress {
       background-color: #f59e0b;
     }
-
     .status-badge.todo {
       background-color: #ef4444;
     }
-
     .photos {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
       gap: 7px;
       margin-top: auto;
     }
-
     .photo-box {
       border-radius: 10px;
       background: linear-gradient(135deg, #e2e8f0, #f8fafc);
@@ -690,23 +643,19 @@
       position: relative;
       display: grid;
       place-items: center;
-      height: 82px;
+      height: 76px;
       font-size: 9px;
       color: #64748b;
       text-align: center;
       font-weight: 700;
       box-shadow: 0 4px 10px rgba(15,23,42,0.12);
     }
-
     .photo-box img {
       width: 100%;
       height: 100%;
-      object-fit: contain;
-      object-position: center;
+      object-fit: contain; /* ปรับแก้ไขตรงนี้ */
       display: block;
-      background: #e2e8f0;
     }
-
     .photo-box::after {
       content: attr(data-label);
       position: absolute;
@@ -720,9 +669,7 @@
       border-radius: 999px;
       backdrop-filter: blur(2px);
     }
-
     /* ===================== OPERATOR ===================== */
-
     .operator {
       background: #fff;
       border-radius: 16px;
@@ -731,7 +678,6 @@
       margin-bottom: 16px;
       box-shadow: 0 6px 16px rgba(15,23,42,0.06);
     }
-
     .operator-header {
       background: linear-gradient(135deg, #f8fafc, #eef6ff);
       color: #0f172a;
@@ -743,7 +689,6 @@
       justify-content: space-between;
       border-bottom: 1px solid #e2e8f0;
     }
-
     .operator-add-btn {
       background: #0ea5e9;
       color: #fff;
@@ -753,15 +698,17 @@
       padding: 5px 10px;
       cursor: pointer;
       font-weight: 700;
+      transition: 0.2s;
     }
-
+    .operator-add-btn:hover {
+      background: #0284c7;
+    }
     .operator-list {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       padding: 11px 16px;
     }
-
     .operator-item {
       display: inline-flex;
       align-items: center;
@@ -770,15 +717,21 @@
       border-radius: 999px;
       border: 1px solid #cbd5e1;
       gap: 6px;
+      transition: 0.2s;
       box-shadow: 0 2px 6px rgba(15,23,42,0.04);
     }
-
+    .operator-item:hover {
+      background: #e2e8f0;
+      border-color: #94a3b8;
+    }
+    .operator-item .op-icon {
+      font-size: 12px;
+    }
     .operator-item .op-name {
       font-size: 11px;
       color: #334155;
       font-weight: 800;
     }
-
     .operator-item .op-role {
       font-size: 9px;
       color: #fff;
@@ -787,16 +740,13 @@
       padding: 2px 8px;
       font-weight: 800;
     }
-
     .operator-item .op-role.green {
       background: #10b981;
     }
-
     .operator-item .op-role.orange {
       background: #f59e0b;
     }
-
-    .op-del {
+    .operator-item .op-del {
       background: #ef4444;
       color: #fff;
       border: none;
@@ -808,11 +758,14 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      transition: 0.2s;
       padding: 0;
     }
-
+    .operator-item .op-del:hover {
+      background: #dc2626;
+      transform: scale(1.1);
+    }
     /* ===================== SAFETY ===================== */
-
     .safety {
       background:
         radial-gradient(circle at 92% 10%, rgba(255,255,255,0.18), transparent 20%),
@@ -825,7 +778,16 @@
       overflow: hidden;
       position: relative;
     }
-
+    .safety::before {
+      content: "";
+      position: absolute;
+      left: -45px;
+      bottom: -60px;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+    }
     .safety-grid {
       position: relative;
       z-index: 1;
@@ -834,21 +796,19 @@
       gap: 10px;
       align-items: center;
     }
-
     .safety-title {
       font-size: 28px;
       line-height: 0.95;
       font-weight: 900;
       text-shadow: 0 3px 8px rgba(15,23,42,0.25);
+      letter-spacing: -0.5px;
     }
-
     .safety-item {
       text-align: center;
       font-size: 9px;
       line-height: 1.15;
       font-weight: 800;
     }
-
     .safety-icon {
       width: 40px;
       height: 40px;
@@ -859,21 +819,19 @@
       place-items: center;
       margin: 0 auto 6px;
       font-size: 17px;
+      backdrop-filter: blur(2px);
       border: 1px solid rgba(255,255,255,0.42);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
     }
-
     /* ===================== PRINT ===================== */
-
     @media print {
       @page {
         size: A4 landscape;
         margin: 10mm;
       }
-
       body {
         background: white;
       }
-
       .controls-container,
       .form-overlay,
       .job-actions,
@@ -882,11 +840,9 @@
       .loader-overlay {
         display: none !important;
       }
-
       .report-viewport {
         padding: 0;
       }
-
       .report {
         box-shadow: none;
         margin: 0 auto;
@@ -894,40 +850,27 @@
         width: 100% !important;
         max-width: none !important;
       }
-
       [contenteditable="true"] {
         outline: none !important;
       }
     }
-
-    @media (max-width: 768px) {
-      #jobList {
-        grid-template-columns: 1fr;
-      }
-    }
-
     @media (max-width: 640px) {
       .header {
         grid-template-columns: 1fr;
         text-align: center;
       }
-
       .header-top-row {
         justify-content: center;
       }
-
       .metrics {
         grid-template-columns: repeat(2, 1fr);
       }
-
       .metric:nth-child(2) {
         border-right: none;
       }
-
       .safety-grid {
         grid-template-columns: repeat(2, 1fr);
       }
-
       .safety-title {
         grid-column: 1 / -1;
         text-align: center;
@@ -935,14 +878,13 @@
     }
   </style>
 </head>
-
 <body>
-
+  <!-- LOADING -->
   <div class="loader-overlay" id="loaderOverlay">
     <div class="spinner"></div>
     <div>กำลังประมวลผลภาพอินโฟกราฟิก...</div>
   </div>
-
+  <!-- CONTROLS -->
   <div class="controls-container">
     <div class="search-box">
       <input
@@ -952,7 +894,6 @@
         onkeyup="filterJobs()"
       >
     </div>
-
     <div class="toolbar">
       <button class="btn-green" onclick="openCreateForm()">+ เพิ่มงาน</button>
       <button class="btn-red" onclick="resetAllData()">เริ่มวันใหม่</button>
@@ -960,7 +901,6 @@
       <button class="btn-blue" onclick="window.print()">PDF A4 แนวนอน</button>
     </div>
   </div>
-
   <!-- JOB FORM -->
   <div class="form-overlay" id="formOverlay" onclick="closeFormByBackdrop(event)">
     <section class="form-panel" onclick="event.stopPropagation()">
@@ -968,53 +908,43 @@
         <h3 id="formTitle">เพิ่มรายการงาน</h3>
         <button class="close-btn" onclick="closeForm()">×</button>
       </div>
-
       <input type="hidden" id="editId">
-
       <div class="form-row">
         <input id="newCode" placeholder="รหัสงาน เช่น 3152">
         <input id="newStatus" placeholder="สถานะ เช่น 100%" value="100%">
       </div>
-
       <input id="newMachine" placeholder="เครื่องจักร / ตำแหน่ง">
       <textarea id="newDetail" rows="3" placeholder="สรุปรายละเอียดงาน"></textarea>
       <input id="newPurpose" placeholder="วัตถุประสงค์">
-
       <div class="photo-form-title">แนบรูปภาพงาน สูงสุด 4 รูป</div>
-
       <div class="photo-form-grid">
         <div class="photo-form-box">
           <img id="preview1">
           <div>+ ก่อนทำ</div>
           <input type="file" accept="image/*" onchange="handleFormPhoto(this, 0)">
         </div>
-
         <div class="photo-form-box">
           <img id="preview2">
           <div>+ ระหว่างทำ</div>
           <input type="file" accept="image/*" onchange="handleFormPhoto(this, 1)">
         </div>
-
         <div class="photo-form-box">
           <img id="preview3">
           <div>+ หลังทำ</div>
           <input type="file" accept="image/*" onchange="handleFormPhoto(this, 2)">
         </div>
-
         <div class="photo-form-box">
           <img id="preview4">
           <div>+ ตรวจสอบ</div>
           <input type="file" accept="image/*" onchange="handleFormPhoto(this, 3)">
         </div>
       </div>
-
       <div class="form-buttons">
         <button class="btn-green" onclick="saveJob()">บันทึกข้อมูล</button>
         <button class="btn-gray" onclick="clearForm()">ล้างค่า</button>
       </div>
     </section>
   </div>
-
   <!-- OPERATOR FORM -->
   <div class="form-overlay" id="opFormOverlay" onclick="closeOpFormByBackdrop(event)">
     <section class="form-panel" onclick="event.stopPropagation()">
@@ -1022,44 +952,51 @@
         <h3>เพิ่มผู้ปฏิบัติงาน</h3>
         <button class="close-btn" onclick="closeOpForm()">×</button>
       </div>
-
       <input id="opName" placeholder="ชื่อผู้ปฏิบัติงาน">
       <input id="opRole" placeholder="ตำแหน่ง เช่น ช่างฟิต, ช่างไฟฟ้า">
-
       <div class="form-buttons">
         <button class="btn-green" onclick="addOperator()">เพิ่มรายชื่อ</button>
       </div>
     </section>
   </div>
-
   <!-- REPORT -->
   <div class="report-viewport">
     <main class="report" id="report">
-
+      <!-- HEADER -->
       <section class="header">
         <div class="logo-container">
-          <div class="logo-text">SCG</div>
+          <img
+            class="logo-img"
+            id="headerLogo"
+            src="images/scg-logo.png"
+            alt="SCG Logo"
+            crossorigin="anonymous"
+            onerror="this.style.display='none';"
+          >
         </div>
-
         <div class="title">
           <div class="header-top-row">
             <h1 contenteditable="true">สรุปงาน AM บดซีเมนต์</h1>
-            <div class="scg-green-badge">SCG GREEN</div>
+            <div class="scg-green-badge">
+              <img
+                src="images/scg_green.png"
+                alt="SCG GREEN"
+                crossorigin="anonymous"
+                onerror="this.style.display='none';"
+              >
+            </div>
           </div>
-
           <p contenteditable="true">CEMENT MILL AM DAILY REPORT</p>
-
           <div class="date">
             📅 <span contenteditable="true" id="reportDate"></span>
           </div>
         </div>
       </section>
-
+      <!-- CONTENT -->
       <section class="content">
-
+        <!-- SUMMARY -->
         <div class="summary">
           <div class="section-label">สรุปผลการดำเนินงาน</div>
-
           <div class="metrics">
             <div class="metric">
               <div class="icon">📋</div>
@@ -1068,7 +1005,6 @@
                 <span class="num" id="totalJobs">0 งาน</span>
               </div>
             </div>
-
             <div class="metric orange">
               <div class="icon">⏱</div>
               <div class="text">
@@ -1076,7 +1012,6 @@
                 <span class="num" id="doneJobs">0 งาน</span>
               </div>
             </div>
-
             <div class="metric red">
               <div class="icon">○</div>
               <div class="text">
@@ -1084,7 +1019,6 @@
                 <span class="num" id="notDoneJobs">0 งาน</span>
               </div>
             </div>
-
             <div class="metric green">
               <div class="icon">✓</div>
               <div class="text">
@@ -1094,75 +1028,65 @@
             </div>
           </div>
         </div>
-
+        <!-- JOB LIST -->
         <div id="jobList">
           <div class="empty-job">
             ยังไม่มีรายการงาน<br>
             กดปุ่ม “+ เพิ่มงาน” ด้านบนเพื่อเริ่ม
           </div>
         </div>
-
+        <!-- OPERATOR -->
         <div class="operator">
           <div class="operator-header">
             <span>👷 ผู้ปฏิบัติงาน</span>
             <button class="operator-add-btn" onclick="openOpForm()">+ เพิ่มคน</button>
           </div>
-
           <div class="operator-list" id="operatorList"></div>
         </div>
-
+        <!-- SAFETY -->
         <section class="safety">
           <div class="safety-grid">
             <div class="safety-title" contenteditable="true">
               Safety<br>First
             </div>
-
             <div class="safety-item">
               <div class="safety-icon">⛑</div>
               <div contenteditable="true">สวม PPE<br>ทุกครั้ง</div>
             </div>
-
             <div class="safety-item">
               <div class="safety-icon">🔒</div>
               <div contenteditable="true">Lockout /<br>Tagout</div>
             </div>
-
             <div class="safety-item">
               <div class="safety-icon">🔎</div>
               <div contenteditable="true">ตรวจสอบพื้นที่<br>ก่อนทำงาน</div>
             </div>
-
             <div class="safety-item">
               <div class="safety-icon">👥</div>
               <div contenteditable="true">ทำงาน<br>เป็นทีม</div>
             </div>
-
             <div class="safety-item">
               <div class="safety-icon">0</div>
               <div contenteditable="true">Zero<br>Accident</div>
             </div>
           </div>
         </section>
-
       </section>
     </main>
   </div>
-
+  <!-- html2canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script>
     let jobs = [];
     let formPhotos = ["", "", "", ""];
     let operators = [];
-
     const photoLabels = ["ก่อนทำ", "ระหว่างทำ", "หลังทำ", "ตรวจสอบ"];
-
     /* ===================== LOCAL STORAGE ===================== */
-
     function loadData() {
       const savedJobs = localStorage.getItem("am_daily_jobs");
       if (savedJobs) {
         jobs = JSON.parse(savedJobs);
       }
-
       const savedOps = localStorage.getItem("am_daily_operators");
       if (savedOps) {
         operators = JSON.parse(savedOps);
@@ -1170,8 +1094,8 @@
         operators = [
           {
             id: "op1",
-            name: "ผู้ปฏิบัติงานประจำ",
-            role: "AM Team",
+            name: "ธีระศักดิ์ บ.",
+            role: "ผู้ปฏิบัติงานประจำ",
             fixed: true,
             color: ""
           },
@@ -1192,104 +1116,81 @@
         ];
       }
     }
-
     function saveData() {
       localStorage.setItem("am_daily_jobs", JSON.stringify(jobs));
       localStorage.setItem("am_daily_operators", JSON.stringify(operators));
     }
-
     function resetAllData() {
       if (!confirm("ต้องการลบข้อมูลงานทั้งหมดเพื่อเริ่มต้นวันใหม่ใช่หรือไม่?")) return;
-
       localStorage.removeItem("am_daily_jobs");
       jobs = [];
       document.getElementById("searchInput").value = "";
       renderJobs();
       saveData();
     }
-
     function createId() {
       return Date.now().toString() + Math.floor(Math.random() * 1000).toString();
     }
-
     /* ===================== DATE ===================== */
-
     function setTodayDate() {
       const now = new Date();
       const dd = String(now.getDate()).padStart(2, "0");
       const mm = String(now.getMonth() + 1).padStart(2, "0");
       const yyyy = now.getFullYear();
-
       document.getElementById("reportDate").innerText = dd + "/" + mm + "/" + yyyy;
     }
-
     /* ===================== SEARCH ===================== */
-
     function filterJobs() {
       const query = document.getElementById("searchInput").value.toLowerCase();
       const cards = document.querySelectorAll(".job-card");
-
       cards.forEach(card => {
         const text = card.innerText.toLowerCase();
         card.style.display = text.includes(query) ? "flex" : "none";
       });
     }
-
-    /* ===================== OPERATOR ===================== */
-
+    /* ===================== OPERATOR CRUD ===================== */
     function renderOperators() {
       const list = document.getElementById("operatorList");
       let html = "";
-
       operators.forEach(op => {
         const roleClass = op.color ? " " + op.color : "";
-
         const delBtn = op.fixed
           ? ""
           : `<button class="op-del" onclick="removeOperator('${op.id}')" title="ลบ">×</button>`;
-
         html += `
           <div class="operator-item">
-            <span>👤</span>
+            <span class="op-icon">👤</span>
             <span class="op-name">${escapeHTML(op.name)}</span>
             <span class="op-role${roleClass}">${escapeHTML(op.role)}</span>
             ${delBtn}
           </div>
         `;
       });
-
       list.innerHTML = html;
     }
-
     function openOpForm() {
       document.getElementById("opName").value = "";
       document.getElementById("opRole").value = "";
       document.getElementById("opFormOverlay").classList.add("show");
-
       setTimeout(() => {
         document.getElementById("opName").focus();
       }, 100);
     }
-
     function closeOpForm() {
       document.getElementById("opFormOverlay").classList.remove("show");
     }
-
     function closeOpFormByBackdrop(event) {
       if (event.target.id === "opFormOverlay") {
         closeOpForm();
       }
     }
-
     function addOperator() {
       const name = document.getElementById("opName").value.trim();
       const role = document.getElementById("opRole").value.trim() || "ผู้ปฏิบัติงาน";
-
       if (!name) {
         alert("กรุณาระบุชื่อผู้ปฏิบัติงาน");
         return;
       }
-
       operators.push({
         id: createId(),
         name,
@@ -1297,38 +1198,29 @@
         fixed: false,
         color: ""
       });
-
       saveData();
       renderOperators();
       closeOpForm();
     }
-
     function removeOperator(id) {
       if (!confirm("ต้องการลบผู้ปฏิบัติงานนี้ใช่หรือไม่?")) return;
-
       operators = operators.filter(op => op.id !== id);
       saveData();
       renderOperators();
     }
-
     /* ===================== JOB FORM ===================== */
-
     function openCreateForm() {
       clearForm();
-
       document.getElementById("formTitle").innerText = "เพิ่มรายการงาน";
       document.getElementById("editId").value = "";
       document.getElementById("formOverlay").classList.add("show");
-
       setTimeout(() => {
         document.getElementById("newCode").focus();
       }, 100);
     }
-
     function openEditForm(id) {
       const job = jobs.find(item => item.id === id);
       if (!job) return;
-
       document.getElementById("formTitle").innerText = "แก้ไขรายการงาน";
       document.getElementById("editId").value = job.id;
       document.getElementById("newCode").value = job.code;
@@ -1336,32 +1228,24 @@
       document.getElementById("newMachine").value = job.machine;
       document.getElementById("newDetail").value = job.detail;
       document.getElementById("newPurpose").value = job.purpose;
-
       formPhotos = [...job.photos.slice(0, 4)];
-
       while (formPhotos.length < 4) {
         formPhotos.push("");
       }
-
       updateFormPhotoPreviews();
-
       document.getElementById("formOverlay").classList.add("show");
-
       setTimeout(() => {
         document.getElementById("newCode").focus();
       }, 100);
     }
-
     function closeForm() {
       document.getElementById("formOverlay").classList.remove("show");
     }
-
     function closeFormByBackdrop(event) {
       if (event.target.id === "formOverlay") {
         closeForm();
       }
     }
-
     function clearForm() {
       document.getElementById("editId").value = "";
       document.getElementById("newCode").value = "";
@@ -1369,89 +1253,25 @@
       document.getElementById("newDetail").value = "";
       document.getElementById("newPurpose").value = "";
       document.getElementById("newStatus").value = "100%";
-
       formPhotos = ["", "", "", ""];
-
       document.querySelectorAll(".photo-form-box input").forEach(input => {
         input.value = "";
       });
-
       updateFormPhotoPreviews();
     }
-
-    /* ===================== IMAGE RESIZE KEEP RATIO ===================== */
-
-    function resizeImageKeepRatio(file, maxWidth = 1280, maxHeight = 960, quality = 0.85) {
-      return new Promise((resolve, reject) => {
-        if (!file || !file.type.startsWith("image/")) {
-          reject();
-          return;
-        }
-
-        const reader = new FileReader();
-
-        reader.onload = function(event) {
-          const img = new Image();
-
-          img.onload = function() {
-            let width = img.width;
-            let height = img.height;
-
-            const ratio = Math.min(
-              maxWidth / width,
-              maxHeight / height,
-              1
-            );
-
-            width = Math.round(width * ratio);
-            height = Math.round(height * ratio);
-
-            const canvas = document.createElement("canvas");
-            canvas.width = width;
-            canvas.height = height;
-
-            const ctx = canvas.getContext("2d");
-
-            ctx.fillStyle = "#ffffff";
-            ctx.fillRect(0, 0, width, height);
-            ctx.drawImage(img, 0, 0, width, height);
-
-            const dataUrl = canvas.toDataURL("image/jpeg", quality);
-            resolve(dataUrl);
-          };
-
-          img.onerror = function() {
-            reject();
-          };
-
-          img.src = event.target.result;
-        };
-
-        reader.onerror = function() {
-          reject();
-        };
-
-        reader.readAsDataURL(file);
-      });
-    }
-
-    async function handleFormPhoto(input, index) {
+    function handleFormPhoto(input, index) {
       const file = input.files && input.files[0];
       if (!file) return;
-
-      try {
-        formPhotos[index] = await resizeImageKeepRatio(file, 1280, 960, 0.85);
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        formPhotos[index] = event.target.result;
         updateFormPhotoPreviews();
-      } catch (err) {
-        alert("ไม่สามารถอ่านรูปภาพได้ กรุณาเลือกรูปใหม่อีกครั้ง");
-        input.value = "";
-      }
+      };
+      reader.readAsDataURL(file);
     }
-
     function updateFormPhotoPreviews() {
       for (let i = 0; i < 4; i++) {
         const img = document.getElementById("preview" + (i + 1));
-
         if (formPhotos[i]) {
           img.src = formPhotos[i];
           img.style.display = "block";
@@ -1461,9 +1281,7 @@
         }
       }
     }
-
     /* ===================== JOB CRUD ===================== */
-
     function saveJob() {
       const editId = document.getElementById("editId").value;
       const code = document.getElementById("newCode").value.trim() || "-";
@@ -1471,7 +1289,6 @@
       const machine = document.getElementById("newMachine").value.trim() || "-";
       const detail = document.getElementById("newDetail").value.trim() || "-";
       const purpose = document.getElementById("newPurpose").value.trim() || "-";
-
       const jobData = {
         id: editId || createId(),
         code,
@@ -1481,32 +1298,24 @@
         purpose,
         photos: [...formPhotos]
       };
-
       if (editId) {
         jobs = jobs.map(item => item.id === editId ? jobData : item);
       } else {
         jobs.push(jobData);
       }
-
       saveData();
-
       document.getElementById("searchInput").value = "";
-
       renderJobs();
       closeForm();
       clearForm();
     }
-
     function deleteJob(id) {
       if (!confirm("ต้องการลบงานนี้ใช่หรือไม่?")) return;
-
       jobs = jobs.filter(item => item.id !== id);
       saveData();
       renderJobs();
     }
-
     /* ===================== HELPERS ===================== */
-
     function escapeHTML(text) {
       return String(text)
         .replaceAll("&", "&amp;")
@@ -1515,33 +1324,26 @@
         .replaceAll('"', "&quot;")
         .replaceAll("'", "&#039;");
     }
-
     function nl2br(text) {
       return escapeHTML(text).replace(/\n/g, "<br>");
     }
-
     function getPercent(status) {
       const value = parseInt(String(status).replace("%", "")) || 0;
       return Math.max(0, Math.min(100, value));
     }
-
     function getStatusClass(percent) {
       if (percent >= 100) return "job-done";
       if (percent > 0) return "job-progress";
       return "job-todo";
     }
-
     function getBadgeClass(percent) {
       if (percent >= 100) return "done";
       if (percent > 0) return "progress";
       return "todo";
     }
-
     /* ===================== RENDER JOBS ===================== */
-
     function renderJobs() {
       const jobList = document.getElementById("jobList");
-
       if (jobs.length === 0) {
         jobList.innerHTML = `
           <div class="empty-job">
@@ -1549,66 +1351,54 @@
             กดปุ่ม “+ เพิ่มงาน” ด้านบนเพื่อเริ่ม
           </div>
         `;
-
         updateSummary();
         return;
       }
-
       let html = "";
-
       jobs.forEach((job, index) => {
         const percent = getPercent(job.status);
         const cardClass = getStatusClass(percent);
         const badgeClass = getBadgeClass(percent);
-
         const photoHTML = job.photos.slice(0, 4).map((photo, photoIndex) => {
           const label = photoLabels[photoIndex] || "ภาพงาน";
-
           if (photo) {
             return `
-              <div class="photo-box" data-label="${escapeHTML(label)}">
-                <img src="${photo}" alt="${escapeHTML(label)}">
+              <div class="photo-box" data-label="${label}">
+                <img src="${photo}" alt="${label}">
               </div>
             `;
           }
-
           return `
-            <div class="photo-box" data-label="${escapeHTML(label)}">
+            <div class="photo-box" data-label="${label}">
               ไม่มีรูป
             </div>
           `;
         }).join("");
-
         html += `
           <article class="job-card ${cardClass}" data-status="${percent}">
             <div class="job-code">
               <div>
                 <b>งานที่ ${index + 1}</b> | ${escapeHTML(job.code)}
               </div>
-
               <div class="job-actions">
                 <button class="edit-job" onclick="openEditForm('${job.id}')">แก้ไข</button>
                 <button class="delete-job" onclick="deleteJob('${job.id}')">ลบ</button>
               </div>
             </div>
-
             <div class="job-body">
               <div class="job-text">
                 <div class="job-info-row"><b>ตำแหน่ง:</b> ${escapeHTML(job.machine)}</div>
                 <div class="job-info-row"><b>สรุปงาน:</b> ${nl2br(job.detail)}</div>
                 <div class="job-info-row"><b>เป้าหมาย:</b> ${escapeHTML(job.purpose)}</div>
-
                 <div class="status-row">
                   <div class="progress">
                     <div style="width:${percent}%"></div>
                   </div>
-
                   <span class="status-badge ${badgeClass}">
                     ${escapeHTML(job.status)}
                   </span>
                 </div>
               </div>
-
               <div class="photos">
                 ${photoHTML}
               </div>
@@ -1616,73 +1406,50 @@
           </article>
         `;
       });
-
       jobList.innerHTML = html;
-
       updateSummary();
       filterJobs();
     }
-
     function updateSummary() {
       const total = jobs.length;
       let progress = 0;
       let full = 0;
-
       jobs.forEach(job => {
         const p = getPercent(job.status);
-
         if (p > 0) progress++;
         if (p >= 100) full++;
       });
-
       document.getElementById("totalJobs").innerText = total + " งาน";
       document.getElementById("doneJobs").innerText = progress + " งาน";
       document.getElementById("notDoneJobs").innerText = (total - progress) + " งาน";
       document.getElementById("fullJobs").innerText = full + " งาน";
     }
-
     /* ===================== DOWNLOAD IMAGE ===================== */
-
     async function downloadReportImage() {
-      if (typeof html2canvas === "undefined") {
-        alert("ยังไม่พบเครื่องมือสำหรับสร้างภาพ กรุณาแนบไลบรารีสำหรับสร้างภาพก่อนใช้งาน");
-        return;
-      }
-
       const loader = document.getElementById("loaderOverlay");
       loader.style.display = "flex";
-
       await new Promise(resolve => setTimeout(resolve, 200));
-
       renderJobs();
-
       const report = document.getElementById("report");
-
       const hideSelectors = [
         ".job-actions",
         ".operator-add-btn",
         ".op-del"
       ];
-
       const hiddenEls = [];
-
       hideSelectors.forEach(selector => {
         report.querySelectorAll(selector).forEach(el => {
           hiddenEls.push({
             el,
             prev: el.style.display
           });
-
           el.style.display = "none";
         });
       });
-
       const editables = report.querySelectorAll("[contenteditable]");
-
       editables.forEach(el => {
         el.style.outline = "none";
       });
-
       try {
         const canvas = await html2canvas(report, {
           scale: 3,
@@ -1693,41 +1460,32 @@
           width: 920,
           windowWidth: 920
         });
-
         const now = new Date();
-
         const dateStr =
           now.getFullYear() + "-" +
           String(now.getMonth() + 1).padStart(2, "0") + "-" +
           String(now.getDate()).padStart(2, "0");
-
         const link = document.createElement("a");
         link.download = "AM-Daily-Report-Infographic-" + dateStr + ".png";
         link.href = canvas.toDataURL("image/png");
         link.click();
-
       } catch (err) {
         alert("ไม่สามารถสร้างภาพได้ กรุณาลองใหม่อีกครั้ง");
       } finally {
         hiddenEls.forEach(item => {
           item.el.style.display = item.prev;
         });
-
         editables.forEach(el => {
           el.style.outline = "";
         });
-
         loader.style.display = "none";
       }
     }
-
     /* ===================== INIT ===================== */
-
     loadData();
     setTodayDate();
     renderJobs();
     renderOperators();
   </script>
-
 </body>
 </html>
