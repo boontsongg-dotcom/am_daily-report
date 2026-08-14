@@ -19,17 +19,313 @@
       color: #1e293b;
     }
 
-    /* ===================== LOADING OVERLAY ===================== */
+    /* ===================== LOADING OVERLAY (INFOGRAPHIC STYLE) ===================== */
     .loader-overlay {
-      position: fixed; inset: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(4px);
-      z-index: 10000; display: none; align-items: center; justify-content: center; flex-direction: column;
-      color: #0a73a8; font-weight: 700; font-size: 16px;
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      background:
+        radial-gradient(circle at top left, rgba(224, 31, 38, 0.20), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(0, 88, 168, 0.25), transparent 40%),
+        linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(30, 41, 59, 0.92));
+      backdrop-filter: blur(8px);
+      font-family: "Noto Sans Thai", sans-serif;
     }
-    .spinner {
-      width: 48px; height: 48px; border: 5px solid #e2e8f0; border-top: 5px solid #0a73a8;
-      border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px;
+
+    .loader-card {
+      width: min(460px, calc(100vw - 32px));
+      padding: 28px;
+      border-radius: 28px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.96));
+      box-shadow:
+        0 30px 80px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255,255,255,0.9);
+      position: relative;
+      overflow: hidden;
+      animation: loaderCardIn 0.35s ease-out;
     }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    .loader-card::before {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      right: -90px;
+      top: -90px;
+      background: radial-gradient(circle, rgba(224, 31, 38, 0.20), transparent 68%);
+      border-radius: 50%;
+    }
+
+    .loader-card::after {
+      content: "";
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      left: -110px;
+      bottom: -120px;
+      background: radial-gradient(circle, rgba(0, 88, 168, 0.18), transparent 68%);
+      border-radius: 50%;
+    }
+
+    .loader-top,
+    .loader-visual,
+    .loader-progress,
+    .loader-steps,
+    .loader-note {
+      position: relative;
+      z-index: 1;
+    }
+
+    .loader-top {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .loader-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #e01f26, #0058a8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 14px 30px rgba(0, 88, 168, 0.28);
+      animation: loaderPulse 1.6s ease-in-out infinite;
+    }
+
+    .loader-icon span {
+      color: white;
+      font-weight: 900;
+      font-size: 20px;
+      letter-spacing: 0.5px;
+    }
+
+    .loader-title {
+      font-size: 20px;
+      font-weight: 900;
+      color: #0f172a;
+      line-height: 1.25;
+    }
+
+    .loader-subtitle {
+      margin-top: 4px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .loader-visual {
+      height: 170px;
+      border-radius: 24px;
+      background:
+        linear-gradient(135deg, rgba(0, 88, 168, 0.08), rgba(224, 31, 38, 0.08)),
+        #f8fafc;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin-bottom: 22px;
+    }
+
+    .loader-circle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.8;
+    }
+
+    .circle-one {
+      width: 90px;
+      height: 90px;
+      background: rgba(224, 31, 38, 0.12);
+      left: 38px;
+      top: 24px;
+      animation: floatOne 3s ease-in-out infinite;
+    }
+
+    .circle-two {
+      width: 70px;
+      height: 70px;
+      background: rgba(0, 88, 168, 0.13);
+      right: 52px;
+      bottom: 26px;
+      animation: floatTwo 3.4s ease-in-out infinite;
+    }
+
+    .circle-three {
+      width: 42px;
+      height: 42px;
+      background: rgba(245, 158, 11, 0.16);
+      right: 110px;
+      top: 34px;
+      animation: floatThree 2.8s ease-in-out infinite;
+    }
+
+    .loader-report-preview {
+      width: 210px;
+      padding: 16px;
+      border-radius: 18px;
+      background: white;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.16);
+      transform: rotate(-2deg);
+      animation: reportPreview 2.2s ease-in-out infinite;
+    }
+
+    .preview-header {
+      height: 28px;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #e01f26, #0058a8);
+      margin-bottom: 12px;
+    }
+
+    .preview-line {
+      height: 8px;
+      border-radius: 999px;
+      background: #cbd5e1;
+      margin-bottom: 8px;
+    }
+
+    .w-90 { width: 90%; }
+    .w-70 { width: 70%; }
+
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .preview-grid div {
+      height: 32px;
+      border-radius: 10px;
+      background: #e2e8f0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preview-grid div::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,0.8),
+        transparent
+      );
+      transform: translateX(-100%);
+      animation: shimmer 1.4s infinite;
+    }
+
+    .loader-progress {
+      height: 12px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      overflow: hidden;
+      margin-bottom: 18px;
+    }
+
+    .loader-progress-bar {
+      height: 100%;
+      width: 45%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #e01f26, #f97316, #0058a8);
+      animation: progressMove 1.45s ease-in-out infinite;
+    }
+
+    .loader-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .loader-step {
+      padding: 10px 8px;
+      border-radius: 14px;
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 11px;
+      font-weight: 700;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .loader-step span {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #94a3b8;
+    }
+
+    .loader-step.active span {
+      background: #16a34a;
+      box-shadow: 0 0 0 5px rgba(22, 163, 74, 0.12);
+      animation: stepBlink 1.2s ease-in-out infinite;
+    }
+
+    .loader-note {
+      text-align: center;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    @keyframes loaderCardIn {
+      from { opacity: 0; transform: translateY(18px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes loaderPulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 14px 30px rgba(0, 88, 168, 0.28); }
+      50% { transform: scale(1.06); box-shadow: 0 18px 38px rgba(224, 31, 38, 0.25); }
+    }
+    @keyframes progressMove {
+      0% { transform: translateX(-80%); width: 40%; }
+      50% { width: 62%; }
+      100% { transform: translateX(250%); width: 40%; }
+    }
+    @keyframes shimmer {
+      100% { transform: translateX(100%); }
+    }
+    @keyframes reportPreview {
+      0%, 100% { transform: rotate(-2deg) translateY(0); }
+      50% { transform: rotate(1deg) translateY(-8px); }
+    }
+    @keyframes floatOne {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(12px, 10px); }
+    }
+    @keyframes floatTwo {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(-10px, -12px); }
+    }
+    @keyframes floatThree {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(8px, -10px); }
+    }
+    @keyframes stepBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.45; }
+    }
+
+    @media (max-width: 480px) {
+      .loader-card { padding: 22px; border-radius: 24px; }
+      .loader-title { font-size: 19px; }
+      .loader-icon { width: 56px; height: 56px; border-radius: 18px; }
+      .loader-visual { height: 150px; }
+      .loader-report-preview { width: 185px; }
+      .loader-steps { grid-template-columns: 1fr; }
+      .loader-step { flex-direction: row; justify-content: center; }
+    }
 
     /* ===================== TOOLBAR & SEARCH ===================== */
     .controls-container { width: calc(100% - 24px); max-width: 840px; margin: 16px auto; }
@@ -347,10 +643,52 @@
 </head>
 <body>
 
-  <!-- ========== LOADING OVERLAY ========== -->
+  <!-- ========== LOADING OVERLAY (NEW INFOGRAPHIC STYLE) ========== -->
   <div class="loader-overlay" id="loaderOverlay">
-    <div class="spinner"></div>
-    <div id="loaderText">กำลังประมวลผล...</div>
+    <div class="loader-card">
+      <div class="loader-top">
+        <div class="loader-icon">
+          <span>SCG</span>
+        </div>
+        <div>
+          <div class="loader-title" id="loaderText">กำลังประมวลผล...</div>
+          <div class="loader-subtitle">โปรดรอสักครู่ ระบบกำลังจัดเตรียมเอกสาร</div>
+        </div>
+      </div>
+
+      <div class="loader-visual">
+        <div class="loader-circle circle-one"></div>
+        <div class="loader-circle circle-two"></div>
+        <div class="loader-circle circle-three"></div>
+        <div class="loader-report-preview">
+          <div class="preview-header"></div>
+          <div class="preview-line w-90"></div>
+          <div class="preview-line w-70"></div>
+          <div class="preview-grid">
+            <div></div><div></div>
+            <div></div><div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="loader-progress">
+        <div class="loader-progress-bar"></div>
+      </div>
+
+      <div class="loader-steps">
+        <div class="loader-step active">
+          <span></span> ดึงข้อมูล
+        </div>
+        <div class="loader-step active">
+          <span></span> จัดหน้า
+        </div>
+        <div class="loader-step active">
+          <span></span> สร้างไฟล์
+        </div>
+      </div>
+
+      <div class="loader-note">กรุณาอย่าปิดหน้าต่างนี้ขณะระบบกำลังทำงาน</div>
+    </div>
   </div>
 
   <!-- ========== CONTROLS (SEARCH & TOOLBAR) ========== -->
@@ -839,7 +1177,7 @@
 
         for (let i = 0; i < jobPages.length; i++) {
           document.getElementById("loaderText").innerText =
-            "กำลังสร้างรูปภาพหน้า " + (i + 1) + " จาก " + jobPages.length + "...";
+            "กำลังสร้างหน้า " + (i + 1) + " จาก " + jobPages.length;
 
           jobs = jobPages[i];
           renderJobs();
@@ -896,7 +1234,7 @@
        ========================================================== */
     async function downloadReportPDF() {
       const loader = document.getElementById("loaderOverlay");
-      document.getElementById("loaderText").innerText = "กำลังสร้างไฟล์ PDF และแบ่งหน้าอัตโนมัติ...";
+      document.getElementById("loaderText").innerText = "กำลังสร้างไฟล์ PDF...";
       loader.style.display = "flex";
       
       await new Promise(resolve => setTimeout(resolve, 200)); 
