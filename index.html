@@ -488,6 +488,15 @@
     let formPhotos = ["", "", "", ""];
     let operators = [];
 
+    /* ========== CHUNK FUNCTION (แบ่งหน้างาน) ========== */
+    function chunkJobs(list, size) {
+      const chunks = [];
+      for (let i = 0; i < list.length; i += size) {
+        chunks.push(list.slice(i, i + size));
+      }
+      return chunks;
+    }
+
     /* ========== LOCAL STORAGE SYSTEM ========== */
     function loadData() {
       const savedJobs = localStorage.getItem("am_daily_jobs");
@@ -573,7 +582,8 @@
         saveData(); 
         renderOperators(); 
         closeOpForm();
-      } catch (e) {}
+      } catch (e) {
+      }
     }
     function removeOperator(id) {
       if (!confirm("ต้องการลบผู้ปฏิบัติงานนี้ใช่หรือไม่?")) return;
@@ -691,13 +701,13 @@
       else { jobs.push(jobData); }
       
       try {
-        saveData(); 
+        saveData();
         document.getElementById('searchInput').value = ""; 
         renderJobs();
         closeForm();
         clearForm();
       } catch (e) {
-        jobs = backupJobs; 
+        jobs = backupJobs;
       }
     }
     
@@ -786,22 +796,22 @@
     }
 
     /* ==========================================================
-       DOWNLOAD IMAGE 
+       DOWNLOAD IMAGE (PAGINATED - ทีละ 4 งาน)
        ========================================================== */
     async function downloadReportImage() {
       const loader = document.getElementById("loaderOverlay");
       document.getElementById("loaderText").innerText = "กำลังสร้างรูปภาพ...";
       loader.style.display = "flex";
-      
-      // บังคับ Scroll เลื่อนกลับขึ้นบนสุดก่อนทำการแคปภาพ
-      window.scrollTo(0, 0);
-      await new Promise(resolve => setTimeout(resolve, 300)); 
 
-      renderJobs(); 
+      await new Promise(resolve => setTimeout(resolve, 200));
+
       const report = document.getElementById("report");
+      const originalJobs = [...jobs];
+      const originalSearch = document.getElementById("searchInput").value;
 
       const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
       const hiddenEls = [];
+
       hideSelectors.forEach(sel => {
         report.querySelectorAll(sel).forEach(el => {
           hiddenEls.push({ el, prev: el.style.display });
@@ -810,35 +820,74 @@
       });
 
       const editables = report.querySelectorAll("[contenteditable]");
-      editables.forEach(el => { el.style.outline = "none"; });
+      editables.forEach(el => {
+        el.style.outline = "none";
+      });
 
       try {
-        const canvas = await html2canvas(report, {
-          scale: 3,
-          useCORS: true,
-          allowTaint: false,
-          backgroundColor: "#f8fafc",
-          scrollY: 0,
-          windowHeight: report.scrollHeight // บังคับอ่านความสูงเต็ม 100%
-        });
+        document.getElementById("searchInput").value = "";
+
+        const jobsPerImage = 4;
+        const jobPages = originalJobs.length > 0
+          ? chunkJobs(originalJobs, jobsPerImage)
+          : [[]];
 
         const now = new Date();
         const dateStr = now.getFullYear() + "-"
           + String(now.getMonth() + 1).padStart(2, "0") + "-"
           + String(now.getDate()).padStart(2, "0");
 
-        const link = document.createElement("a");
-        link.download = "AM-Daily-Report-Landscape-" + dateStr + ".png";
-        link.href = canvas.toDataURL("image/png");
-        link.click();
+        for (let i = 0; i < jobPages.length; i++) {
+          document.getElementById("loaderText").innerText =
+            "กำลังสร้างรูปภาพหน้า " + (i + 1) + " จาก " + jobPages.length + "...";
+
+          jobs = jobPages[i];
+          renderJobs();
+
+          await new Promise(resolve => setTimeout(resolve, 300));
+
+          const canvas = await html2canvas(report, {
+            scale: 3,
+            useCORS: true,
+            allowTaint: false,
+            backgroundColor: "#f8fafc",
+            logging: false,
+            width: 840,
+            windowWidth: 840
+          });
+
+          const link = document.createElement("a");
+
+          if (jobPages.length === 1) {
+            link.download = "AM-Daily-Report-Landscape-" + dateStr + ".png";
+          } else {
+            link.download = "AM-Daily-Report-Landscape-" + dateStr + "-page-" + String(i + 1).padStart(2, "0") + ".png";
+          }
+
+          link.href = canvas.toDataURL("image/png");
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
 
       } catch (err) {
         alert("ไม่สามารถสร้างภาพได้ กรุณาลองใหม่อีกครั้ง");
       } finally {
-        hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
-        editables.forEach(el => { el.style.outline = ""; });
-        
-        loader.style.display = "none"; 
+        jobs = originalJobs;
+        document.getElementById("searchInput").value = originalSearch;
+        renderJobs();
+
+        hiddenEls.forEach(({ el, prev }) => {
+          el.style.display = prev;
+        });
+
+        editables.forEach(el => {
+          el.style.outline = "";
+        });
+
+        loader.style.display = "none";
       }
     }
 
@@ -850,9 +899,7 @@
       document.getElementById("loaderText").innerText = "กำลังสร้างไฟล์ PDF และแบ่งหน้าอัตโนมัติ...";
       loader.style.display = "flex";
       
-      // บังคับ Scroll เลื่อนกลับขึ้นบนสุด เพื่อไม่ให้บัก html2canvas ตัดภาพขาด
-      window.scrollTo(0, 0);
-      await new Promise(resolve => setTimeout(resolve, 300)); 
+      await new Promise(resolve => setTimeout(resolve, 200)); 
 
       renderJobs(); 
       const report = document.getElementById("report");
@@ -875,11 +922,12 @@
           useCORS: true,
           allowTaint: false,
           backgroundColor: "#f8fafc",
-          scrollY: 0,
-          windowHeight: report.scrollHeight // บังคับอ่านความสูงเต็ม 100%
+          logging: false,
+          width: 840,
+          windowWidth: 840
         });
 
-        const imgData = canvas.toDataURL("image/jpeg", 0.9);
+        const imgData = canvas.toDataURL("image/jpeg", 0.85);
 
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF({
@@ -899,8 +947,8 @@
         pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
         heightLeft -= pdfHeight;
 
-        // หากความยาวภาพยาวกว่า 1 หน้ากระดาษ ให้ตัดแบ่งสร้างหน้าใหม่ต่อไปเรื่อยๆ
-        while (heightLeft > 1) {
+        // หากเนื้อหาเกิน 1 หน้า ให้สร้างหน้าใหม่เพิ่มอัตโนมัติทีละหน้าจนครบ
+        while (heightLeft > 0) {
           position = heightLeft - imgHeight;
           pdf.addPage();
           pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
