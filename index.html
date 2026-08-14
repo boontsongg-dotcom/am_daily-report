@@ -174,15 +174,15 @@
     }
     /* ===================== HEADER ===================== */
     .header {
-      height: 120px;
+      height: 110px; /* ลดความสูงลงเล็กน้อยเพราะไม่มีกรอบรูปด้านขวาแล้ว */
       background: #0b78ae;
       color: #fff;
-      padding: 10px 12px;
+      padding: 10px 15px;
       position: relative;
       display: grid;
-      grid-template-columns: 95px 1fr; /* เปลี่ยนเป็น 2 คอลัมน์ให้ข้อความเต็มพื้นที่ */
-      gap: 6px;
-      align-items: start;
+      grid-template-columns: 95px 1fr; /* ปรับให้เหลือแค่ 2 คอลัมน์ (โลโก้ + ตัวหนังสือ) */
+      gap: 15px;
+      align-items: center; /* จัดให้อยู่กึ่งกลางแนวตั้ง */
     }
     .logo-container {
       position: relative;
@@ -213,14 +213,14 @@
       letter-spacing: 0.3px;
     }
     .title h1 {
-      margin: 4px 0 0;
-      font-size: 21px;
+      margin: 0 0 4px;
+      font-size: 24px; /* ขยายขนาดฟอนต์ให้ใหญ่ขึ้นเพราะมีพื้นที่มากขึ้น */
       line-height: 1.05;
       font-weight: 900;
     }
     .title p {
-      margin: 1px 0 6px;
-      font-size: 9px;
+      margin: 0 0 8px;
+      font-size: 10px;
       letter-spacing: 0.4px;
       font-weight: bold;
     }
@@ -237,7 +237,7 @@
     /* ===================== CONTENT ===================== */
     .content {
       padding: 0 10px 8px;
-      margin-top: -18px;
+      margin-top: -15px; /* ดันกล่องสรุปผลงานขึ้นไปทับ Header เล็กน้อย */
       position: relative;
       z-index: 2;
     }
@@ -493,17 +493,10 @@
       gap: 5px;
       align-items: center;
     }
-    /* === ปรับแต่งรูปภาพ Safety ด้านล่าง === */
-    .bottom-safety-img {
-      width: 100%;
-      max-width: 65px;
-      height: 65px;
-      background: #ffffff;
-      border-radius: 8px;
-      border: 2px solid #fff;
-      object-fit: cover;
-      object-position: top; /* ดันภาพขึ้นเพื่อซ่อนลายน้ำเหมือนเดิม */
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    .safety-title {
+      font-size: 22px;
+      line-height: 0.9;
+      font-weight: 900;
     }
     .safety-item {
       text-align: center;
@@ -527,27 +520,41 @@
       color: #fff;
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      padding: 6px 8px 8px;
+      padding: 8px;
       gap: 4px;
       font-size: 7.5px;
       text-align: center;
       font-weight: 800;
     }
+    /* จัดการ Layout ในแต่ละช่องของ Footer */
     .footer div {
       border-right: 1px solid rgba(255,255,255,0.35);
-    }
-    .footer div:last-child { border-right: none; }
-    .footer-brand {
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 2px;
+      justify-content: flex-end; /* ดันข้อความทั้งหมดให้ตรงกันด้านล่างสุด */
+      gap: 4px;
+      padding-bottom: 2px;
     }
-    .footer-brand img {
-      width: 40px;
-      height: auto;
+    .footer div:last-child { border-right: none; }
+    
+    .footer-logo {
+      height: 28px;
+      width: auto;
       border-radius: 3px;
     }
+    
+    /* ควบคุมรูป Safety ใน Footer ให้ตัดลายน้ำออก */
+    .footer-safety-img {
+      width: 32px;
+      height: 32px;
+      object-fit: cover;
+      object-position: top;
+      border-radius: 6px;
+      background: #fff;
+      border: 1px solid #fff;
+    }
+    
     /* ===================== PRINT ===================== */
     @media print {
       body { background: white; }
@@ -652,7 +659,6 @@
           <p contenteditable="true">CEMENT MILL AM DAILY REPORT</p>
           <div class="date">📅 <span contenteditable="true" id="reportDate"></span></div>
         </div>
-        <!-- นำ Worker (Safety Badge) ออกจากส่วนนี้แล้ว -->
       </section>
 
       <!-- ===== CONTENT ===== -->
@@ -698,16 +704,7 @@
         <!-- SAFETY -->
         <section class="safety">
           <div class="safety-grid">
-            <!-- นำรูป Safety มาใส่ตรงนี้แทนข้อความ Safety First -->
-            <div style="text-align: center;">
-              <img 
-                class="bottom-safety-img" 
-                src="images/safety.png" 
-                alt="Safety First" 
-                crossorigin="anonymous"
-                onerror="this.style.display='none';"
-              >
-            </div>
+            <div class="safety-title" contenteditable="true">Safety<br>First</div>
             <div class="safety-item">
               <div class="safety-icon">⛑</div>
               <div contenteditable="true">สวม PPE<br>ทุกครั้ง</div>
@@ -735,8 +732,9 @@
 
       <!-- ===== FOOTER ===== -->
       <footer class="footer">
-        <div class="footer-brand">
+        <div>
           <img
+            class="footer-logo"
             src="images/scg_green.png"
             alt="SCG"
             crossorigin="anonymous"
@@ -744,10 +742,25 @@
           >
           <span contenteditable="true">SCG GREEN</span>
         </div>
-        <div contenteditable="true">Reliability</div>
-        <div contenteditable="true">Safety</div>
-        <div contenteditable="true">Teamwork</div>
-        <div contenteditable="true">Continuous<br>Improvement</div>
+        <div>
+          <span contenteditable="true">Reliability</span>
+        </div>
+        <div>
+          <img
+            class="footer-safety-img"
+            src="images/safety.png"
+            alt="Safety Worker"
+            crossorigin="anonymous"
+            onerror="this.style.display='none';"
+          >
+          <span contenteditable="true">Safety</span>
+        </div>
+        <div>
+          <span contenteditable="true">Teamwork</span>
+        </div>
+        <div>
+          <span contenteditable="true">Continuous<br>Improvement</span>
+        </div>
       </footer>
 
     </main>
@@ -893,7 +906,7 @@
       document.getElementById("newDetail").value = "";
       document.getElementById("newPurpose").value = "";
       document.getElementById("newStatus").value = "100%";
-      formPhotos = ["", "", ""]; 
+      formPhotos = ["", "", ""];
       document.querySelectorAll(".photo-form-box input").forEach(input => input.value = "");
       updateFormPhotoPreviews();
     }
