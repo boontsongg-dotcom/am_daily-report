@@ -3,905 +3,297 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AM Daily Report Infographic</title>
+  <title>AM Daily Report CRUD (Responsive Landscape)</title>
+  
+  <!-- Google Fonts: Noto Sans Thai -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: 'Noto Sans Thai', Tahoma, sans-serif;
-      background: radial-gradient(circle at top, #e0f2fe 0, #f0f4f8 38%, #e2e8f0 100%);
+      font-family: 'Noto Sans Thai', Tahoma, sans-serif; 
+      background: #f0f4f8; 
       color: #1e293b;
     }
+
     /* ===================== LOADING OVERLAY ===================== */
     .loader-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(255,255,255,0.85);
-      backdrop-filter: blur(4px);
-      z-index: 10000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      color: #0a73a8;
-      font-weight: 700;
-      font-size: 16px;
+      position: fixed; inset: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(4px);
+      z-index: 10000; display: none; align-items: center; justify-content: center; flex-direction: column;
+      color: #0a73a8; font-weight: 700; font-size: 16px;
     }
     .spinner {
-      width: 48px;
-      height: 48px;
-      border: 5px solid #e2e8f0;
-      border-top: 5px solid #0a73a8;
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin-bottom: 16px;
+      width: 48px; height: 48px; border: 5px solid #e2e8f0; border-top: 5px solid #0a73a8;
+      border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px;
     }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-    /* ===================== TOOLBAR ===================== */
-    .controls-container {
-      width: calc(100% - 24px);
-      max-width: 920px;
-      margin: 16px auto;
-    }
-    .search-box {
-      margin-bottom: 12px;
-    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* ===================== TOOLBAR & SEARCH ===================== */
+    .controls-container { width: calc(100% - 24px); max-width: 840px; margin: 16px auto; }
+    .search-box { margin-bottom: 12px; }
     .search-box input {
-      width: 100%;
-      padding: 12px 18px;
-      border: 1px solid #cbd5e1;
-      border-radius: 999px;
-      font-family: inherit;
-      font-size: 14px;
-      outline: none;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 14px rgba(15,23,42,0.05);
-      background: rgba(255,255,255,0.95);
+      width: 100%; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 24px;
+      font-family: 'Noto Sans Thai', sans-serif; font-size: 14px; outline: none; transition: all 0.3s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
     }
-    .search-box input:focus {
-      border-color: #0ea5e9;
-      box-shadow: 0 6px 18px rgba(14,165,233,0.18);
-    }
+    .search-box input:focus { border-color: #0a73a8; box-shadow: 0 4px 12px rgba(10,115,168,0.15); }
     .toolbar {
-      background: rgba(255,255,255,0.95);
-      padding: 12px;
-      border-radius: 18px;
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      flex-wrap: wrap;
-      box-shadow: 0 10px 28px rgba(15,23,42,0.08);
-      border: 1px solid rgba(226,232,240,0.9);
+      background: #ffffff; padding: 12px; border-radius: 16px; display: flex;
+      gap: 8px; justify-content: center; flex-wrap: wrap; box-shadow: 0 4px 16px rgba(0,0,0,0.06);
     }
-    button {
-      font-family: inherit;
+    button { font-family: inherit; }
+    .toolbar button, .form-panel button {
+      border: none; color: white; padding: 10px 14px; border-radius: 10px;
+      font-weight: 600; cursor: pointer; font-size: 13px; flex: 1 1 auto;
+      min-width: 78px; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .toolbar button,
-    .form-panel button {
-      border: none;
-      color: white;
-      padding: 10px 14px;
-      border-radius: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      font-size: 13px;
-      flex: 1 1 auto;
-      min-width: 84px;
-      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .toolbar button:hover,
-    .form-panel button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 14px rgba(15,23,42,0.18);
-      filter: brightness(1.05);
-    }
-    .toolbar button:active,
-    .form-panel button:active {
-      transform: translateY(0);
-    }
-    .btn-blue   { background: linear-gradient(135deg, #0ea5e9, #0284c7); }
-    .btn-green  { background: linear-gradient(135deg, #10b981, #059669); }
-    .btn-orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
-    .btn-red    { background: linear-gradient(135deg, #ef4444, #dc2626); }
-    .btn-gray   { background: linear-gradient(135deg, #64748b, #475569); }
+    .toolbar button:hover, .form-panel button:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.15); filter: brightness(1.05); }
+    .toolbar button:active, .form-panel button:active { transform: translateY(0); }
+
+    .btn-blue   { background: #0ea5e9; } 
+    .btn-green  { background: #10b981; } 
+    .btn-orange { background: #f59e0b; } 
+    .btn-red    { background: #ef4444; } 
+    .btn-gray   { background: #64748b; }
+
     /* ===================== FORM OVERLAY ===================== */
     .form-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(15,23,42,0.6);
-      backdrop-filter: blur(3px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      padding: 16px;
+      position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(2px);
+      display: none; align-items: center; justify-content: center; z-index: 9999; padding: 16px;
     }
-    .form-overlay.show {
-      display: flex;
-    }
+    .form-overlay.show { display: flex; }
     .form-panel {
-      width: 100%;
-      max-width: 460px;
-      max-height: 92vh;
-      overflow-y: auto;
-      background: #ffffff;
-      border-radius: 22px;
-      padding: 20px;
-      box-shadow: 0 24px 48px rgba(15,23,42,0.24);
-      font-size: 13px;
+      width: 100%; max-width: 430px; max-height: 92vh; overflow-y: auto;
+      background: #ffffff; border-radius: 20px; padding: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2); font-size: 13px;
       animation: popupIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    @keyframes popupIn {
-      from { opacity: 0; transform: translateY(20px) scale(0.95); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    .form-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-    .form-header h3 {
-      margin: 0;
-      color: #0f172a;
-      font-size: 18px;
-      font-weight: 800;
-    }
+    @keyframes popupIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .form-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .form-header h3 { margin: 0; color: #0f172a; font-size: 18px; font-weight: 700; }
     .close-btn {
-      width: 34px;
-      height: 34px;
-      border: none;
-      border-radius: 50%;
-      background: #f1f5f9;
-      color: #64748b;
-      font-size: 22px;
-      line-height: 1;
-      cursor: pointer;
-      transition: 0.2s;
-      padding: 0;
+      width: 32px; height: 32px; border: none; border-radius: 50%;
+      background: #f1f5f9; color: #64748b; font-size: 20px; line-height: 1; cursor: pointer; transition: 0.2s;
     }
-    .close-btn:hover {
-      background: #ef4444;
-      color: white;
-      transform: rotate(90deg);
+    .close-btn:hover { background: #ef4444; color: white; transform: rotate(90deg); }
+    
+    .form-panel input, .form-panel textarea {
+      width: 100%; padding: 10px 12px; margin: 6px 0; border: 1.5px solid #e2e8f0; border-radius: 10px;
+      font-family: inherit; font-size: 13.5px; transition: 0.2s;
     }
-    .form-panel input,
-    .form-panel textarea {
-      width: 100%;
-      padding: 10px 12px;
-      margin: 6px 0;
-      border: 1.5px solid #e2e8f0;
-      border-radius: 12px;
-      font-family: inherit;
-      font-size: 13.5px;
-      transition: 0.2s;
-    }
-    .form-panel input:focus,
-    .form-panel textarea:focus {
-      border-color: #0ea5e9;
-      outline: none;
-      box-shadow: 0 0 0 3px rgba(14,165,233,0.15);
-    }
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 105px;
-      gap: 8px;
-    }
-    .form-buttons {
-      display: flex;
-      gap: 8px;
-      margin-top: 16px;
-    }
-    .photo-form-title {
-      margin: 12px 0 6px;
-      font-weight: 700;
-      color: #334155;
-    }
-    .photo-form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-    }
+    .form-panel input:focus, .form-panel textarea:focus { border-color: #0ea5e9; outline: none; box-shadow: 0 0 0 3px rgba(14,165,233,0.15); }
+    .form-row { display: grid; grid-template-columns: 1fr 95px; gap: 8px; }
+    .form-buttons { display: flex; gap: 8px; margin-top: 16px; }
+
+    .photo-form-title { margin: 12px 0 6px; font-weight: 600; color: #334155; }
+    .photo-form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
     .photo-form-box {
-      border: 1.5px dashed #cbd5e1;
-      border-radius: 14px;
-      padding: 8px;
-      background: #f8fafc;
-      text-align: center;
-      font-size: 11px;
-      color: #64748b;
-      transition: 0.2s;
+      border: 1.5px dashed #cbd5e1; border-radius: 12px; padding: 8px;
+      background: #f8fafc; text-align: center; font-size: 11px; color: #64748b; transition: 0.2s;
     }
-    .photo-form-box:hover {
-      border-color: #0ea5e9;
-      background: #f0f9ff;
-    }
+    .photo-form-box:hover { border-color: #0ea5e9; background: #f0f9ff; }
     .photo-form-box img {
-      width: 100%;
-      height: 56px;
-      object-fit: contain; /* ปรับแก้ไขตรงนี้ */
-      display: none;
-      border-radius: 10px;
-      margin-bottom: 6px;
-      background: #e2e8f0;
+      width: 100%; height: 50px; object-fit: cover; display: none;
+      border-radius: 8px; margin-bottom: 6px; background: #e2e8f0;
     }
-    .photo-form-box input {
-      font-size: 10px;
-      padding: 6px;
-    }
-    /* ===================== REPORT ===================== */
-    .report-viewport {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      padding: 0 8px 32px;
-    }
+
+    /* ===================== REPORT VIEWPORT (RESPONSIVE LANDSCAPE) ===================== */
+    .report-viewport { width: 100%; display: flex; justify-content: center; padding: 0 8px 32px; }
     .report {
       width: 100%;
-      max-width: 920px;
+      max-width: 840px; 
       background: #f8fafc;
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 20px 48px rgba(15,23,42,0.16);
-      position: relative;
-      border: 1px solid rgba(226,232,240,0.9);
+      border-radius: 12px; overflow: hidden; box-shadow: 0 12px 32px rgba(0,0,0,0.1); position: relative;
     }
-    [contenteditable="true"] {
-      outline: 1px dashed transparent;
-      border-radius: 4px;
-      transition: 0.2s;
-    }
-    [contenteditable="true"]:focus {
-      outline-color: #fcd34d;
-      background: rgba(255,255,255,0.8);
-    }
-    /* ===================== HEADER INFOGRAPHIC ===================== */
+    [contenteditable="true"] { outline: 1px dashed transparent; border-radius: 4px; transition: 0.2s; }
+    [contenteditable="true"]:focus { outline-color: #fcd34d; background: rgba(255,255,255,0.8); }
+
+    /* ===================== HEADER ===================== */
     .header {
-      min-height: 128px;
-      height: auto;
-      background:
-        radial-gradient(circle at 92% 20%, rgba(255,255,255,0.22), transparent 20%),
-        linear-gradient(135deg, #0284c7, #0369a1 55%, #075985);
-      color: #fff;
-      padding: 18px 26px 30px;
-      position: relative;
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: 24px;
-      align-items: center;
-      overflow: hidden;
+      min-height: 110px; height: auto; background: linear-gradient(135deg, #0284c7, #0369a1); 
+      color: #fff; padding: 16px 24px 26px 24px; position: relative; display: grid;
+      grid-template-columns: auto 1fr; gap: 24px; align-items: center; 
     }
-    .header::before {
-      content: "";
-      position: absolute;
-      right: -70px;
-      top: -75px;
-      width: 240px;
-      height: 240px;
-      background: rgba(255,255,255,0.12);
-      border-radius: 50%;
-    }
-    .header::after {
-      content: "";
-      position: absolute;
-      right: 110px;
-      bottom: -55px;
-      width: 150px;
-      height: 150px;
-      background: rgba(255,255,255,0.08);
-      border-radius: 50%;
-    }
-    .logo-container {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-    }
-    .logo-img {
-      width: 118px;
-      height: auto;
-      border-radius: 12px;
-      background: #fff;
-      padding: 7px;
-      display: block;
-      box-shadow: 0 8px 18px rgba(15,23,42,0.18);
-    }
-    .title {
-      position: relative;
-      z-index: 1;
-    }
+    .logo-container { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+    .logo-img { width: 110px; height: auto; border-radius: 8px; background: #fff; padding: 6px; display: block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    
     .header-top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      margin-bottom: 6px;
-      flex-wrap: wrap;
-      gap: 10px;
+      display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 6px; flex-wrap: wrap; gap: 10px;
     }
-    .title h1 {
-      margin: 0;
-      font-size: 32px;
-      line-height: 1.08;
-      font-weight: 900;
-      letter-spacing: -0.6px;
-      text-shadow: 0 3px 8px rgba(15,23,42,0.2);
-    }
-    .title p {
-      display: inline-block;
-      margin: 0 0 9px;
-      font-size: 11px;
-      font-weight: 800;
-      opacity: 0.96;
-      letter-spacing: 0.6px;
-      background: rgba(255,255,255,0.18);
-      padding: 5px 12px;
-      border-radius: 999px;
-      backdrop-filter: blur(4px);
-    }
+    .title h1 { margin: 0; font-size: 28px; line-height: 1.1; font-weight: 900; letter-spacing: -0.5px; }
+    
+    /* SCG GREEN โหลดจากภาพ scg_green.png และปรับขนาดเท่าโลโก้ซ้าย */
     .scg-green-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: #ffffff;
-      padding: 7px 12px;
-      border-radius: 12px;
-      box-shadow: 0 6px 16px rgba(15,23,42,0.18);
-      white-space: nowrap;
+      display: inline-flex; align-items: center; justify-content: center; background: #ffffff;
+      padding: 6px 12px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); white-space: nowrap; 
     }
-    .scg-green-badge img {
-      height: 38px;
-      width: auto;
-      border-radius: 4px;
-      display: block;
-    }
-    .date {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(255,255,255,0.22);
-      border-radius: 999px;
-      padding: 5px 15px;
-      font-size: 13px;
-      font-weight: 800;
-      backdrop-filter: blur(4px);
-      border: 1px solid rgba(255,255,255,0.22);
-    }
+    .scg-green-badge img { height: 35px; width: auto; border-radius: 4px; display: block; }
+
+    .title p { margin: 0 0 8px; font-size: 11px; font-weight: 600; opacity: 0.9; }
+    .date { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.2); border-radius: 16px; padding: 4px 14px; font-size: 13px; font-weight: 600; backdrop-filter: blur(4px); }
+
     /* ===================== CONTENT ===================== */
-    .content {
-      padding: 0 18px 18px;
-      margin-top: -14px;
-      position: relative;
-      z-index: 2;
-    }
+    .content { padding: 0 16px 16px; margin-top: -12px; position: relative; z-index: 2; }
+    
     .summary {
-      background: #ffffff;
-      border-radius: 16px;
-      border: 1px solid #e2e8f0;
-      padding: 14px 16px 15px;
-      box-shadow: 0 8px 20px rgba(15,23,42,0.08);
-      margin-bottom: 16px;
+      background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;
+      padding: 12px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 16px;
     }
     .section-label {
-      position: relative;
-      display: inline-block;
-      background: linear-gradient(135deg, #0284c7, #0ea5e9);
-      color: #fff;
-      padding: 7px 17px;
-      border-radius: 10px 10px 10px 0;
-      font-size: 13px;
-      font-weight: 800;
-      margin-bottom: 10px;
-      box-shadow: 0 5px 12px rgba(2,132,199,0.25);
+      display: inline-block; background: #0284c7; color: #fff;
+      padding: 6px 16px; border-radius: 8px 8px 0 0; font-size: 13px; font-weight: 700; margin-bottom: 8px;
     }
-    .section-label::after {
-      content: "";
-      position: absolute;
-      left: 100%;
-      top: 50%;
-      width: 86px;
-      height: 3px;
-      background: #bae6fd;
-      transform: translateY(-50%);
-      border-radius: 999px;
-    }
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      text-align: center;
-    }
-    .metric {
-      border-right: 1px solid #e2e8f0;
-      min-height: 66px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      position: relative;
-    }
-    .metric:last-child {
-      border-right: none;
-    }
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center; }
+    .metric { border-right: 1px solid #e2e8f0; min-height: 48px; display: flex; flex-direction: column; justify-content: center; }
+    .metric:last-child { border-right: none; }
     .metric .icon {
-      width: 36px;
-      height: 36px;
-      margin: 0 auto 5px;
-      border-radius: 50%;
-      background: #e0f2fe;
-      color: #0284c7;
-      display: grid;
-      place-items: center;
-      font-size: 16px;
-      font-weight: 900;
-      box-shadow: inset 0 0 0 1px rgba(2,132,199,0.12);
+      width: 28px; height: 28px; margin: 0 auto 4px; border-radius: 50%;
+      background: #e0f2fe; color: #0284c7; display: grid; place-items: center; font-size: 14px; font-weight: bold;
     }
-    .metric.red .icon {
-      background: #fee2e2;
-      color: #dc2626;
-    }
-    .metric.green .icon {
-      background: #d1fae5;
-      color: #059669;
-    }
-    .metric.orange .icon {
-      background: #fef3c7;
-      color: #d97706;
-    }
-    .metric .text {
-      font-size: 10px;
-      line-height: 1.15;
-      font-weight: 800;
-      color: #64748b;
-    }
-    .metric .num {
-      display: block;
-      font-size: 24px;
-      color: #0f172a;
-      margin-top: 2px;
-      font-weight: 900;
-      letter-spacing: -0.5px;
-    }
-    /* ===================== JOB CARDS ===================== */
+    .metric.red .icon   { background: #fee2e2; color: #dc2626; }
+    .metric.green .icon { background: #d1fae5; color: #059669; }
+    .metric .text { font-size: 10px; line-height: 1.1; font-weight: 700; color: #64748b; }
+    .metric .num { display: block; font-size: 14px; color: #0f172a; margin-top: 2px; }
+
+    /* ===================== JOB CARDS (RESPONSIVE GRID) ===================== */
     #jobList {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, 1fr); 
       gap: 12px;
       margin-bottom: 16px;
     }
     @media (max-width: 768px) {
-      #jobList {
-        grid-template-columns: 1fr;
-      }
+      #jobList { grid-template-columns: 1fr; } /* หน้าจอเล็กปรับเป็น 1 คอลัมน์อัตโนมัติ */
     }
+
     .empty-job {
-      grid-column: 1 / -1;
-      background: #ffffff;
-      border: 2px dashed #cbd5e1;
-      border-radius: 16px;
-      padding: 28px;
-      text-align: center;
-      color: #64748b;
-      font-size: 14px;
-      font-weight: 600;
+      grid-column: 1 / -1; background: #ffffff; border: 2px dashed #cbd5e1; border-radius: 12px;
+      padding: 24px; text-align: center; color: #64748b; font-size: 14px; font-weight: 500;
     }
+
     .job-card {
-      background: #fff;
-      border-radius: 16px;
-      border: 1px solid #e2e8f0;
-      overflow: hidden;
-      box-shadow: 0 6px 16px rgba(15,23,42,0.07);
-      transition: all 0.25s ease;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-    .job-card::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 7px;
-      height: 100%;
-      background: #94a3b8;
-      z-index: 2;
-    }
-    .job-card.job-done::before {
-      background: linear-gradient(180deg, #22c55e, #10b981);
-    }
-    .job-card.job-progress::before {
-      background: linear-gradient(180deg, #fbbf24, #f59e0b);
-    }
-    .job-card.job-todo::before {
-      background: linear-gradient(180deg, #f87171, #ef4444);
-    }
-    .job-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 24px rgba(15,23,42,0.1);
+      background: #fff; border-radius: 12px; border: 1px solid #e2e8f0;
+      overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: all 0.25s ease; 
+      display: flex; flex-direction: column; 
     }
     .job-code {
-      background: linear-gradient(135deg, #f8fafc, #eef6ff);
-      color: #334155;
-      font-weight: 800;
-      font-size: 12px;
-      padding: 9px 12px 9px 16px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #e2e8f0;
+      background: #f1f5f9; color: #334155; font-weight: 700; font-size: 12px; padding: 8px 12px;
+      display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0;
     }
-    .job-code b {
-      color: #0f172a;
-    }
-    .job-actions {
-      display: flex;
-      gap: 4px;
-    }
+    .job-actions { display: flex; gap: 4px; }
     .job-actions button {
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-size: 10px;
-      padding: 4px 8px;
-      cursor: pointer;
-      font-weight: 700;
-      transition: 0.2s;
+      color: #fff; border: none; border-radius: 4px; font-size: 10px;
+      padding: 3px 8px; cursor: pointer; font-weight: 600; transition: 0.2s;
     }
-    .edit-job { background: #f59e0b; }
-    .edit-job:hover { background: #d97706; }
-    .delete-job { background: #ef4444; }
-    .delete-job:hover { background: #dc2626; }
-    .job-body {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      padding: 12px 12px 12px 16px;
-      flex: 1;
-    }
-    .job-text {
-      font-size: 11.5px;
-      line-height: 1.55;
-      font-weight: 550;
-      color: #334155;
-    }
-    .job-text b {
-      color: #0284c7;
-      font-weight: 800;
-    }
-    .job-info-row {
-      margin-bottom: 2px;
-    }
-    .status-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-top: 8px;
-      font-size: 10px;
-      font-weight: 800;
-    }
-    .progress {
-      flex: 1;
-      height: 12px;
-      background: #e2e8f0;
-      border-radius: 999px;
-      overflow: hidden;
-    }
-    .progress div {
-      height: 100%;
-      border-radius: 999px;
-      transition: width 0.5s ease;
-    }
-    .job-done .progress div {
-      background: linear-gradient(90deg, #22c55e, #14b8a6);
-      box-shadow: 0 0 8px rgba(16,185,129,0.45);
-    }
-    .job-progress .progress div {
-      background: linear-gradient(90deg, #fbbf24, #f59e0b);
-      box-shadow: 0 0 8px rgba(245,158,11,0.38);
-    }
-    .job-todo .progress div {
-      background: linear-gradient(90deg, #f87171, #ef4444);
-      box-shadow: 0 0 8px rgba(239,68,68,0.35);
-    }
-    .status-badge {
-      padding: 3px 8px;
-      border-radius: 999px;
-      color: #fff;
-      font-size: 9px;
-      font-weight: 900;
-      letter-spacing: 0.3px;
-      min-width: 42px;
-      text-align: center;
-    }
-    .status-badge.done {
-      background-color: #10b981;
-    }
-    .status-badge.progress {
-      background-color: #f59e0b;
-    }
-    .status-badge.todo {
-      background-color: #ef4444;
-    }
-    .photos {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 7px;
-      margin-top: auto;
-    }
+    .edit-job { background: #f59e0b; } .edit-job:hover { background: #d97706; }
+    .delete-job { background: #ef4444; } .delete-job:hover { background: #dc2626; }
+    
+    .job-body { display: flex; flex-direction: column; gap: 10px; padding: 12px; flex: 1; }
+    .job-text { font-size: 11.5px; line-height: 1.5; font-weight: 500; color: #334155; }
+    .job-text b { color: #0284c7; font-weight: 700; }
+    
+    .status-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 10px; font-weight: 700; }
+    .progress { flex: 1; height: 10px; background: #e2e8f0; border-radius: 20px; overflow: hidden; }
+    .progress div { height: 100%; background: #10b981; border-radius: 20px; transition: width 0.5s ease; }
+    
+    .status-badge { padding: 2px 8px; border-radius: 12px; color: #fff; font-size: 9px; font-weight: 700; letter-spacing: 0.5px; }
+    .status-badge.done { background-color: #10b981; } 
+    .status-badge.progress { background-color: #f59e0b; } 
+    .status-badge.todo { background-color: #ef4444; } 
+
+    /* ระบบ 4 รูปภาพ 2x2 */
+    .photos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: auto; }
     .photo-box {
-      border-radius: 10px;
-      background: linear-gradient(135deg, #e2e8f0, #f8fafc);
-      border: 2px solid #ffffff;
-      overflow: hidden;
-      position: relative;
-      display: grid;
-      place-items: center;
-      height: 76px;
-      font-size: 9px;
-      color: #64748b;
-      text-align: center;
-      font-weight: 700;
-      box-shadow: 0 4px 10px rgba(15,23,42,0.12);
+      border-radius: 6px; background: #e2e8f0; border: 1px solid #cbd5e1;
+      overflow: hidden; position: relative; display: grid; place-items: center;
+      height: 65px; font-size: 9px; color: #64748b; text-align: center; font-weight: 600;
     }
-    .photo-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain; /* ปรับแก้ไขตรงนี้ */
-      display: block;
-    }
-    .photo-box::after {
-      content: attr(data-label);
-      position: absolute;
-      left: 6px;
-      bottom: 5px;
-      background: rgba(15,23,42,0.68);
-      color: #fff;
-      font-size: 8px;
-      line-height: 1;
-      padding: 3px 7px;
-      border-radius: 999px;
-      backdrop-filter: blur(2px);
-    }
+    .photo-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
     /* ===================== OPERATOR ===================== */
     .operator {
-      background: #fff;
-      border-radius: 16px;
-      border: 1px solid #e2e8f0;
-      overflow: hidden;
-      margin-bottom: 16px;
-      box-shadow: 0 6px 16px rgba(15,23,42,0.06);
+      background: #fff; border-radius: 12px; border: 1px solid #e2e8f0;
+      overflow: hidden; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);
     }
     .operator-header {
-      background: linear-gradient(135deg, #f8fafc, #eef6ff);
-      color: #0f172a;
-      font-weight: 900;
-      padding: 10px 16px;
-      font-size: 13px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #e2e8f0;
+      background: #f8fafc; color: #0f172a; font-weight: 800; padding: 10px 16px;
+      font-size: 13px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0;
     }
     .operator-add-btn {
-      background: #0ea5e9;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 11px;
-      padding: 5px 10px;
-      cursor: pointer;
-      font-weight: 700;
-      transition: 0.2s;
+      background: #0ea5e9; color: #fff; border: none; border-radius: 6px;
+      font-size: 11px; padding: 4px 10px; cursor: pointer; font-weight: 600; transition: 0.2s;
     }
-    .operator-add-btn:hover {
-      background: #0284c7;
-    }
-    .operator-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding: 11px 16px;
-    }
+    .operator-add-btn:hover { background: #0284c7; }
+    
+    .operator-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 16px; }
     .operator-item {
-      display: inline-flex;
-      align-items: center;
-      background: #f1f5f9;
-      padding: 6px 10px;
-      border-radius: 999px;
-      border: 1px solid #cbd5e1;
-      gap: 6px;
-      transition: 0.2s;
-      box-shadow: 0 2px 6px rgba(15,23,42,0.04);
+      display: inline-flex; align-items: center; background: #f1f5f9;
+      padding: 6px 10px; border-radius: 16px; border: 1px solid #cbd5e1; gap: 6px; transition: 0.2s;
     }
-    .operator-item:hover {
-      background: #e2e8f0;
-      border-color: #94a3b8;
-    }
-    .operator-item .op-icon {
-      font-size: 12px;
-    }
-    .operator-item .op-name {
-      font-size: 11px;
-      color: #334155;
-      font-weight: 800;
-    }
+    .operator-item:hover { background: #e2e8f0; border-color: #94a3b8; }
+    .operator-item .op-icon { font-size: 12px; }
+    .operator-item .op-name { font-size: 11px; color: #334155; font-weight: 700; }
     .operator-item .op-role {
-      font-size: 9px;
-      color: #fff;
-      background: #64748b;
-      border-radius: 999px;
-      padding: 2px 8px;
-      font-weight: 800;
+      font-size: 9px; color: #fff; background: #64748b; border-radius: 10px; padding: 2px 8px; font-weight: 700;
     }
-    .operator-item .op-role.green {
-      background: #10b981;
-    }
-    .operator-item .op-role.orange {
-      background: #f59e0b;
-    }
+    .operator-item .op-role.green  { background: #10b981; }
+    .operator-item .op-role.orange { background: #f59e0b; }
     .operator-item .op-del {
-      background: #ef4444;
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      font-size: 9px;
-      width: 18px;
-      height: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: 0.2s;
-      padding: 0;
+      background: #ef4444; color: #fff; border: none; border-radius: 50%;
+      font-size: 9px; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: 0.2s;
     }
-    .operator-item .op-del:hover {
-      background: #dc2626;
-      transform: scale(1.1);
-    }
+    .operator-item .op-del:hover { background: #dc2626; transform: scale(1.1); }
+
     /* ===================== SAFETY ===================== */
     .safety {
-      background:
-        radial-gradient(circle at 92% 10%, rgba(255,255,255,0.18), transparent 20%),
-        linear-gradient(135deg, #0284c7, #075985);
-      color: #fff;
-      border-radius: 16px;
-      padding: 15px 16px;
-      margin-top: 4px;
-      box-shadow: 0 8px 20px rgba(15,23,42,0.12);
-      overflow: hidden;
-      position: relative;
+      background: #0284c7; color: #fff; border-radius: 12px; 
+      padding: 14px 16px; margin-top: 4px; box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
     }
-    .safety::before {
-      content: "";
-      position: absolute;
-      left: -45px;
-      bottom: -60px;
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.08);
-    }
-    .safety-grid {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: 95px repeat(5, 1fr);
-      gap: 10px;
-      align-items: center;
-    }
-    .safety-title {
-      font-size: 28px;
-      line-height: 0.95;
-      font-weight: 900;
-      text-shadow: 0 3px 8px rgba(15,23,42,0.25);
-      letter-spacing: -0.5px;
-    }
-    .safety-item {
-      text-align: center;
-      font-size: 9px;
-      line-height: 1.15;
-      font-weight: 800;
-    }
+    .safety-grid { display: grid; grid-template-columns: 85px repeat(5, 1fr); gap: 10px; align-items: center; }
+    .safety-title { font-size: 24px; line-height: 0.95; font-weight: 900; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+    .safety-item { text-align: center; font-size: 9px; line-height: 1.1; font-weight: 700; }
     .safety-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.22);
-      color: #fff;
-      display: grid;
-      place-items: center;
-      margin: 0 auto 6px;
-      font-size: 17px;
-      backdrop-filter: blur(2px);
-      border: 1px solid rgba(255,255,255,0.42);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12);
+      width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.2);
+      color: #fff; display: grid; place-items: center; margin: 0 auto 6px; font-size: 15px; backdrop-filter: blur(2px); border: 1px solid rgba(255,255,255,0.4);
     }
+
     /* ===================== PRINT ===================== */
     @media print {
-      @page {
-        size: A4 landscape;
-        margin: 10mm;
-      }
-      body {
-        background: white;
-      }
-      .controls-container,
-      .form-overlay,
-      .job-actions,
-      .operator-add-btn,
-      .op-del,
-      .loader-overlay {
-        display: none !important;
-      }
-      .report-viewport {
-        padding: 0;
-      }
-      .report {
-        box-shadow: none;
-        margin: 0 auto;
-        border-radius: 0;
-        width: 100% !important;
-        max-width: none !important;
-      }
-      [contenteditable="true"] {
-        outline: none !important;
-      }
-    }
-    @media (max-width: 640px) {
-      .header {
-        grid-template-columns: 1fr;
-        text-align: center;
-      }
-      .header-top-row {
-        justify-content: center;
-      }
-      .metrics {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .metric:nth-child(2) {
-        border-right: none;
-      }
-      .safety-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .safety-title {
-        grid-column: 1 / -1;
-        text-align: center;
-      }
+      @page { size: A4 landscape; margin: 10mm; }
+      body { background: white; }
+      .controls-container, .form-overlay, .job-actions, .operator-add-btn, .op-del, .loader-overlay { display: none !important; }
+      .report-viewport { padding: 0; }
+      .report { box-shadow: none; margin: 0 auto; border-radius: 0; width: 100% !important; max-width: none !important; }
+      [contenteditable="true"] { outline: none !important; }
     }
   </style>
 </head>
 <body>
-  <!-- LOADING -->
+
+  <!-- ========== LOADING OVERLAY ========== -->
   <div class="loader-overlay" id="loaderOverlay">
     <div class="spinner"></div>
-    <div>กำลังประมวลผลภาพอินโฟกราฟิก...</div>
+    <div>กำลังประมวลผลรูปภาพ (A4 แนวนอน)...</div>
   </div>
-  <!-- CONTROLS -->
+
+  <!-- ========== CONTROLS (SEARCH & TOOLBAR) ========== -->
   <div class="controls-container">
     <div class="search-box">
-      <input
-        type="text"
-        id="searchInput"
-        placeholder="🔍 ค้นหางาน, เครื่องจักร หรือรหัสงาน..."
-        onkeyup="filterJobs()"
-      >
+      <input type="text" id="searchInput" placeholder="🔍 ค้นหางาน, เครื่องจักร หรือรหัสงาน..." onkeyup="filterJobs()">
     </div>
     <div class="toolbar">
       <button class="btn-green" onclick="openCreateForm()">+ เพิ่มงาน</button>
       <button class="btn-red" onclick="resetAllData()">เริ่มวันใหม่</button>
       <button class="btn-orange" onclick="downloadReportImage()">ดาวน์โหลดภาพ</button>
-      <button class="btn-blue" onclick="window.print()">PDF A4 แนวนอน</button>
+      <button class="btn-blue" onclick="window.print()">PDF (A4 แนวนอน)</button>
     </div>
   </div>
-  <!-- JOB FORM -->
+
+  <!-- ========== FORM OVERLAY (JOB) ========== -->
   <div class="form-overlay" id="formOverlay" onclick="closeFormByBackdrop(event)">
     <section class="form-panel" onclick="event.stopPropagation()">
       <div class="form-header">
@@ -911,33 +303,18 @@
       <input type="hidden" id="editId">
       <div class="form-row">
         <input id="newCode" placeholder="รหัสงาน เช่น 3152">
-        <input id="newStatus" placeholder="สถานะ เช่น 100%" value="100%">
+        <input id="newStatus" placeholder="สถานะ (0-100%)" value="100%">
       </div>
-      <input id="newMachine" placeholder="เครื่องจักร / ตำแหน่ง">
+      <input id="newMachine" placeholder="เครื่อง/ตำแหน่ง">
       <textarea id="newDetail" rows="3" placeholder="สรุปรายละเอียดงาน"></textarea>
       <input id="newPurpose" placeholder="วัตถุประสงค์">
-      <div class="photo-form-title">แนบรูปภาพงาน สูงสุด 4 รูป</div>
+      
+      <div class="photo-form-title">แนบรูปภาพงาน (สูงสุด 4 รูป)</div>
       <div class="photo-form-grid">
-        <div class="photo-form-box">
-          <img id="preview1">
-          <div>+ ก่อนทำ</div>
-          <input type="file" accept="image/*" onchange="handleFormPhoto(this, 0)">
-        </div>
-        <div class="photo-form-box">
-          <img id="preview2">
-          <div>+ ระหว่างทำ</div>
-          <input type="file" accept="image/*" onchange="handleFormPhoto(this, 1)">
-        </div>
-        <div class="photo-form-box">
-          <img id="preview3">
-          <div>+ หลังทำ</div>
-          <input type="file" accept="image/*" onchange="handleFormPhoto(this, 2)">
-        </div>
-        <div class="photo-form-box">
-          <img id="preview4">
-          <div>+ ตรวจสอบ</div>
-          <input type="file" accept="image/*" onchange="handleFormPhoto(this, 3)">
-        </div>
+        <div class="photo-form-box"><img id="preview1"><div>+ รูปที่ 1</div><input type="file" accept="image/*" onchange="handleFormPhoto(this, 0)"></div>
+        <div class="photo-form-box"><img id="preview2"><div>+ รูปที่ 2</div><input type="file" accept="image/*" onchange="handleFormPhoto(this, 1)"></div>
+        <div class="photo-form-box"><img id="preview3"><div>+ รูปที่ 3</div><input type="file" accept="image/*" onchange="handleFormPhoto(this, 2)"></div>
+        <div class="photo-form-box"><img id="preview4"><div>+ รูปที่ 4</div><input type="file" accept="image/*" onchange="handleFormPhoto(this, 3)"></div>
       </div>
       <div class="form-buttons">
         <button class="btn-green" onclick="saveJob()">บันทึกข้อมูล</button>
@@ -945,7 +322,8 @@
       </div>
     </section>
   </div>
-  <!-- OPERATOR FORM -->
+
+  <!-- ========== FORM OVERLAY (OPERATOR) ========== -->
   <div class="form-overlay" id="opFormOverlay" onclick="closeOpFormByBackdrop(event)">
     <section class="form-panel" onclick="event.stopPropagation()">
       <div class="form-header">
@@ -959,82 +337,49 @@
       </div>
     </section>
   </div>
-  <!-- REPORT -->
+
+  <!-- ========== REPORT (RESPONSIVE LANDSCAPE) ========== -->
   <div class="report-viewport">
     <main class="report" id="report">
-      <!-- HEADER -->
+
+      <!-- ===== HEADER ===== -->
       <section class="header">
         <div class="logo-container">
-          <img
-            class="logo-img"
-            id="headerLogo"
-            src="images/scg-logo.png"
-            alt="SCG Logo"
-            crossorigin="anonymous"
-            onerror="this.style.display='none';"
-          >
+          <img class="logo-img" id="headerLogo" src="images/scg-logo.png" alt="SCG Logo" crossorigin="anonymous" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
         </div>
+        
         <div class="title">
           <div class="header-top-row">
             <h1 contenteditable="true">สรุปงาน AM บดซีเมนต์</h1>
-            <div class="scg-green-badge">
-              <img
-                src="images/scg_green.png"
-                alt="SCG GREEN"
-                crossorigin="anonymous"
-                onerror="this.style.display='none';"
-              >
+            <!-- ใช้รูป scg_green.png และปรับขนาดให้เทียบเท่าโลโก้ซ้าย -->
+            <div class="scg-green-badge" contenteditable="true">
+              <img src="images/scg_green.png" alt="SCG GREEN" crossorigin="anonymous" onerror="this.style.display='none';">
             </div>
           </div>
           <p contenteditable="true">CEMENT MILL AM DAILY REPORT</p>
-          <div class="date">
-            📅 <span contenteditable="true" id="reportDate"></span>
-          </div>
+          <div class="date">📅 <span contenteditable="true" id="reportDate"></span></div>
         </div>
       </section>
-      <!-- CONTENT -->
+
+      <!-- ===== CONTENT ===== -->
       <section class="content">
-        <!-- SUMMARY -->
+
+        <!-- สรุปผลการดำเนินงาน -->
         <div class="summary">
           <div class="section-label">สรุปผลการดำเนินงาน</div>
           <div class="metrics">
-            <div class="metric">
-              <div class="icon">📋</div>
-              <div class="text">
-                งานทั้งหมด
-                <span class="num" id="totalJobs">0 งาน</span>
-              </div>
-            </div>
-            <div class="metric orange">
-              <div class="icon">⏱</div>
-              <div class="text">
-                มีความคืบหน้า
-                <span class="num" id="doneJobs">0 งาน</span>
-              </div>
-            </div>
-            <div class="metric red">
-              <div class="icon">○</div>
-              <div class="text">
-                ยังไม่เริ่ม
-                <span class="num" id="notDoneJobs">0 งาน</span>
-              </div>
-            </div>
-            <div class="metric green">
-              <div class="icon">✓</div>
-              <div class="text">
-                เสร็จ 100%
-                <span class="num" id="fullJobs">0 งาน</span>
-              </div>
-            </div>
+            <div class="metric"><div class="icon">👥</div><div class="text">งานทั้งหมด<span class="num" id="totalJobs">0 งาน</span></div></div>
+            <div class="metric"><div class="icon">⏱</div><div class="text">งานสำเร็จ<span class="num" id="doneJobs">0 งาน</span></div></div>
+            <div class="metric red"><div class="icon">○</div><div class="text">ไม่สำเร็จ<span class="num" id="notDoneJobs">0 งาน</span></div></div>
+            <div class="metric green"><div class="icon">✓</div><div class="text">เสร็จ 100%<span class="num" id="fullJobs">0 งาน</span></div></div>
           </div>
         </div>
+
         <!-- JOB LIST -->
         <div id="jobList">
-          <div class="empty-job">
-            ยังไม่มีรายการงาน<br>
-            กดปุ่ม “+ เพิ่มงาน” ด้านบนเพื่อเริ่ม
-          </div>
+          <div class="empty-job">ยังไม่มีรายการงาน<br>กดปุ่ม "+ เพิ่มงาน" ด้านบนเพื่อเริ่ม</div>
         </div>
+
         <!-- OPERATOR -->
         <div class="operator">
           <div class="operator-header">
@@ -1043,76 +388,46 @@
           </div>
           <div class="operator-list" id="operatorList"></div>
         </div>
+
         <!-- SAFETY -->
         <section class="safety">
           <div class="safety-grid">
-            <div class="safety-title" contenteditable="true">
-              Safety<br>First
-            </div>
-            <div class="safety-item">
-              <div class="safety-icon">⛑</div>
-              <div contenteditable="true">สวม PPE<br>ทุกครั้ง</div>
-            </div>
-            <div class="safety-item">
-              <div class="safety-icon">🔒</div>
-              <div contenteditable="true">Lockout /<br>Tagout</div>
-            </div>
-            <div class="safety-item">
-              <div class="safety-icon">🔎</div>
-              <div contenteditable="true">ตรวจสอบพื้นที่<br>ก่อนทำงาน</div>
-            </div>
-            <div class="safety-item">
-              <div class="safety-icon">👥</div>
-              <div contenteditable="true">ทำงาน<br>เป็นทีม</div>
-            </div>
-            <div class="safety-item">
-              <div class="safety-icon">0</div>
-              <div contenteditable="true">Zero<br>Accident</div>
-            </div>
+            <div class="safety-title" contenteditable="true">Safety<br>First</div>
+            <div class="safety-item"><div class="safety-icon">⛑</div><div contenteditable="true">สวม PPE<br>ทุกครั้ง</div></div>
+            <div class="safety-item"><div class="safety-icon">🔒</div><div contenteditable="true">Lockout /<br>Tagout</div></div>
+            <div class="safety-item"><div class="safety-icon">🔎</div><div contenteditable="true">ตรวจสอบพื้นที่<br>ก่อนทำงาน</div></div>
+            <div class="safety-item"><div class="safety-icon">👥</div><div contenteditable="true">ทำงาน<br>เป็นทีม</div></div>
+            <div class="safety-item"><div class="safety-icon">0</div><div contenteditable="true">Zero<br>Accident</div></div>
           </div>
         </section>
+
       </section>
+
     </main>
   </div>
-  <!-- html2canvas -->
+
+  <!-- ========== html2canvas ========== -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <!-- ========== JAVASCRIPT ========== -->
   <script>
     let jobs = [];
     let formPhotos = ["", "", "", ""];
     let operators = [];
-    const photoLabels = ["ก่อนทำ", "ระหว่างทำ", "หลังทำ", "ตรวจสอบ"];
-    /* ===================== LOCAL STORAGE ===================== */
+
+    /* ========== LOCAL STORAGE SYSTEM ========== */
     function loadData() {
       const savedJobs = localStorage.getItem("am_daily_jobs");
-      if (savedJobs) {
-        jobs = JSON.parse(savedJobs);
-      }
+      if (savedJobs) jobs = JSON.parse(savedJobs);
+
       const savedOps = localStorage.getItem("am_daily_operators");
       if (savedOps) {
         operators = JSON.parse(savedOps);
       } else {
         operators = [
-          {
-            id: "op1",
-            name: "ธีระศักดิ์ บ.",
-            role: "ผู้ปฏิบัติงานประจำ",
-            fixed: true,
-            color: ""
-          },
-          {
-            id: "op2",
-            name: "ช่างฟิตมิตรสกุณา",
-            role: "ช่างฟิต",
-            fixed: true,
-            color: "green"
-          },
-          {
-            id: "op3",
-            name: "ช่างฟิตบ้านแพรก",
-            role: "ช่างฟิต",
-            fixed: true,
-            color: "orange"
-          }
+          { id: "op1", name: "ธีระศักดิ์ บ.", role: "ผู้ปฏิบัติงานประจำ", fixed: true, color: "" },
+          { id: "op2", name: "ช่างฟิตมิตรสกุณา", role: "ช่างฟิต", fixed: true, color: "green" },
+          { id: "op3", name: "ช่างฟิตบ้านแพรก", role: "ช่างฟิต", fixed: true, color: "orange" }
         ];
       }
     }
@@ -1121,17 +436,15 @@
       localStorage.setItem("am_daily_operators", JSON.stringify(operators));
     }
     function resetAllData() {
-      if (!confirm("ต้องการลบข้อมูลงานทั้งหมดเพื่อเริ่มต้นวันใหม่ใช่หรือไม่?")) return;
+      if (!confirm("ต้องการลบข้อมูลงานทั้งหมดเพื่อเริ่มต้นวันใหม่ใช่หรือไม่? (ข้อมูลจะหายไปถาวร)")) return;
       localStorage.removeItem("am_daily_jobs");
       jobs = [];
-      document.getElementById("searchInput").value = "";
+      document.getElementById('searchInput').value = "";
       renderJobs();
-      saveData();
     }
-    function createId() {
-      return Date.now().toString() + Math.floor(Math.random() * 1000).toString();
-    }
-    /* ===================== DATE ===================== */
+    function createId() { return Date.now().toString() + Math.floor(Math.random() * 1000).toString(); }
+
+    /* ========== AUTO DATE ========== */
     function setTodayDate() {
       const now = new Date();
       const dd = String(now.getDate()).padStart(2, "0");
@@ -1139,7 +452,8 @@
       const yyyy = now.getFullYear();
       document.getElementById("reportDate").innerText = dd + "/" + mm + "/" + yyyy;
     }
-    /* ===================== SEARCH ===================== */
+
+    /* ========== SEARCH ========== */
     function filterJobs() {
       const query = document.getElementById("searchInput").value.toLowerCase();
       const cards = document.querySelectorAll(".job-card");
@@ -1148,23 +462,21 @@
         card.style.display = text.includes(query) ? "flex" : "none";
       });
     }
-    /* ===================== OPERATOR CRUD ===================== */
+
+    /* ========== OPERATOR CRUD ========== */
     function renderOperators() {
       const list = document.getElementById("operatorList");
       let html = "";
-      operators.forEach(op => {
-        const roleClass = op.color ? " " + op.color : "";
-        const delBtn = op.fixed
-          ? ""
-          : `<button class="op-del" onclick="removeOperator('${op.id}')" title="ลบ">×</button>`;
+      operators.forEach((op) => {
+        const roleClass = op.color ? ` ${op.color}` : "";
+        const delBtn = op.fixed ? "" : `<button class="op-del" onclick="removeOperator('${op.id}')" title="ลบ">✕</button>`;
         html += `
           <div class="operator-item">
             <span class="op-icon">👤</span>
             <span class="op-name">${escapeHTML(op.name)}</span>
             <span class="op-role${roleClass}">${escapeHTML(op.role)}</span>
             ${delBtn}
-          </div>
-        `;
+          </div>`;
       });
       list.innerHTML = html;
     }
@@ -1172,51 +484,30 @@
       document.getElementById("opName").value = "";
       document.getElementById("opRole").value = "";
       document.getElementById("opFormOverlay").classList.add("show");
-      setTimeout(() => {
-        document.getElementById("opName").focus();
-      }, 100);
+      setTimeout(() => document.getElementById("opName").focus(), 100);
     }
-    function closeOpForm() {
-      document.getElementById("opFormOverlay").classList.remove("show");
-    }
-    function closeOpFormByBackdrop(event) {
-      if (event.target.id === "opFormOverlay") {
-        closeOpForm();
-      }
-    }
+    function closeOpForm() { document.getElementById("opFormOverlay").classList.remove("show"); }
+    function closeOpFormByBackdrop(event) { if (event.target.id === "opFormOverlay") closeOpForm(); }
     function addOperator() {
       const name = document.getElementById("opName").value.trim();
       const role = document.getElementById("opRole").value.trim() || "ผู้ปฏิบัติงาน";
-      if (!name) {
-        alert("กรุณาระบุชื่อผู้ปฏิบัติงาน");
-        return;
-      }
-      operators.push({
-        id: createId(),
-        name,
-        role,
-        fixed: false,
-        color: ""
-      });
-      saveData();
-      renderOperators();
-      closeOpForm();
+      if (!name) { alert("กรุณาระบุชื่อ"); return; }
+      operators.push({ id: createId(), name, role, fixed: false, color: "" });
+      saveData(); renderOperators(); closeOpForm();
     }
     function removeOperator(id) {
       if (!confirm("ต้องการลบผู้ปฏิบัติงานนี้ใช่หรือไม่?")) return;
       operators = operators.filter(op => op.id !== id);
-      saveData();
-      renderOperators();
+      saveData(); renderOperators();
     }
-    /* ===================== JOB FORM ===================== */
+
+    /* ========== JOB FORM ========== */
     function openCreateForm() {
       clearForm();
       document.getElementById("formTitle").innerText = "เพิ่มรายการงาน";
       document.getElementById("editId").value = "";
       document.getElementById("formOverlay").classList.add("show");
-      setTimeout(() => {
-        document.getElementById("newCode").focus();
-      }, 100);
+      setTimeout(() => document.getElementById("newCode").focus(), 100);
     }
     function openEditForm(id) {
       const job = jobs.find(item => item.id === id);
@@ -1228,24 +519,15 @@
       document.getElementById("newMachine").value = job.machine;
       document.getElementById("newDetail").value = job.detail;
       document.getElementById("newPurpose").value = job.purpose;
+      
       formPhotos = [...job.photos.slice(0, 4)];
-      while (formPhotos.length < 4) {
-        formPhotos.push("");
-      }
+      while (formPhotos.length < 4) formPhotos.push("");
       updateFormPhotoPreviews();
       document.getElementById("formOverlay").classList.add("show");
-      setTimeout(() => {
-        document.getElementById("newCode").focus();
-      }, 100);
+      setTimeout(() => document.getElementById("newCode").focus(), 100);
     }
-    function closeForm() {
-      document.getElementById("formOverlay").classList.remove("show");
-    }
-    function closeFormByBackdrop(event) {
-      if (event.target.id === "formOverlay") {
-        closeForm();
-      }
-    }
+    function closeForm() { document.getElementById("formOverlay").classList.remove("show"); }
+    function closeFormByBackdrop(event) { if (event.target.id === "formOverlay") closeForm(); }
     function clearForm() {
       document.getElementById("editId").value = "";
       document.getElementById("newCode").value = "";
@@ -1254,9 +536,7 @@
       document.getElementById("newPurpose").value = "";
       document.getElementById("newStatus").value = "100%";
       formPhotos = ["", "", "", ""];
-      document.querySelectorAll(".photo-form-box input").forEach(input => {
-        input.value = "";
-      });
+      document.querySelectorAll(".photo-form-box input").forEach(input => input.value = "");
       updateFormPhotoPreviews();
     }
     function handleFormPhoto(input, index) {
@@ -1273,38 +553,30 @@
       for (let i = 0; i < 4; i++) {
         const img = document.getElementById("preview" + (i + 1));
         if (formPhotos[i]) {
-          img.src = formPhotos[i];
-          img.style.display = "block";
+          img.src = formPhotos[i]; img.style.display = "block";
         } else {
-          img.removeAttribute("src");
-          img.style.display = "none";
+          img.removeAttribute("src"); img.style.display = "none";
         }
       }
     }
-    /* ===================== JOB CRUD ===================== */
+
+    /* ========== JOB CRUD ========== */
     function saveJob() {
       const editId = document.getElementById("editId").value;
-      const code = document.getElementById("newCode").value.trim() || "-";
-      const status = document.getElementById("newStatus").value.trim() || "0%";
+      const code    = document.getElementById("newCode").value.trim() || "-";
+      const status  = document.getElementById("newStatus").value.trim() || "0%";
       const machine = document.getElementById("newMachine").value.trim() || "-";
-      const detail = document.getElementById("newDetail").value.trim() || "-";
+      const detail  = document.getElementById("newDetail").value.trim() || "-";
       const purpose = document.getElementById("newPurpose").value.trim() || "-";
       const jobData = {
         id: editId || createId(),
-        code,
-        status,
-        machine,
-        detail,
-        purpose,
-        photos: [...formPhotos]
+        code, status, machine, detail, purpose, photos: [...formPhotos]
       };
-      if (editId) {
-        jobs = jobs.map(item => item.id === editId ? jobData : item);
-      } else {
-        jobs.push(jobData);
-      }
+      if (editId) { jobs = jobs.map(item => item.id === editId ? jobData : item); } 
+      else { jobs.push(jobData); }
+      
       saveData();
-      document.getElementById("searchInput").value = "";
+      document.getElementById('searchInput').value = ""; 
       renderJobs();
       closeForm();
       clearForm();
@@ -1312,74 +584,46 @@
     function deleteJob(id) {
       if (!confirm("ต้องการลบงานนี้ใช่หรือไม่?")) return;
       jobs = jobs.filter(item => item.id !== id);
-      saveData();
-      renderJobs();
+      saveData(); renderJobs();
     }
-    /* ===================== HELPERS ===================== */
+
+    /* ========== HELPERS ========== */
     function escapeHTML(text) {
-      return String(text)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+      return String(text).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
     }
-    function nl2br(text) {
-      return escapeHTML(text).replace(/\n/g, "<br>");
-    }
+    function nl2br(text) { return escapeHTML(text).replace(/\n/g, "<br>"); }
     function getPercent(status) {
       const value = parseInt(String(status).replace("%", "")) || 0;
       return Math.max(0, Math.min(100, value));
     }
-    function getStatusClass(percent) {
-      if (percent >= 100) return "job-done";
-      if (percent > 0) return "job-progress";
-      return "job-todo";
-    }
-    function getBadgeClass(percent) {
-      if (percent >= 100) return "done";
-      if (percent > 0) return "progress";
-      return "todo";
-    }
-    /* ===================== RENDER JOBS ===================== */
+
+    /* ========== RENDER JOBS ========== */
     function renderJobs() {
       const jobList = document.getElementById("jobList");
+
       if (jobs.length === 0) {
-        jobList.innerHTML = `
-          <div class="empty-job">
-            ยังไม่มีรายการงาน<br>
-            กดปุ่ม “+ เพิ่มงาน” ด้านบนเพื่อเริ่ม
-          </div>
-        `;
+        jobList.innerHTML = `<div class="empty-job">ยังไม่มีรายการงาน<br>กดปุ่ม "+ เพิ่มงาน" ด้านบนเพื่อเริ่ม</div>`;
         updateSummary();
         return;
       }
+
       let html = "";
       jobs.forEach((job, index) => {
         const percent = getPercent(job.status);
-        const cardClass = getStatusClass(percent);
-        const badgeClass = getBadgeClass(percent);
-        const photoHTML = job.photos.slice(0, 4).map((photo, photoIndex) => {
-          const label = photoLabels[photoIndex] || "ภาพงาน";
-          if (photo) {
-            return `
-              <div class="photo-box" data-label="${label}">
-                <img src="${photo}" alt="${label}">
-              </div>
-            `;
-          }
-          return `
-            <div class="photo-box" data-label="${label}">
-              ไม่มีรูป
-            </div>
-          `;
+        
+        let badgeClass = "todo";
+        if (percent >= 100) badgeClass = "done";
+        else if (percent > 0) badgeClass = "progress";
+
+        const photoHTML = job.photos.slice(0, 4).map(photo => {
+          if (photo) return `<div class="photo-box"><img src="${photo}"></div>`;
+          return `<div class="photo-box">ไม่มีรูป</div>`;
         }).join("");
+
         html += `
-          <article class="job-card ${cardClass}" data-status="${percent}">
+          <article class="job-card" data-status="${percent}">
             <div class="job-code">
-              <div>
-                <b>งานที่ ${index + 1}</b> | ${escapeHTML(job.code)}
-              </div>
+              <div><b>งานที่ ${index + 1}</b> | ${escapeHTML(job.code)}</div>
               <div class="job-actions">
                 <button class="edit-job" onclick="openEditForm('${job.id}')">แก้ไข</button>
                 <button class="delete-job" onclick="deleteJob('${job.id}')">ลบ</button>
@@ -1387,69 +631,61 @@
             </div>
             <div class="job-body">
               <div class="job-text">
-                <div class="job-info-row"><b>ตำแหน่ง:</b> ${escapeHTML(job.machine)}</div>
-                <div class="job-info-row"><b>สรุปงาน:</b> ${nl2br(job.detail)}</div>
-                <div class="job-info-row"><b>เป้าหมาย:</b> ${escapeHTML(job.purpose)}</div>
+                <div><b>ตำแหน่ง:</b> ${escapeHTML(job.machine)}</div>
+                <div><b>สรุปงาน:</b> ${nl2br(job.detail)}</div>
+                <div><b>เป้าหมาย:</b> ${escapeHTML(job.purpose)}</div>
                 <div class="status-row">
-                  <div class="progress">
-                    <div style="width:${percent}%"></div>
-                  </div>
-                  <span class="status-badge ${badgeClass}">
-                    ${escapeHTML(job.status)}
-                  </span>
+                  <div class="progress"><div style="width:${percent}%"></div></div>
+                  <span class="status-badge ${badgeClass}">${escapeHTML(job.status)}</span>
                 </div>
               </div>
-              <div class="photos">
-                ${photoHTML}
-              </div>
+              <div class="photos">${photoHTML}</div>
             </div>
-          </article>
-        `;
+          </article>`;
       });
       jobList.innerHTML = html;
       updateSummary();
-      filterJobs();
+      filterJobs(); 
     }
+
     function updateSummary() {
       const total = jobs.length;
-      let progress = 0;
-      let full = 0;
+      let done = 0, full = 0;
       jobs.forEach(job => {
         const p = getPercent(job.status);
-        if (p > 0) progress++;
+        if (p > 0) done++;
         if (p >= 100) full++;
       });
       document.getElementById("totalJobs").innerText = total + " งาน";
-      document.getElementById("doneJobs").innerText = progress + " งาน";
-      document.getElementById("notDoneJobs").innerText = (total - progress) + " งาน";
+      document.getElementById("doneJobs").innerText = done + " งาน";
+      document.getElementById("notDoneJobs").innerText = (total - done) + " งาน";
       document.getElementById("fullJobs").innerText = full + " งาน";
     }
-    /* ===================== DOWNLOAD IMAGE ===================== */
+
+    /* ==========================================================
+       DOWNLOAD IMAGE 
+       ========================================================== */
     async function downloadReportImage() {
       const loader = document.getElementById("loaderOverlay");
       loader.style.display = "flex";
-      await new Promise(resolve => setTimeout(resolve, 200));
-      renderJobs();
+      
+      await new Promise(resolve => setTimeout(resolve, 200)); 
+
+      renderJobs(); 
       const report = document.getElementById("report");
-      const hideSelectors = [
-        ".job-actions",
-        ".operator-add-btn",
-        ".op-del"
-      ];
+
+      const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
       const hiddenEls = [];
-      hideSelectors.forEach(selector => {
-        report.querySelectorAll(selector).forEach(el => {
-          hiddenEls.push({
-            el,
-            prev: el.style.display
-          });
+      hideSelectors.forEach(sel => {
+        report.querySelectorAll(sel).forEach(el => {
+          hiddenEls.push({ el, prev: el.style.display });
           el.style.display = "none";
         });
       });
+
       const editables = report.querySelectorAll("[contenteditable]");
-      editables.forEach(el => {
-        el.style.outline = "none";
-      });
+      editables.forEach(el => { el.style.outline = "none"; });
+
       try {
         const canvas = await html2canvas(report, {
           scale: 3,
@@ -1457,35 +693,36 @@
           allowTaint: false,
           backgroundColor: "#f8fafc",
           logging: false,
-          width: 920,
-          windowWidth: 920
+          width: 840,
+          windowWidth: 840
         });
+
         const now = new Date();
-        const dateStr =
-          now.getFullYear() + "-" +
-          String(now.getMonth() + 1).padStart(2, "0") + "-" +
-          String(now.getDate()).padStart(2, "0");
+        const dateStr = now.getFullYear() + "-"
+          + String(now.getMonth() + 1).padStart(2, "0") + "-"
+          + String(now.getDate()).padStart(2, "0");
+
         const link = document.createElement("a");
-        link.download = "AM-Daily-Report-Infographic-" + dateStr + ".png";
+        link.download = "AM-Daily-Report-Landscape-" + dateStr + ".png";
         link.href = canvas.toDataURL("image/png");
         link.click();
+
       } catch (err) {
         alert("ไม่สามารถสร้างภาพได้ กรุณาลองใหม่อีกครั้ง");
       } finally {
-        hiddenEls.forEach(item => {
-          item.el.style.display = item.prev;
-        });
-        editables.forEach(el => {
-          el.style.outline = "";
-        });
-        loader.style.display = "none";
+        hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
+        editables.forEach(el => { el.style.outline = ""; });
+        
+        loader.style.display = "none"; 
       }
     }
-    /* ===================== INIT ===================== */
+
+    /* ========== INIT ========== */
     loadData();
     setTodayDate();
     renderJobs();
     renderOperators();
   </script>
+
 </body>
 </html>
