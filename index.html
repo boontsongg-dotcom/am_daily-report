@@ -15,7 +15,7 @@
     /* ===================== TOOLBAR ===================== */
     .toolbar {
       width: calc(100% - 24px);
-      max-width: 480px; /* ขยายความกว้างนิดหน่อยเพื่อรองรับปุ่มใหม่ */
+      max-width: 480px;
       margin: 12px auto;
       background: #ffffff;
       padding: 10px;
@@ -115,7 +115,7 @@
     }
     .photo-form-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 6px;
     }
     .photo-form-box {
@@ -129,7 +129,7 @@
     }
     .photo-form-box img {
       width: 100%;
-      height: 70px;
+      height: 60px;
       object-fit: cover;
       display: none;
       border-radius: 6px;
@@ -234,15 +234,16 @@
       font-size: 12px;
       font-weight: bold;
     }
+    /* === ปรับแก้ Worker Badge ให้เข้ากับรูปใหม่ === */
     .worker {
       position: absolute;
       right: 10px;
       top: 10px;
       width: 74px;
       height: 98px;
-      background: #ffd28c;
-      border-radius: 40px 40px 14px 14px;
-      border: 3px solid rgba(255,255,255,0.55);
+      background: #ffffff;
+      border-radius: 12px;
+      border: 2px solid #0b78ae;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -250,13 +251,15 @@
       color: #053b5f;
       font-weight: 900;
       font-size: 11px;
-      text-align: center;
       gap: 2px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
     .worker-img {
-      width: 44px;
-      height: 44px;
-      object-fit: contain;
+      width: 100%;
+      height: 72px;
+      object-fit: cover;
+      object-position: top; /* ดันภาพขึ้นเพื่อซ่อนลายน้ำด้านล่าง */
     }
     .worker-emoji {
       font-size: 44px;
@@ -398,14 +401,15 @@
       background: #1aae55;
       border-radius: 20px;
     }
+    
+    /* === ดีไซน์ Layout รูปภาพ 3 รูป === */
     .photos {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr 1fr;
       gap: 4px;
       align-content: start;
     }
     .photo-box {
-      height: 50px;
       border-radius: 5px;
       background: linear-gradient(135deg, #d6d6d6, #8e9a90);
       border: 1px solid #c8c8c8;
@@ -423,6 +427,17 @@
       object-fit: cover;
       display: block;
     }
+    /* รูปที่ 1 ขยายกว้างเป็นภาพหลัก */
+    .photo-box:nth-child(1) {
+      grid-column: 1 / -1;
+      height: 70px;
+    }
+    /* รูปที่ 2 และ 3 อยู่ด้านล่าง */
+    .photo-box:nth-child(2),
+    .photo-box:nth-child(3) {
+      height: 45px;
+    }
+
     /* ===================== OPERATOR ===================== */
     .operator {
       background: #fff;
@@ -555,7 +570,7 @@
       gap: 2px;
     }
     .footer-brand img {
-      width: 30px;
+      width: 40px;
       height: auto;
       border-radius: 3px;
     }
@@ -598,10 +613,12 @@
       <input id="newMachine" placeholder="เครื่อง/ตำแหน่ง">
       <textarea id="newDetail" rows="3" placeholder="สรุปรายละเอียดงาน"></textarea>
       <input id="newPurpose" placeholder="วัตถุประสงค์">
-      <div class="photo-form-title">แนบรูปภาพงาน สูงสุด 4 รูป</div>
+      
+      <!-- อัปเดตช่องอัปโหลดเป็น 3 รูป -->
+      <div class="photo-form-title">แนบรูปภาพงาน (สูงสุด 3 รูป)</div>
       <div class="photo-form-grid">
         <div class="photo-form-box">
-          <img id="preview1"><div>รูปที่ 1</div>
+          <img id="preview1"><div>รูปที่ 1 (ภาพรวม)</div>
           <input type="file" accept="image/*" onchange="handleFormPhoto(this, 0)">
         </div>
         <div class="photo-form-box">
@@ -611,10 +628,6 @@
         <div class="photo-form-box">
           <img id="preview3"><div>รูปที่ 3</div>
           <input type="file" accept="image/*" onchange="handleFormPhoto(this, 2)">
-        </div>
-        <div class="photo-form-box">
-          <img id="preview4"><div>รูปที่ 4</div>
-          <input type="file" accept="image/*" onchange="handleFormPhoto(this, 3)">
         </div>
       </div>
       <div class="form-buttons">
@@ -648,6 +661,7 @@
       <!-- ===== HEADER ===== -->
       <section class="header">
         <div class="logo-container">
+          <!-- เปลี่ยนเป็น scg-logo.png -->
           <img
             class="logo-img"
             id="headerLogo"
@@ -668,10 +682,11 @@
         </div>
 
         <div class="worker" id="workerBadge">
+          <!-- เปลี่ยนเป็น safety.png -->
           <img
             class="worker-img"
             id="safetyIcon"
-            src="images/safety-icon.png"
+            src="images/safety.png"
             alt="Safety"
             crossorigin="anonymous"
             onerror="this.style.display='none'; document.getElementById('workerEmoji').style.display='block';"
@@ -753,8 +768,9 @@
       <!-- ===== FOOTER ===== -->
       <footer class="footer">
         <div class="footer-brand">
+          <!-- เปลี่ยนเป็น scg_green.png -->
           <img
-            src="images/scg-logo-white.png"
+            src="images/scg_green.png"
             alt="SCG"
             crossorigin="anonymous"
             onerror="this.style.display='none';"
@@ -776,7 +792,7 @@
   <!-- ========== JAVASCRIPT ========== -->
   <script>
     let jobs = [];
-    let formPhotos = ["", "", "", ""];
+    let formPhotos = ["", "", ""]; // ลดเหลือ Array 3 ช่อง
     let operators = [];
 
     /* ========== LOCAL STORAGE SYSTEM ========== */
@@ -790,7 +806,6 @@
       if (savedOps) {
         operators = JSON.parse(savedOps);
       } else {
-        // ค่าเริ่มต้นกรณีเข้าเว็บครั้งแรก
         operators = [
           { id: "op1", name: "ธีระศักดิ์ บ.",     role: "ผู้ปฏิบัติงานประจำ", fixed: true, color: "" },
           { id: "op2", name: "ช่างฟิตมิตรสกุณา",   role: "ช่างฟิต",          fixed: true, color: "green" },
@@ -809,7 +824,6 @@
       localStorage.removeItem("am_daily_jobs");
       jobs = [];
       renderJobs();
-      // ไม่ลบผู้ปฏิบัติงานเพราะปกติจะเป็นรายชื่อเดิม
     }
 
     function createId() {
@@ -891,7 +905,11 @@
       document.getElementById("newMachine").value = job.machine;
       document.getElementById("newDetail").value = job.detail;
       document.getElementById("newPurpose").value = job.purpose;
-      formPhotos = [...job.photos];
+      
+      // ดึงข้อมูลรูปภาพ (ตัดมาแค่ 3 เผื่อของเก่ามี 4)
+      formPhotos = [...job.photos.slice(0, 3)];
+      while (formPhotos.length < 3) formPhotos.push(""); // เติมช่องว่างให้ครบ 3
+
       updateFormPhotoPreviews();
       document.getElementById("formOverlay").classList.add("show");
       setTimeout(() => document.getElementById("newCode").focus(), 100);
@@ -909,7 +927,7 @@
       document.getElementById("newDetail").value = "";
       document.getElementById("newPurpose").value = "";
       document.getElementById("newStatus").value = "100%";
-      formPhotos = ["", "", "", ""];
+      formPhotos = ["", "", ""]; // รีเซ็ตเป็น 3 ช่อง
       document.querySelectorAll(".photo-form-box input").forEach(input => input.value = "");
       updateFormPhotoPreviews();
     }
@@ -924,7 +942,7 @@
       reader.readAsDataURL(file);
     }
     function updateFormPhotoPreviews() {
-      for (let i = 0; i < 4; i++) {
+      for (let i = 0; i < 3; i++) {
         const img = document.getElementById("preview" + (i + 1));
         if (formPhotos[i]) {
           img.src = formPhotos[i];
@@ -994,10 +1012,13 @@
       let html = "";
       jobs.forEach((job, index) => {
         const percent = getPercent(job.status);
-        const photoHTML = job.photos.map(photo => {
+        
+        // ตัดข้อมูลรูปภาพมาแค่ 3 รูป (ป้องกันข้อมูลจากระบบเก่าที่อาจมี 4)
+        const photoHTML = job.photos.slice(0, 3).map(photo => {
           if (photo) return `<div class="photo-box"><img src="${photo}"></div>`;
           return `<div class="photo-box">ไม่มีรูป</div>`;
         }).join("");
+
         html += `
           <article class="job-card" data-status="${percent}">
             <div class="job-code">
