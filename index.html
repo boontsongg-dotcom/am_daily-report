@@ -129,15 +129,14 @@
     .scg-green-badge {
       display: inline-flex; align-items: center; justify-content: center; background: #ffffff;
       padding: 6px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-      height: 52px; /* ลบ width ออก แล้วใช้ height คุมแทน (ปรับตัวเลขนี้เพื่อให้ขอบกรอบเท่าฝั่งซ้าย) */
+      height: 40px; /* ลดความสูงลงมาให้เหลือ 40px เพื่อให้เตี้ยลงเท่าโลโก้ซ้าย */
     }
     .scg-green-badge img { 
-      height: 100%; /* บังคับให้รูปสูงพอดีกับกรอบ */
-      width: auto;  /* ปล่อยความกว้างให้ยืดหดตามสัดส่วนจริง ภาพจะไม่เบี้ยว */
+      height: 100%; 
+      width: auto; 
       border-radius: 4px; 
       display: block; 
     }
-
     .title p { margin: 0 0 8px; font-size: 11px; font-weight: 600; opacity: 0.9; }
     .date { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.2); border-radius: 16px; padding: 4px 14px; font-size: 13px; font-weight: 600; backdrop-filter: blur(4px); }
 
