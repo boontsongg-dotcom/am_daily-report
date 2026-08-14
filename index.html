@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AM Daily Report CRUD (Landscape)</title>
+  <title>AM Daily Report CRUD (Responsive Landscape)</title>
   
   <!-- Google Fonts: Noto Sans Thai -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -100,11 +100,11 @@
       border-radius: 8px; margin-bottom: 6px; background: #e2e8f0;
     }
 
-    /* ===================== REPORT VIEWPORT (LANDSCAPE A4) ===================== */
-    .report-viewport { width: 100%; display: flex; justify-content: center; padding: 0 8px 32px; overflow-x: auto; }
+    /* ===================== REPORT VIEWPORT (RESPONSIVE LANDSCAPE) ===================== */
+    .report-viewport { width: 100%; display: flex; justify-content: center; padding: 0 8px 32px; }
     .report {
-      width: 840px; 
-      flex: 0 0 840px; 
+      width: 100%;
+      max-width: 840px; 
       background: #f8fafc;
       border-radius: 12px; overflow: hidden; box-shadow: 0 12px 32px rgba(0,0,0,0.1); position: relative;
     }
@@ -121,17 +121,16 @@
     .logo-img { width: 110px; height: auto; border-radius: 8px; background: #fff; padding: 6px; display: block; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
     
     .header-top-row {
-      display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 6px;
+      display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 6px; flex-wrap: wrap; gap: 10px;
     }
     .title h1 { margin: 0; font-size: 28px; line-height: 1.1; font-weight: 900; letter-spacing: -0.5px; }
     
-    /* ปรับ SCG GREEN ให้มีขนาดใหญ่ขึ้น เทียบเท่าสัดส่วนโลโก้หลัก */
+    /* SCG GREEN โหลดจากภาพ scg_green.png และปรับขนาดเท่าโลโก้ซ้าย */
     .scg-green-badge {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #ffffff;
-      color: #059669; padding: 6px 16px; border-radius: 24px; font-size: 13px;
-      font-weight: 800; box-shadow: 0 2px 6px rgba(0,0,0,0.15); letter-spacing: 0.3px; white-space: nowrap; 
+      display: inline-flex; align-items: center; justify-content: center; background: #ffffff;
+      padding: 6px 12px; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); white-space: nowrap; 
     }
-    .scg-green-badge img { height: 26px; width: auto; border-radius: 4px; }
+    .scg-green-badge img { height: 35px; width: auto; border-radius: 4px; display: block; }
 
     .title p { margin: 0 0 8px; font-size: 11px; font-weight: 600; opacity: 0.9; }
     .date { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.2); border-radius: 16px; padding: 4px 14px; font-size: 13px; font-weight: 600; backdrop-filter: blur(4px); }
@@ -159,12 +158,15 @@
     .metric .text { font-size: 10px; line-height: 1.1; font-weight: 700; color: #64748b; }
     .metric .num { display: block; font-size: 14px; color: #0f172a; margin-top: 2px; }
 
-    /* ===================== JOB CARDS (FIXED 2 COLUMNS) ===================== */
+    /* ===================== JOB CARDS (RESPONSIVE GRID) ===================== */
     #jobList {
       display: grid;
       grid-template-columns: repeat(2, 1fr); 
       gap: 12px;
       margin-bottom: 16px;
+    }
+    @media (max-width: 768px) {
+      #jobList { grid-template-columns: 1fr; } /* หน้าจอเล็กปรับเป็น 1 คอลัมน์อัตโนมัติ */
     }
 
     .empty-job {
@@ -336,7 +338,7 @@
     </section>
   </div>
 
-  <!-- ========== REPORT (LANDSCAPE) ========== -->
+  <!-- ========== REPORT (RESPONSIVE LANDSCAPE) ========== -->
   <div class="report-viewport">
     <main class="report" id="report">
 
@@ -349,9 +351,9 @@
         <div class="title">
           <div class="header-top-row">
             <h1 contenteditable="true">สรุปงาน AM บดซีเมนต์</h1>
+            <!-- ใช้รูป scg_green.png และปรับขนาดให้เทียบเท่าโลโก้ซ้าย -->
             <div class="scg-green-badge" contenteditable="true">
               <img src="images/scg_green.png" alt="SCG GREEN" crossorigin="anonymous" onerror="this.style.display='none';">
-              SCG GREEN
             </div>
           </div>
           <p contenteditable="true">CEMENT MILL AM DAILY REPORT</p>
