@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AM Daily Report CRUD (Responsive Landscape)</title>
+  <title>AM Daily Report CRUD (Eco Infographic)</title>
   
   <!-- Google Fonts: Noto Sans Thai -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,22 +11,39 @@
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
 
   <style>
+    /* ===============================
+       ECO FRIENDLY INFOGRAPHIC THEME
+       =============================== */
+    :root {
+      --eco-green: #2e7d32;
+      --eco-green-light: #e8f5e9;
+      --eco-green-soft: #f1f8e9;
+      --eco-mint: #dff5e1;
+      --eco-blue: #e3f2fd;
+      --eco-text: #1f2933;
+      --eco-muted: #607d68;
+      --eco-border: #c8e6c9;
+      --eco-card: #ffffff;
+      --eco-warning: #fff8e1;
+      --eco-danger: #ffebee;
+    }
+
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: 'Noto Sans Thai', Tahoma, sans-serif; 
-      background: #f0f4f8; 
-      color: #1e293b;
+      background: #eef9f0; 
+      color: var(--eco-text);
     }
 
     /* ===================== LOADING OVERLAY ===================== */
     .loader-overlay {
       position: fixed; inset: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(4px);
       z-index: 10000; display: none; align-items: center; justify-content: center; flex-direction: column;
-      color: #0a73a8; font-weight: 700; font-size: 16px;
+      color: var(--eco-green); font-weight: 700; font-size: 16px;
     }
     .spinner {
-      width: 48px; height: 48px; border: 5px solid #e2e8f0; border-top: 5px solid #0a73a8;
+      width: 48px; height: 48px; border: 5px solid var(--eco-green-light); border-top: 5px solid var(--eco-green);
       border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px;
     }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -35,18 +52,18 @@
     .controls-container { width: calc(100% - 24px); max-width: 840px; margin: 16px auto; }
     .search-box { margin-bottom: 12px; }
     .search-box input {
-      width: 100%; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 24px;
+      width: 100%; padding: 12px 16px; border: 1px solid var(--eco-border); border-radius: 24px;
       font-family: 'Noto Sans Thai', sans-serif; font-size: 14px; outline: none; transition: all 0.3s ease;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      box-shadow: 0 2px 6px rgba(46,125,50,0.05);
     }
-    .search-box input:focus { border-color: #0a73a8; box-shadow: 0 4px 12px rgba(10,115,168,0.15); }
+    .search-box input:focus { border-color: var(--eco-green); box-shadow: 0 4px 12px rgba(46,125,50,0.15); }
     .toolbar {
       background: #ffffff; padding: 12px; border-radius: 16px; display: flex;
-      gap: 8px; justify-content: center; flex-wrap: wrap; box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      gap: 8px; justify-content: center; flex-wrap: wrap; box-shadow: 0 4px 16px rgba(46,125,50,0.06);
     }
-    button { font-family: inherit; }
+    button { font-family: inherit; border-radius: 999px; }
     .toolbar button, .form-panel button {
-      border: none; color: white; padding: 10px 14px; border-radius: 10px;
+      border: none; color: white; padding: 10px 14px; 
       font-weight: 600; cursor: pointer; font-size: 13px; flex: 1 1 auto;
       min-width: 78px; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -54,7 +71,7 @@
     .toolbar button:active, .form-panel button:active { transform: translateY(0); }
 
     .btn-blue   { background: #0ea5e9; } 
-    .btn-green  { background: #10b981; } 
+    .btn-green  { background: var(--eco-green); } 
     .btn-orange { background: #f59e0b; } 
     .btn-red    { background: #ef4444; } 
     .btn-gray   { background: #64748b; }
@@ -73,51 +90,79 @@
     }
     @keyframes popupIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
     .form-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .form-header h3 { margin: 0; color: #0f172a; font-size: 18px; font-weight: 700; }
+    .form-header h3 { margin: 0; color: var(--eco-green); font-size: 18px; font-weight: 700; }
     .close-btn {
       width: 32px; height: 32px; border: none; border-radius: 50%;
-      background: #f1f5f9; color: #64748b; font-size: 20px; line-height: 1; cursor: pointer; transition: 0.2s;
+      background: var(--eco-green-light); color: var(--eco-green); font-size: 20px; line-height: 1; cursor: pointer; transition: 0.2s;
     }
     .close-btn:hover { background: #ef4444; color: white; transform: rotate(90deg); }
     
     .form-panel input, .form-panel textarea {
-      width: 100%; padding: 10px 12px; margin: 6px 0; border: 1.5px solid #e2e8f0; border-radius: 10px;
+      width: 100%; padding: 10px 12px; margin: 6px 0; border: 1px solid var(--eco-border); border-radius: 10px;
       font-family: inherit; font-size: 13.5px; transition: 0.2s;
     }
-    .form-panel input:focus, .form-panel textarea:focus { border-color: #0ea5e9; outline: none; box-shadow: 0 0 0 3px rgba(14,165,233,0.15); }
+    .form-panel input:focus, .form-panel textarea:focus { border-color: var(--eco-green); outline: none; box-shadow: 0 0 0 3px var(--eco-mint); }
     .form-row { display: grid; grid-template-columns: 1fr 95px; gap: 8px; }
     .form-buttons { display: flex; gap: 8px; margin-top: 16px; }
 
-    .photo-form-title { margin: 12px 0 6px; font-weight: 600; color: #334155; }
+    .photo-form-title { margin: 12px 0 6px; font-weight: 600; color: var(--eco-muted); }
     .photo-form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
     .photo-form-box {
-      border: 1.5px dashed #cbd5e1; border-radius: 12px; padding: 8px;
-      background: #f8fafc; text-align: center; font-size: 11px; color: #64748b; transition: 0.2s;
+      border: 1.5px dashed var(--eco-border); border-radius: 12px; padding: 8px;
+      background: var(--eco-green-soft); text-align: center; font-size: 11px; color: var(--eco-muted); transition: 0.2s;
     }
-    .photo-form-box:hover { border-color: #0ea5e9; background: #f0f9ff; }
+    .photo-form-box:hover { border-color: var(--eco-green); background: var(--eco-green-light); }
     .photo-form-box img {
       width: 100%; height: 50px; object-fit: cover; display: none;
       border-radius: 8px; margin-bottom: 6px; background: #e2e8f0;
     }
 
-    /* ===================== REPORT VIEWPORT ===================== */
+    /* ===================== REPORT VIEWPORT (ECO THEME) ===================== */
     .report-viewport { width: 100%; display: flex; justify-content: center; padding: 0 8px 32px; overflow-x: auto; }
-    .report {
+    
+    #report {
       width: 100%;
       max-width: 840px; 
       min-width: 320px;
-      background: #f8fafc;
-      border-radius: 12px; overflow: hidden; box-shadow: 0 12px 32px rgba(0,0,0,0.1); position: relative;
+      font-family: "Noto Sans Thai", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(129, 199, 132, 0.28), transparent 28%),
+        linear-gradient(135deg, #f7fff8 0%, #eef9f0 45%, #f8fafc 100%);
+      color: var(--eco-text);
+      border-radius: 18px;
+      padding: 22px;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 12px 32px rgba(46, 125, 50, 0.1);
     }
+
+    #report::before {
+      content: "🌱";
+      position: absolute;
+      right: 24px;
+      top: 18px;
+      font-size: 42px;
+      opacity: 0.18;
+      pointer-events: none;
+    }
+
     [contenteditable="true"] { outline: 1px dashed transparent; border-radius: 4px; transition: 0.2s; }
-    [contenteditable="true"]:focus { outline-color: #fcd34d; background: rgba(255,255,255,0.8); }
+    [contenteditable="true"]:focus { outline-color: var(--eco-green); background: rgba(255,255,255,0.8); }
 
     /* ===================== HEADER ===================== */
     .header {
-      min-height: 100px; height: auto; background: linear-gradient(135deg, #0284c7, #0369a1); 
-      color: #fff; padding: 16px 24px 26px 24px; position: relative; display: grid;
+      background: linear-gradient(90deg, #ffffff 0%, var(--eco-green-light) 100%);
+      border: 1px solid var(--eco-border);
+      border-left: 8px solid var(--eco-green);
+      border-radius: 18px;
+      padding: 14px 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 6px 18px rgba(46, 125, 50, 0.08);
+      display: grid;
       grid-template-columns: 110px 1fr 110px; 
       gap: 24px; align-items: center; 
+      position: relative; z-index: 2;
     }
     
     .logo-box { 
@@ -125,7 +170,7 @@
       background: #ffffff;
       padding: 6px; 
       border-radius: 8px; 
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
       width: 110px; 
       height: 54px; 
     }
@@ -139,37 +184,76 @@
     }
     
     .header-top-row {
-      display: flex; align-items: center; width: 100%; margin-bottom: 6px;
+      display: flex; align-items: center; width: 100%; margin-bottom: 4px;
     }
-    .title h1 { margin: 0; font-size: 28px; line-height: 1.1; font-weight: 900; letter-spacing: -0.5px; }
+    .title h1 { 
+      margin: 0; font-size: 26px; line-height: 1.1; 
+      color: var(--eco-green); font-weight: 800; letter-spacing: -0.3px; 
+    }
+    .title h1::before {
+      content: "Eco Infographic • ";
+      font-size: 0.65em;
+      color: #43a047;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 2px;
+    }
     
-    .title p { margin: 0 0 8px; font-size: 11px; font-weight: 600; opacity: 0.9; }
-    .date { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.2); border-radius: 16px; padding: 4px 14px; font-size: 13px; font-weight: 600; backdrop-filter: blur(4px); }
+    .title p { margin: 0 0 6px; font-size: 11px; font-weight: 600; color: var(--eco-muted); }
+    .date { 
+      display: inline-flex; align-items: center; gap: 6px; 
+      background: #ffffff; border-radius: 16px; padding: 4px 14px; 
+      font-size: 12px; font-weight: 700; border: 1px solid var(--eco-border);
+      color: var(--eco-green);
+    }
 
-    /* ===================== CONTENT ===================== */
-    .content { padding: 0 16px 16px; margin-top: -12px; position: relative; z-index: 2; }
-    
-    .summary {
-      background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0;
-      padding: 12px 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 16px;
+    /* ===================== ECO SUMMARY ===================== */
+    .eco-summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 12px 0 14px;
+      position: relative; z-index: 2;
     }
-    .section-label {
-      display: inline-block; background: #0284c7; color: #fff;
-      padding: 6px 16px; border-radius: 8px 8px 0 0; font-size: 13px; font-weight: 700; margin-bottom: 8px;
+    .eco-summary-card {
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--eco-border);
+      border-radius: 16px;
+      padding: 10px 12px;
+      box-shadow: 0 5px 14px rgba(46, 125, 50, 0.05);
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; text-align: center; }
-    .metric { border-right: 1px solid #e2e8f0; min-height: 48px; display: flex; flex-direction: column; justify-content: center; }
-    .metric:last-child { border-right: none; }
-    .metric .icon {
-      width: 28px; height: 28px; margin: 0 auto 4px; border-radius: 50%;
-      background: #e0f2fe; color: #0284c7; display: grid; place-items: center; font-size: 14px; font-weight: bold;
+    .eco-summary-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--eco-green-light); color: var(--eco-green);
+      display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
     }
-    .metric.red .icon   { background: #fee2e2; color: #dc2626; }
-    .metric.green .icon { background: #d1fae5; color: #059669; }
-    .metric .text { font-size: 10px; line-height: 1.1; font-weight: 700; color: #64748b; }
-    .metric .num { display: block; font-size: 14px; color: #0f172a; margin-top: 2px; }
+    .eco-summary-label { font-size: 10px; color: var(--eco-muted); line-height: 1.2; font-weight: 600;}
+    .eco-summary-value { font-size: 16px; font-weight: 800; color: var(--eco-green); line-height: 1.2; margin-top: 2px;}
 
-    /* ===================== JOB CARDS (RESPONSIVE GRID) ===================== */
+    /* ===================== CONTENT / SECTIONS ===================== */
+    .content { position: relative; z-index: 2; }
+
+    .section {
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--eco-border);
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 5px 14px rgba(46, 125, 50, 0.05);
+    }
+    .section-title {
+      color: var(--eco-green);
+      font-weight: 800; font-size: 14px;
+      border-bottom: 2px solid var(--eco-mint);
+      padding-bottom: 6px;
+      margin: 0 0 10px 0;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    /* ===================== JOB CARDS ===================== */
     #jobList {
       display: grid;
       grid-template-columns: repeat(2, 1fr); 
@@ -178,160 +262,122 @@
     }
 
     .empty-job {
-      grid-column: 1 / -1; background: #ffffff; border: 2px dashed #cbd5e1; border-radius: 12px;
-      padding: 24px; text-align: center; color: #64748b; font-size: 14px; font-weight: 500;
+      grid-column: 1 / -1; background: #ffffff; border: 2px dashed var(--eco-border); border-radius: 16px;
+      padding: 24px; text-align: center; color: var(--eco-muted); font-size: 14px; font-weight: 600;
     }
 
     .job-card {
-      background: #fff; border-radius: 12px; border: 1px solid #e2e8f0;
-      overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: all 0.25s ease; 
-      display: flex; flex-direction: column; position: relative;
+      background: var(--eco-card);
+      border: 1px solid var(--eco-border);
+      border-left: 6px solid var(--eco-green);
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: 0 6px 16px rgba(46, 125, 50, 0.05);
+      position: relative;
+      display: flex; flex-direction: column; 
     }
-    .job-number { display: none; /* ซ่อนในโหมดปกติ */ }
+    
+    .job-card::before {
+      content: "AM";
+      position: absolute;
+      right: 12px; top: 12px;
+      background: var(--eco-green-light); color: var(--eco-green);
+      border: 1px solid var(--eco-border); border-radius: 999px;
+      padding: 2px 8px; font-size: 9px; font-weight: 800;
+    }
+
     .job-code {
-      background: #f1f5f9; color: #334155; font-weight: 700; font-size: 12px; padding: 8px 12px;
-      display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0;
+      display: flex; align-items: center; justify-content: space-between; 
+      margin-bottom: 6px; padding-right: 36px;
     }
-    .job-actions { display: flex; gap: 4px; }
+    .job-title { font-weight: 800; color: #1b5e20; font-size: 13.5px; margin: 0; line-height: 1.2; }
+    
+    .job-actions { display: flex; gap: 4px; position: absolute; right: 12px; top: 35px;}
     .job-actions button {
-      color: #fff; border: none; border-radius: 4px; font-size: 10px;
+      color: #fff; border: none; font-size: 9px;
       padding: 3px 8px; cursor: pointer; font-weight: 600; transition: 0.2s;
     }
     .edit-job { background: #f59e0b; } .edit-job:hover { background: #d97706; }
     .delete-job { background: #ef4444; } .delete-job:hover { background: #dc2626; }
     
-    .job-body { display: flex; flex-direction: column; gap: 10px; padding: 12px; flex: 1; }
-    .job-text { font-size: 11.5px; line-height: 1.5; font-weight: 500; color: #334155; }
-    .job-text b { color: #0284c7; font-weight: 700; }
+    .job-body { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .job-text { font-size: 11px; line-height: 1.45; color: #374151; }
+    .job-text b { color: var(--eco-green); font-weight: 700; }
     
-    .status-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 10px; font-weight: 700; }
-    .progress { flex: 1; height: 10px; background: #e2e8f0; border-radius: 20px; overflow: hidden; }
-    .progress div { height: 100%; background: #10b981; border-radius: 20px; transition: width 0.5s ease; }
+    .status-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+    .progress { flex: 1; height: 8px; background: var(--eco-green-light); border-radius: 20px; overflow: hidden; border: 1px solid var(--eco-border); }
+    .progress div { height: 100%; background: var(--eco-green); border-radius: 20px; transition: width 0.5s ease; }
     
-    .status-badge { padding: 2px 8px; border-radius: 12px; color: #fff; font-size: 9px; font-weight: 700; letter-spacing: 0.5px; }
-    .status-badge.done { background-color: #10b981; } 
-    .status-badge.progress { background-color: #f59e0b; } 
-    .status-badge.todo { background-color: #ef4444; } 
+    .status-badge { 
+      padding: 3px 9px; border-radius: 999px; font-size: 9px; font-weight: 700; 
+      background: var(--eco-green-light); color: var(--eco-green); border: 1px solid var(--eco-border);
+    }
+    .status-badge.todo { background-color: var(--eco-danger); color: #d32f2f; border-color: #ffcdd2;} 
 
     /* ระบบ 4 รูปภาพ 2x2 */
     .photos { 
-      display: grid; 
-      grid-template-columns: repeat(2, 1fr); 
-      gap: 6px; 
-      margin-top: auto; 
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: auto; 
     }
     .photo-box {
-      border-radius: 6px; 
-      background: #f1f5f9; 
-      border: 1px solid #cbd5e1;
-      overflow: hidden; 
-      position: relative; 
-      display: flex; 
-      align-items: center;
-      justify-content: center;
-      aspect-ratio: 4 / 3; 
-      font-size: 9px; 
-      color: #64748b; 
-      text-align: center; 
-      font-weight: 600;
+      border-radius: 8px; background: var(--eco-green-soft); border: 1px solid var(--eco-border);
+      overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;
+      aspect-ratio: 4 / 3; font-size: 9px; color: var(--eco-muted); text-align: center; font-weight: 600;
     }
-    .photo-box img { 
-      max-width: 100%; 
-      max-height: 100%; 
-      width: auto; 
-      height: auto; 
-      display: block; 
-    }
+    .photo-box img { max-width: 100%; max-height: 100%; width: auto; height: auto; display: block; }
 
     /* ===================== OPERATOR ===================== */
-    .operator {
-      background: #fff; border-radius: 12px; border: 1px solid #e2e8f0;
-      overflow: hidden; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-    }
-    .operator-header {
-      background: #f8fafc; color: #0f172a; font-weight: 800; padding: 10px 16px;
-      font-size: 13px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #e2e8f0;
-    }
     .operator-add-btn {
-      background: #0ea5e9; color: #fff; border: none; border-radius: 6px;
-      font-size: 11px; padding: 4px 10px; cursor: pointer; font-weight: 600; transition: 0.2s;
+      background: var(--eco-green); color: #fff; border: none; border-radius: 999px;
+      font-size: 10px; padding: 4px 10px; cursor: pointer; font-weight: 600; transition: 0.2s;
     }
-    .operator-add-btn:hover { background: #0284c7; }
-    
-    .operator-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px 16px; }
-    
+    .operator-add-btn:hover { filter: brightness(1.1); }
+    .operator-list { display: flex; flex-wrap: wrap; gap: 8px; }
     .operator-item {
-      display: inline-flex; align-items: center; background: #f1f5f9;
-      padding: 6px 12px; border-radius: 20px; border: 1px solid #cbd5e1; gap: 8px; transition: 0.2s;
+      display: inline-flex; align-items: center; background: #ffffff;
+      padding: 5px 12px; border-radius: 20px; border: 1px solid var(--eco-border); gap: 6px; 
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
-    .operator-item:hover { background: #e2e8f0; border-color: #94a3b8; }
-    .operator-item .op-icon { font-size: 12px; }
-    .operator-item .op-name { font-size: 11.5px; color: #334155; font-weight: 700; white-space: nowrap; }
+    .operator-item .op-icon { font-size: 12px; color: var(--eco-green); }
+    .operator-item .op-name { font-size: 11px; color: var(--eco-text); font-weight: 700; white-space: nowrap; }
     .operator-item .op-del {
-      background: #ef4444; color: #fff; border: none; border-radius: 50%;
+      background: var(--eco-danger); color: #d32f2f; border: none; border-radius: 50%;
       font-size: 8px; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: 0.2s;
+      cursor: pointer; transition: 0.2s; margin-left: 4px;
     }
-    .operator-item .op-del:hover { background: #dc2626; transform: scale(1.1); }
+    .operator-item .op-del:hover { background: #d32f2f; color: white; }
 
     /* ===================== SAFETY ===================== */
-    .safety {
-      background: #0284c7; color: #fff; border-radius: 12px; 
-      padding: 10px 16px; margin-top: 4px; box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-    }
     .safety-grid { 
-      display: flex; 
-      align-items: center; 
-      justify-content: space-between; 
-      gap: 8px; 
-      flex-wrap: nowrap;
+      display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: nowrap;
     }
-    .safety-title { 
-      font-size: 15px; 
-      line-height: 1.1; 
-      font-weight: 900; 
-      text-shadow: 0 1px 2px rgba(0,0,0,0.2); 
-      white-space: nowrap;
-      border-right: 1.5px solid rgba(255,255,255,0.3);
-      padding-right: 12px;
+    .safety-title-main { 
+      font-size: 16px; line-height: 1.1; font-weight: 900; color: var(--eco-green);
+      white-space: nowrap; border-right: 1.5px solid var(--eco-border); padding-right: 12px;
     }
     .safety-item { 
-      display: flex; 
-      align-items: center; 
-      gap: 6px; 
-      text-align: left; 
-      font-size: 9.5px; 
-      line-height: 1.2; 
-      font-weight: 700; 
-      background: rgba(255,255,255,0.1);
-      padding: 4px 8px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,0.2);
-      flex: 1;
-      justify-content: center;
+      display: flex; align-items: center; gap: 6px; text-align: left; 
+      font-size: 9.5px; line-height: 1.2; font-weight: 700; 
+      background: var(--eco-green-soft); padding: 5px 8px; border-radius: 8px;
+      border: 1px solid var(--eco-border); flex: 1; justify-content: center; color: var(--eco-text);
     }
     .safety-icon {
-      width: 24px; height: 24px; border-radius: 50%; background: rgba(255,255,255,0.25);
-      color: #fff; display: grid; place-items: center; font-size: 12px; flex-shrink: 0;
+      width: 24px; height: 24px; border-radius: 50%; background: var(--eco-green-light);
+      color: var(--eco-green); display: grid; place-items: center; font-size: 12px; flex-shrink: 0;
     }
+
+    /* สำหรับ export ภาพให้คมและนิ่ง */
+    #report * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
     /* ===================== RESPONSIVE MEDIA QUERIES ===================== */
     @media (max-width: 768px) {
-      .header {
-        grid-template-columns: 1fr;
-        justify-items: center;
-        text-align: center;
-        gap: 12px;
-        padding: 16px;
-      }
+      #report { padding: 14px; }
+      .header { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 12px; padding: 16px; }
       .header-top-row { justify-content: center; }
       .title h1 { font-size: 22px; }
+      .eco-summary { grid-template-columns: repeat(2, 1fr); gap: 8px;}
       #jobList { grid-template-columns: 1fr; }
-      .metrics { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-      .metric { border-right: none; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
-      
       .safety-grid { flex-direction: column; align-items: stretch; gap: 6px; }
-      .safety-title { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 4px; text-align: center; }
+      .safety-title-main { border-right: none; border-bottom: 1px solid var(--eco-border); padding-bottom: 4px; text-align: center; }
       .safety-item { justify-content: flex-start; padding: 6px 10px; }
     }
 
@@ -341,239 +387,8 @@
       body { background: white; }
       .controls-container, .form-overlay, .job-actions, .operator-add-btn, .op-del, .loader-overlay { display: none !important; }
       .report-viewport { padding: 0; }
-      .report { box-shadow: none; margin: 0 auto; border-radius: 0; width: 100% !important; max-width: none !important; }
+      #report { box-shadow: none; margin: 0 auto; border-radius: 0; width: 100% !important; max-width: none !important; min-height: 594px;}
       [contenteditable="true"] { outline: none !important; }
-    }
-
-    /* ============================= */
-    /* Infographic Export Style (SCG Theme) */
-    /* ============================= */
-
-    #report.export-infographic {
-      width: 840px;
-      min-height: 594px; /* พอดีสัดส่วน A4 แนวนอน */
-      padding: 22px;
-      background:
-        radial-gradient(circle at top left, rgba(220, 38, 38, 0.12), transparent 30%),
-        radial-gradient(circle at bottom right, rgba(15, 23, 42, 0.10), transparent 35%),
-        linear-gradient(135deg, #ffffff 0%, #f8fafc 45%, #eef2f7 100%);
-      border-radius: 0; 
-      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.18);
-      overflow: hidden;
-    }
-
-    #report.export-infographic .header {
-      background: linear-gradient(135deg, #b91c1c 0%, #dc2626 50%, #ef4444 100%);
-      color: white;
-      border-radius: 24px;
-      padding: 18px 22px;
-      margin-bottom: 18px;
-      box-shadow: 0 14px 32px rgba(185, 28, 28, 0.25);
-      position: relative;
-      overflow: hidden;
-      border: none;
-    }
-
-    #report.export-infographic .header::after {
-      content: "";
-      position: absolute;
-      right: -50px;
-      top: -50px;
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.16);
-    }
-
-    #report.export-infographic .title h1 {
-      font-size: 30px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      margin: 0;
-    }
-
-    #report.export-infographic .title p {
-      font-size: 14px;
-      opacity: 0.92;
-      margin-top: 4px;
-    }
-
-    #report.export-infographic .logo-box {
-      background: transparent;
-      box-shadow: none;
-    }
-
-    #report.export-infographic .logo-box img {
-      max-height: 54px;
-      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.2));
-    }
-
-    #report.export-infographic .summary {
-      background: transparent;
-      border: none;
-      box-shadow: none;
-      padding: 0;
-      margin-bottom: 16px;
-    }
-    
-    #report.export-infographic .section-label {
-      display: none;
-    }
-    
-    #report.export-infographic .metrics {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-    }
-    
-    #report.export-infographic .metric {
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid rgba(226, 232, 240, 0.9);
-      border-radius: 20px;
-      padding: 14px;
-      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
-      position: relative;
-      overflow: hidden;
-      justify-content: center;
-      align-items: center;
-    }
-    
-    #report.export-infographic .metric::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 12px;
-      width: 5px;
-      height: 42px;
-      border-radius: 0 8px 8px 0;
-      background: linear-gradient(180deg, #dc2626, #f97316);
-    }
-
-    #report.export-infographic .job-card {
-      background: rgba(255, 255, 255, 0.96);
-      border: 1px solid rgba(226, 232, 240, 0.95);
-      border-radius: 22px;
-      padding: 16px;
-      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.10);
-      position: relative;
-      overflow: hidden;
-      min-height: 165px;
-    }
-
-    #report.export-infographic .job-card::before {
-      content: "";
-      position: absolute;
-      inset: 0 auto 0 0;
-      width: 7px;
-      background: linear-gradient(180deg, #dc2626, #fb923c);
-    }
-
-    #report.export-infographic .job-card::after {
-      content: "";
-      position: absolute;
-      right: -38px;
-      bottom: -38px;
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      background: rgba(220, 38, 38, 0.07);
-      pointer-events: none; 
-    }
-
-    #report.export-infographic .job-code {
-      background: transparent;
-      border-bottom: none;
-      padding: 0;
-      margin-bottom: 8px;
-    }
-    
-    #report.export-infographic .job-code b {
-      font-size: 17px;
-      font-weight: 900;
-      color: #0f172a;
-    }
-    
-    #report.export-infographic .job-body {
-      padding: 0;
-    }
-    
-    #report.export-infographic .job-text {
-      font-size: 13px;
-      line-height: 1.55;
-    }
-
-    #report.export-infographic .job-number {
-      position: absolute;
-      right: 14px;
-      top: 14px;
-      width: 36px;
-      height: 36px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, #0f172a, #334155);
-      color: white;
-      font-size: 16px;
-      font-weight: 900;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 10px 22px rgba(15, 23, 42, 0.22);
-      z-index: 2;
-    }
-
-    #report.export-infographic .operator,
-    #report.export-infographic .safety {
-      background: rgba(255, 255, 255, 0.92);
-      border-radius: 22px;
-      border: 1px solid rgba(226, 232, 240, 0.95);
-      padding: 14px 16px;
-      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
-      margin-top: 14px;
-      color: #0f172a; 
-    }
-
-    #report.export-infographic .safety-title {
-      color: #b91c1c;
-      text-shadow: none;
-      border-right-color: #cbd5e1;
-    }
-    
-    #report.export-infographic .safety-item {
-      background: transparent;
-      border-color: #e2e8f0;
-      color: #334155;
-    }
-    
-    #report.export-infographic .safety-icon {
-      background: #f1f5f9;
-      color: #b91c1c;
-    }
-    
-    #report.export-infographic .operator-header {
-      background: transparent;
-      border-bottom: none;
-      padding: 0 0 8px 0;
-      color: #b91c1c;
-      font-size: 15px;
-    }
-    
-    #report.export-infographic .operator-list {
-      padding: 0;
-    }
-
-    #report.export-infographic button,
-    #report.export-infographic input,
-    #report.export-infographic textarea,
-    #report.export-infographic select,
-    #report.export-infographic .job-actions,
-    #report.export-infographic .operator-add-btn,
-    #report.export-infographic .op-del {
-      display: none !important;
-    }
-
-    #report.export-infographic [contenteditable] {
-      outline: none !important;
-      border: none !important;
-      background: transparent !important;
     }
   </style>
 </head>
@@ -642,9 +457,9 @@
     </section>
   </div>
 
-  <!-- ========== REPORT (RESPONSIVE LANDSCAPE) ========== -->
+  <!-- ========== REPORT (ECO THEME) ========== -->
   <div class="report-viewport">
-    <main class="report" id="report">
+    <main id="report">
 
       <!-- ===== HEADER ===== -->
       <section class="header">
@@ -665,19 +480,40 @@
         </div>
       </section>
 
-      <!-- ===== CONTENT ===== -->
-      <section class="content">
-
-        <!-- สรุปผลการดำเนินงาน -->
-        <div class="summary">
-          <div class="section-label">สรุปผลการดำเนินงาน</div>
-          <div class="metrics">
-            <div class="metric"><div class="icon">👥</div><div class="text">งานทั้งหมด<span class="num" id="totalJobs">0 งาน</span></div></div>
-            <div class="metric"><div class="icon">⏱</div><div class="text">งานสำเร็จ<span class="num" id="doneJobs">0 งาน</span></div></div>
-            <div class="metric red"><div class="icon">○</div><div class="text">ไม่สำเร็จ<span class="num" id="notDoneJobs">0 งาน</span></div></div>
-            <div class="metric green"><div class="icon">✓</div><div class="text">เสร็จ 100%<span class="num" id="fullJobs">0 งาน</span></div></div>
+      <!-- ===== ECO SUMMARY ===== -->
+      <div class="eco-summary" id="ecoSummary">
+        <div class="eco-summary-card">
+          <div class="eco-summary-icon">📋</div>
+          <div>
+            <div class="eco-summary-label">งานทั้งหมด</div>
+            <div class="eco-summary-value" id="totalJobs">0 งาน</div>
           </div>
         </div>
+        <div class="eco-summary-card">
+          <div class="eco-summary-icon">⏱</div>
+          <div>
+            <div class="eco-summary-label">งานสำเร็จ</div>
+            <div class="eco-summary-value" id="doneJobs">0 งาน</div>
+          </div>
+        </div>
+        <div class="eco-summary-card">
+          <div class="eco-summary-icon" style="background:var(--eco-danger); color:#d32f2f;">⚠️</div>
+          <div>
+            <div class="eco-summary-label">ไม่สำเร็จ</div>
+            <div class="eco-summary-value" style="color:#d32f2f;" id="notDoneJobs">0 งาน</div>
+          </div>
+        </div>
+        <div class="eco-summary-card">
+          <div class="eco-summary-icon">🌱</div>
+          <div>
+            <div class="eco-summary-label">เสร็จ 100%</div>
+            <div class="eco-summary-value" id="fullJobs">0 งาน</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== CONTENT ===== -->
+      <section class="content">
 
         <!-- JOB LIST -->
         <div id="jobList">
@@ -685,18 +521,18 @@
         </div>
 
         <!-- OPERATOR -->
-        <div class="operator">
-          <div class="operator-header">
-            <span>👷 ผู้ปฏิบัติงาน</span>
+        <div class="section operator-section">
+          <div class="section-title">
+            <span>👷 ทีมผู้ปฏิบัติงาน</span>
             <button class="operator-add-btn" onclick="openOpForm()">+ เพิ่มคน</button>
           </div>
           <div class="operator-list" id="operatorList"></div>
         </div>
 
         <!-- SAFETY -->
-        <section class="safety">
+        <section class="section safety-section">
           <div class="safety-grid">
-            <div class="safety-title" contenteditable="true">Safety First</div>
+            <div class="safety-title-main" contenteditable="true">Safety Focus</div>
             <div class="safety-item"><div class="safety-icon">⛑</div><div contenteditable="true">สวม PPE ทุกครั้ง</div></div>
             <div class="safety-item"><div class="safety-icon">🔒</div><div contenteditable="true">Lockout / Tagout</div></div>
             <div class="safety-item"><div class="safety-icon">🔎</div><div contenteditable="true">ตรวจสอบพื้นที่ก่อนทำ</div></div>
@@ -720,7 +556,7 @@
     let formPhotos = ["", "", "", ""];
     let operators = [];
 
-    /* ========== CHUNK FUNCTION (แบ่งกลุ่มงาน) ========== */
+    /* ========== CHUNK FUNCTION (แบ่งหน้างาน) ========== */
     function chunkJobs(list, size) {
       const chunks = [];
       for (let i = 0; i < list.length; i += size) {
@@ -963,8 +799,7 @@
     }
 
     /* ========== RENDER JOBS ========== */
-    // เพิ่ม startIndex เพื่อให้เวลารันลูปหน้าที่ 2 เลขงานจะเรียงต่อจากเดิม (5, 6, 7...) ไม่กลับไปเริ่ม 1 ใหม่
-    function renderJobs(startIndex = 0) {
+    function renderJobs() {
       const jobList = document.getElementById("jobList");
 
       if (jobs.length === 0) {
@@ -976,7 +811,6 @@
       let html = "";
       jobs.forEach((job, index) => {
         const percent = getPercent(job.status);
-        const realIndex = startIndex + index + 1; // ลำดับงานที่แท้จริง
         
         let badgeClass = "todo";
         if (percent >= 100) badgeClass = "done";
@@ -989,9 +823,8 @@
 
         html += `
           <article class="job-card" data-status="${percent}">
-            <div class="job-number">${realIndex}</div>
             <div class="job-code">
-              <div><b>งานที่ ${realIndex}</b> | ${escapeHTML(job.code)}</div>
+              <h4 class="job-title">${escapeHTML(job.code)}</h4>
               <div class="job-actions">
                 <button class="edit-job" onclick="openEditForm('${job.id}')">แก้ไข</button>
                 <button class="delete-job" onclick="deleteJob('${job.id}')">ลบ</button>
@@ -1016,15 +849,13 @@
       filterJobs(); 
     }
 
-    function updateSummary() {
-      // ตรงนี้ต้องนับจาก Original ถ้ามีการแบ่งหน้า แต่ถ้านับสดจาก jobs ปัจจุบัน หน้าย่อยจะนับผิด
-      // เราจึงใช้วิธีดึงจาก localStorage ชั่วคราวเพื่ออัปเดตตัวเลขรวมทั้งหมดให้เป๊ะเสมอ
-      const rawJobs = localStorage.getItem("am_daily_jobs");
-      const allJobs = rawJobs ? JSON.parse(rawJobs) : jobs;
+    /* อัปเดต Summary (ใช้พารามิเตอร์เพื่อรับค่าจำนวนงานทั้งหมดเวลา Export) */
+    function updateSummary(totalOverride = null) {
+      // ถ้าได้รับค่า override มาตอนปริ้นภาพ ให้ใช้ค่านั้น ไม่งั้นนับจาก jobs ปัจจุบัน
+      const total = totalOverride !== null ? totalOverride : jobs.length;
       
-      const total = allJobs.length;
       let done = 0, full = 0;
-      allJobs.forEach(job => {
+      jobs.forEach(job => {
         const p = getPercent(job.status);
         if (p > 0) done++;
         if (p >= 100) full++;
@@ -1036,7 +867,7 @@
     }
 
     /* ==========================================================
-       DOWNLOAD IMAGE (PAGINATED - ทีละ 4 งาน + INFOGRAPHIC MODE)
+       DOWNLOAD IMAGE (PAGINATED - ทีละ 4 งาน แบบ Eco)
        ========================================================== */
     async function downloadReportImage() {
       const loader = document.getElementById("loaderOverlay");
@@ -1046,8 +877,6 @@
       await new Promise(resolve => setTimeout(resolve, 200));
 
       const report = document.getElementById("report");
-      report.classList.add("export-infographic"); // เปิดโหมด Infographic
-
       const originalJobs = [...jobs];
       const originalSearch = document.getElementById("searchInput").value;
 
@@ -1084,16 +913,17 @@
             "กำลังสร้างรูปภาพหน้า " + (i + 1) + " จาก " + jobPages.length + "...";
 
           jobs = jobPages[i];
-          const startIndex = i * jobsPerImage;
-          renderJobs(startIndex);
+          renderJobs();
+          // อัปเดต Summary ให้โชว์จำนวนงานจริงของทั้งหมด ไม่ใช่แค่ 4 งานในหน้านี้
+          updateSummary(originalJobs.length); 
 
-          await new Promise(resolve => setTimeout(resolve, 400)); // รอให้ DOM เรียงตัวสมบูรณ์
+          await new Promise(resolve => setTimeout(resolve, 300));
 
           const canvas = await html2canvas(report, {
             scale: 3,
             useCORS: true,
             allowTaint: false,
-            backgroundColor: "#f8fafc",
+            backgroundColor: "#f7fff8", // พื้นหลังธีม Eco
             logging: false,
             width: 840,
             windowWidth: 840
@@ -1102,9 +932,9 @@
           const link = document.createElement("a");
 
           if (jobPages.length === 1) {
-            link.download = "AM-Daily-Report-Landscape-" + dateStr + ".png";
+            link.download = "AM-Daily-Report-Eco-Infographic-" + dateStr + ".png";
           } else {
-            link.download = "AM-Daily-Report-Landscape-" + dateStr + "-page-" + String(i + 1).padStart(2, "0") + ".png";
+            link.download = "AM-Daily-Report-Eco-Infographic-" + dateStr + "-page-" + String(i + 1).padStart(2, "0") + ".png";
           }
 
           link.href = canvas.toDataURL("image/png");
@@ -1120,7 +950,7 @@
       } finally {
         jobs = originalJobs;
         document.getElementById("searchInput").value = originalSearch;
-        renderJobs(0); // กลับมาใช้ index 0 สำหรับหน้าจอปกติ
+        renderJobs();
 
         hiddenEls.forEach(({ el, prev }) => {
           el.style.display = prev;
@@ -1130,13 +960,12 @@
           el.style.outline = "";
         });
 
-        report.classList.remove("export-infographic"); // ปิดโหมด Infographic
         loader.style.display = "none";
       }
     }
 
     /* ==========================================================
-       DOWNLOAD PDF (A4 LANDSCAPE - MULTI-PAGE + INFOGRAPHIC MODE)
+       DOWNLOAD PDF (A4 LANDSCAPE - ECO)
        ========================================================== */
     async function downloadReportPDF() {
       const loader = document.getElementById("loaderOverlay");
@@ -1145,15 +974,11 @@
       
       await new Promise(resolve => setTimeout(resolve, 200)); 
 
+      renderJobs(); 
       const report = document.getElementById("report");
-      report.classList.add("export-infographic"); // เปิดโหมด Infographic
-
-      const originalJobs = [...jobs];
-      const originalSearch = document.getElementById("searchInput").value;
 
       const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
       const hiddenEls = [];
-      
       hideSelectors.forEach(sel => {
         report.querySelectorAll(sel).forEach(el => {
           hiddenEls.push({ el, prev: el.style.display });
@@ -1165,12 +990,17 @@
       editables.forEach(el => { el.style.outline = "none"; });
 
       try {
-        document.getElementById("searchInput").value = "";
+        const canvas = await html2canvas(report, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: false,
+          backgroundColor: "#f7fff8", // พื้นหลังธีม Eco
+          logging: false,
+          width: 840,
+          windowWidth: 840
+        });
 
-        const jobsPerImage = 4;
-        const jobPages = originalJobs.length > 0
-          ? chunkJobs(originalJobs, jobsPerImage)
-          : [[]];
+        const imgData = canvas.toDataURL("image/jpeg", 0.85);
 
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF({
@@ -1181,34 +1011,19 @@
 
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = pdf.internal.pageSize.getHeight();
+        
+        const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 0;
 
-        for (let i = 0; i < jobPages.length; i++) {
-          document.getElementById("loaderText").innerText =
-            "กำลังสร้าง PDF หน้า " + (i + 1) + " จาก " + jobPages.length + "...";
+        pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
+        heightLeft -= pdfHeight;
 
-          jobs = jobPages[i];
-          const startIndex = i * jobsPerImage;
-          renderJobs(startIndex);
-
-          await new Promise(resolve => setTimeout(resolve, 400));
-
-          const canvas = await html2canvas(report, {
-            scale: 2,
-            useCORS: true,
-            allowTaint: false,
-            backgroundColor: "#f8fafc",
-            logging: false,
-            width: 840,
-            windowWidth: 840
-          });
-
-          const imgData = canvas.toDataURL("image/jpeg", 0.85);
-          const imgHeight = (canvas.height * pdfWidth) / canvas.width;
-
-          if (i > 0) pdf.addPage();
-          
-          // แปะรูปแต่ละหน้าลงใน PDF
-          pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, imgHeight);
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
+          heightLeft -= pdfHeight;
         }
 
         const now = new Date();
@@ -1216,20 +1031,15 @@
           + String(now.getMonth() + 1).padStart(2, "0") + "-"
           + String(now.getDate()).padStart(2, "0");
 
-        pdf.save("AM-Daily-Report-Landscape-" + dateStr + ".pdf");
+        pdf.save("AM-Daily-Report-Eco-Infographic-" + dateStr + ".pdf");
 
       } catch (err) {
         console.error(err);
         alert("ไม่สามารถสร้าง PDF ได้ กรุณาลองใหม่อีกครั้ง");
       } finally {
-        jobs = originalJobs;
-        document.getElementById("searchInput").value = originalSearch;
-        renderJobs(0);
-
         hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
         editables.forEach(el => { el.style.outline = ""; });
         
-        report.classList.remove("export-infographic"); // ปิดโหมด Infographic
         loader.style.display = "none"; 
       }
     }
