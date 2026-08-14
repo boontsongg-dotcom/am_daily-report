@@ -184,12 +184,33 @@
       gap: 6px;
       align-items: start;
     }
+    .logo-container {
+      position: relative;
+    }
     .logo-img {
       width: 90px;
       height: auto;
       border-radius: 4px;
       background: #fff;
       padding: 4px;
+      display: block;
+    }
+    .logo-fallback {
+      display: none;
+      background: #fff;
+      color: #008344;
+      border-radius: 4px;
+      padding: 5px 6px;
+      font-weight: 900;
+      font-size: 18px;
+      line-height: 1;
+      text-align: left;
+    }
+    .logo-fallback span {
+      display: block;
+      color: #e2231a;
+      font-size: 11px;
+      letter-spacing: 0.3px;
     }
     .title h1 {
       margin: 4px 0 0;
@@ -222,17 +243,24 @@
       background: #ffd28c;
       border-radius: 40px 40px 14px 14px;
       border: 3px solid rgba(255,255,255,0.55);
-      display: grid;
-      place-items: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       color: #053b5f;
       font-weight: 900;
       font-size: 11px;
       text-align: center;
+      gap: 2px;
     }
     .worker-img {
-      width: 50px;
-      height: 50px;
+      width: 44px;
+      height: 44px;
       object-fit: contain;
+    }
+    .worker-emoji {
+      font-size: 44px;
+      line-height: 1;
     }
     /* ===================== CONTENT ===================== */
     .content {
@@ -520,7 +548,6 @@
       border-right: 1px solid rgba(255,255,255,0.35);
     }
     .footer div:last-child { border-right: none; }
-    /* ===================== FOOTER LOGO ===================== */
     .footer-brand {
       display: flex;
       flex-direction: column;
@@ -618,28 +645,21 @@
   <div class="report-viewport">
     <main class="report" id="report">
 
-      <!-- HEADER -->
+      <!-- ===== HEADER ===== -->
       <section class="header">
-        <!--
-          ============================================================
-          🔧 วิธีใช้ Logo จาก GitHub:
-          1. สร้าง repo บน GitHub เช่น "am-daily-report"
-          2. สร้างโฟลเดอร์ "images" ใน repo
-          3. อัปโหลดไฟล์ logo เช่น scg-logo.png, safety-icon.png
-          4. เปลี่ยน URL ด้านล่างให้ตรงกับ repo ของคุณ:
-             https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/images/scg-logo.png
-          ============================================================
-        -->
-        <img
-          class="logo-img"
-          id="headerLogo"
-          src="https://raw.githubusercontent.com/pongsakorn-maker/am-daily-report/main/images/scg-logo.png"
-          alt="SCG Logo"
-          crossorigin="anonymous"
-          onerror="this.style.display='none'; document.getElementById('logoFallback').style.display='block';"
-        >
-        <div id="logoFallback" style="display:none; background:#fff; color:#008344; border-radius:4px; padding:5px 6px; font-weight:900; font-size:18px; line-height:1; text-align:left;">
-          <span style="display:block; color:#e2231a; font-size:11px; letter-spacing:0.3px;">SCG</span>GREEN
+        <div class="logo-container">
+          <!-- เปลี่ยน src ตรงนี้ -->
+          <img
+            class="logo-img"
+            id="headerLogo"
+            src="images/scg-logo.png"
+            alt="SCG Logo"
+            crossorigin="anonymous"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+          >
+          <div class="logo-fallback" id="logoFallback">
+            <span>SCG</span>GREEN
+          </div>
         </div>
 
         <div class="title">
@@ -648,19 +668,22 @@
           <div class="date">📅 <span contenteditable="true" id="reportDate"></span></div>
         </div>
 
-        <div class="worker">
+        <div class="worker" id="workerBadge">
+          <!-- เปลี่ยน src ตรงนี้ -->
           <img
             class="worker-img"
-         src="images/scg-logo.png"
+            id="safetyIcon"
+            src="images/safety-icon.png"
             alt="Safety"
             crossorigin="anonymous"
-            onerror="this.style.display='none'; this.parentElement.innerHTML='👷<br>SAFETY';"
+            onerror="this.style.display='none'; document.getElementById('workerEmoji').style.display='block';"
           >
+          <span class="worker-emoji" id="workerEmoji" style="display:none;">👷</span>
           <span>SAFETY</span>
         </div>
       </section>
 
-      <!-- CONTENT -->
+      <!-- ===== CONTENT ===== -->
       <section class="content">
 
         <!-- สรุปผลการดำเนินงาน -->
@@ -729,11 +752,12 @@
 
       </section>
 
-      <!-- FOOTER -->
+      <!-- ===== FOOTER ===== -->
       <footer class="footer">
         <div class="footer-brand">
+          <!-- เปลี่ยน src ตรงนี้ -->
           <img
-         src="https://raw.githubusercontent.com/boontsongg-dotcom/am_daily-report/main/images/safety-icon.png?v=1"
+            src="images/scg-logo-white.png"
             alt="SCG"
             crossorigin="anonymous"
             onerror="this.style.display='none';"
@@ -749,13 +773,15 @@
     </main>
   </div>
 
-  <!-- ========== html2canvas Library ========== -->
+  <!-- ========== html2canvas ========== -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
   <!-- ========== JAVASCRIPT ========== -->
   <script>
-    /* ========== CONFIG - เปลี่ยน URL ตรงนี้ให้ตรงกับ GitHub repo ของคุณ ========== */
-    const GITHUB_IMAGE_BASE = "https://raw.githubusercontent.com/pongsakorn-maker/am_daily-report/main/images/";
+    /* ========================================================
+       CONFIG - เปลี่ยน URL Base เป็น Relative
+       ======================================================== */
+    const IMG_BASE = "images/";
 
     let jobs = [];
     let formPhotos = ["", "", "", ""];
@@ -991,13 +1017,15 @@
       document.getElementById("fullJobs").innerText     = full + " งาน";
     }
 
-    /* ========== DOWNLOAD IMAGE (html2canvas) ========== */
+    /* ==========================================================
+       DOWNLOAD IMAGE - ใช้ html2canvas
+       ========================================================== */
     async function downloadReportImage() {
       renderJobs();
 
       const report = document.getElementById("report");
 
-      // ซ่อนปุ่มที่ไม่ต้องการในภาพ
+      /* --- ซ่อนปุ่มที่ไม่ต้องการในภาพ --- */
       const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
       const hiddenEls = [];
       hideSelectors.forEach(sel => {
@@ -1007,11 +1035,11 @@
         });
       });
 
-      // ปิด contenteditable outline ชั่วคราว
+      /* --- ปิด contenteditable outline --- */
       const editables = report.querySelectorAll("[contenteditable]");
       editables.forEach(el => { el.style.outline = "none"; });
 
-      // บันทึก transform เดิม แล้วรีเซ็ตชั่วคราว
+      /* --- รีเซ็ต transform (สำหรับมือถือ) --- */
       const origTransform = report.style.transform;
       const origMarginBottom = report.style.marginBottom;
       report.style.transform = "none";
@@ -1028,16 +1056,21 @@
           windowWidth: 390
         });
 
-        // สร้างลิงก์ดาวน์โหลด
+        /* --- สร้างชื่อไฟล์พร้อมวันที่ --- */
+        const now = new Date();
+        const dateStr = now.getFullYear() + "-"
+          + String(now.getMonth() + 1).padStart(2, "0") + "-"
+          + String(now.getDate()).padStart(2, "0");
+
         const link = document.createElement("a");
-        link.download = "AM-Daily-Report.png";
+        link.download = "AM-Daily-Report-" + dateStr + ".png";
         link.href = canvas.toDataURL("image/png");
         link.click();
 
       } catch (err) {
         alert("ไม่สามารถสร้างภาพได้ กรุณาลองใหม่อีกครั้ง");
       } finally {
-        // คืนค่าทั้งหมด
+        /* --- คืนค่าทั้งหมด --- */
         report.style.transform = origTransform;
         report.style.marginBottom = origMarginBottom;
         hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
