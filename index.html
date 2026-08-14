@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AM Daily Report CRUD (Landscape)</title>
+  <title>AM Daily Report CRUD (Responsive Landscape)</title>
   
   <!-- Google Fonts: Noto Sans Thai -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,6 +17,7 @@
       font-family: 'Noto Sans Thai', Tahoma, sans-serif; 
       background: #f0f4f8; 
       color: #1e293b;
+      overflow-x: hidden; /* ป้องกันการเลื่อนแนวนอน */
     }
 
     /* ===================== LOADING OVERLAY ===================== */
@@ -100,13 +101,18 @@
       border-radius: 8px; margin-bottom: 6px; background: #e2e8f0;
     }
 
-    /* ===================== REPORT VIEWPORT (LANDSCAPE A4) ===================== */
-    .report-viewport { width: 100%; display: flex; justify-content: center; padding: 0 8px 32px; overflow-x: auto; }
+    /* ===================== REPORT VIEWPORT (SMART SCALING) ===================== */
+    .report-viewport { 
+      width: 100%; display: flex; justify-content: center; padding: 0 8px 32px; 
+      /* ใช้ JS คำนวณความสูงให้พอดีตอนย่อส่วน */
+    }
     .report {
-      width: 840px; 
+      width: 840px; /* ฟิกซ์ความกว้างแนวนอนที่ 840px เสมอ */
       flex: 0 0 840px; 
       background: #f8fafc;
-      border-radius: 12px; overflow: hidden; box-shadow: 0 12px 32px rgba(0,0,0,0.1); position: relative;
+      border-radius: 12px; overflow: hidden; box-shadow: 0 12px 32px rgba(0,0,0,0.1); 
+      position: relative;
+      transform-origin: top center; /* จุดศูนย์กลางการย่อส่วนอยู่ตรงกลางด้านบน */
     }
     [contenteditable="true"] { outline: 1px dashed transparent; border-radius: 4px; transition: 0.2s; }
     [contenteditable="true"]:focus { outline-color: #fcd34d; background: rgba(255,255,255,0.8); }
@@ -116,7 +122,7 @@
       min-height: 110px; height: auto; background: linear-gradient(135deg, #0284c7, #0369a1); 
       color: #fff; padding: 16px 24px 26px 24px; position: relative; 
       display: grid;
-      grid-template-columns: auto 1fr auto; /* แบ่งเป็น 3 ส่วน: โลโก้ซ้าย | ข้อความกลาง | โลโก้ขวา */
+      grid-template-columns: auto 1fr auto; 
       gap: 24px; align-items: center; 
     }
     .logo-container { display: flex; flex-direction: column; align-items: center; gap: 8px; }
@@ -127,7 +133,6 @@
     .title p { margin: 0 0 8px; font-size: 11px; font-weight: 600; opacity: 0.9; text-transform: uppercase; }
     .date { display: inline-flex; align-items: center; gap: 6px; background: rgba(255,255,255,0.2); border-radius: 16px; padding: 4px 14px; font-size: 13px; font-weight: 600; backdrop-filter: blur(4px); }
 
-    /* SCG GREEN BADGE ย้ายมาอยู่ฝั่งขวา */
     .scg-green-badge {
       display: flex; align-items: center; justify-content: center; background: #ffffff;
       padding: 10px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
@@ -263,7 +268,7 @@
       body { background: white; }
       .controls-container, .form-overlay, .job-actions, .operator-add-btn, .op-del, .loader-overlay { display: none !important; }
       .report-viewport { padding: 0; }
-      .report { box-shadow: none; margin: 0 auto; border-radius: 0; width: 100% !important; max-width: none !important; }
+      .report { box-shadow: none; margin: 0 auto; border-radius: 0; transform: none !important; width: 100% !important; max-width: none !important; }
       [contenteditable="true"] { outline: none !important; }
     }
   </style>
@@ -273,7 +278,7 @@
   <!-- ========== LOADING OVERLAY ========== -->
   <div class="loader-overlay" id="loaderOverlay">
     <div class="spinner"></div>
-    <div>กำลังประมวลผลรูปภาพ (A4 แนวนอน)...</div>
+    <div>กำลังประมวลผลรูปภาพแนวนอน HD...</div>
   </div>
 
   <!-- ========== CONTROLS (SEARCH & TOOLBAR) ========== -->
@@ -335,24 +340,22 @@
   </div>
 
   <!-- ========== REPORT (LANDSCAPE) ========== -->
-  <div class="report-viewport">
+  <div class="report-viewport" id="reportViewport">
     <main class="report" id="report">
 
       <!-- ===== HEADER ===== -->
       <section class="header">
-        <!-- 1. โลโก้ SCG ซ้าย -->
         <div class="logo-container">
-          <img class="logo-img" id="headerLogo" src="images/scg-logo.png" alt="SCG Logo" crossorigin="anonymous" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+          <img class="logo-img" id="headerLogo" src="images/scg-logo.png" alt="SCG Logo" crossorigin="anonymous" onerror="this.style.display='none';">
         </div>
         
-        <!-- 2. หัวข้อ ตรงกลาง -->
         <div class="title">
           <h1 contenteditable="true">สรุปงาน AM บดซีเมนต์</h1>
           <p contenteditable="true">CEMENT MILL AM DAILY REPORT</p>
           <div class="date">📅 <span contenteditable="true" id="reportDate"></span></div>
         </div>
 
-        <!-- 3. โลโก้ SCG GREEN ขวา -->
+        <!-- SCG GREEN ขวาบน -->
         <div class="scg-green-badge" contenteditable="true">
           <img src="images/scg_green.png" alt="SCG GREEN" crossorigin="anonymous" onerror="this.style.display='none';">
         </div>
@@ -412,6 +415,30 @@
     let formPhotos = ["", "", "", ""];
     let operators = [];
 
+    /* ========== SMART SCALING (ย่อจออัตโนมัติ) ========== */
+    function scaleReport() {
+      const viewport = document.getElementById('reportViewport');
+      const report = document.getElementById('report');
+      if (!viewport || !report) return;
+
+      // รีเซ็ตค่าเพื่อเช็คความกว้างจริง
+      report.style.transform = 'none';
+      viewport.style.height = 'auto';
+
+      const containerWidth = viewport.clientWidth;
+      // ถ้าย่อจอเล็กกว่า 860px ให้จำลองการซูมออก
+      if (containerWidth > 0 && containerWidth < 860) {
+        const scale = (containerWidth - 16) / 840; // 16px คือพื้นที่ขอบ
+        report.style.transform = `scale(${scale})`;
+        
+        // ชดเชยความสูงที่เสียไปจากการซูม เพื่อไม่ให้มีพื้นที่ว่างด้านล่าง
+        const rect = report.getBoundingClientRect();
+        viewport.style.height = (rect.height + 32) + 'px'; 
+      }
+    }
+    // ให้คำนวณสเกลทุกครั้งที่หน้าจอเปลี่ยนขนาด
+    window.addEventListener('resize', scaleReport);
+
     /* ========== LOCAL STORAGE SYSTEM ========== */
     function loadData() {
       const savedJobs = localStorage.getItem("am_daily_jobs");
@@ -458,6 +485,7 @@
         const text = card.innerText.toLowerCase();
         card.style.display = text.includes(query) ? "flex" : "none";
       });
+      setTimeout(scaleReport, 50); // อัปเดตความสูงจอหลังค้นหา
     }
 
     /* ========== OPERATOR CRUD ========== */
@@ -476,6 +504,7 @@
           </div>`;
       });
       list.innerHTML = html;
+      setTimeout(scaleReport, 50);
     }
     function openOpForm() {
       document.getElementById("opName").value = "";
@@ -601,6 +630,7 @@
       if (jobs.length === 0) {
         jobList.innerHTML = `<div class="empty-job">ยังไม่มีรายการงาน<br>กดปุ่ม "+ เพิ่มงาน" ด้านบนเพื่อเริ่ม</div>`;
         updateSummary();
+        setTimeout(scaleReport, 50);
         return;
       }
 
@@ -643,6 +673,7 @@
       jobList.innerHTML = html;
       updateSummary();
       filterJobs(); 
+      setTimeout(scaleReport, 50); // อัปเดตสเกลหลังเรนเดอร์งานเสร็จ
     }
 
     function updateSummary() {
@@ -660,17 +691,27 @@
     }
 
     /* ==========================================================
-       DOWNLOAD IMAGE 
+       DOWNLOAD IMAGE (ปิดสเกลชั่วคราวตอนแคปภาพ)
        ========================================================== */
     async function downloadReportImage() {
       const loader = document.getElementById("loaderOverlay");
       loader.style.display = "flex";
       
-      await new Promise(resolve => setTimeout(resolve, 200)); 
+      // ให้เบราว์เซอร์เตรียมตัวก่อนแคปภาพ
+      await new Promise(resolve => setTimeout(resolve, 300)); 
 
-      renderJobs(); 
       const report = document.getElementById("report");
+      const viewport = document.getElementById("reportViewport");
 
+      // เก็บค่าสเกลเดิมไว้
+      const origTransform = report.style.transform;
+      const origHeight = viewport.style.height;
+
+      // คืนค่าขนาด 840px แบบ 100% สำหรับแคปภาพ
+      report.style.transform = "none";
+      viewport.style.height = "auto";
+
+      // ซ่อนปุ่มต่างๆ
       const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
       const hiddenEls = [];
       hideSelectors.forEach(sel => {
@@ -685,7 +726,7 @@
 
       try {
         const canvas = await html2canvas(report, {
-          scale: 3,
+          scale: 3, // ความละเอียดสูง (HD)
           useCORS: true,
           allowTaint: false,
           backgroundColor: "#f8fafc",
@@ -707,8 +748,13 @@
       } catch (err) {
         alert("ไม่สามารถสร้างภาพได้ กรุณาลองใหม่อีกครั้ง");
       } finally {
+        // คืนค่าปุ่ม
         hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
         editables.forEach(el => { el.style.outline = ""; });
+        
+        // คืนค่าสเกลให้หน้าจอ Responsive เหมือนเดิม
+        report.style.transform = origTransform;
+        viewport.style.height = origHeight;
         
         loader.style.display = "none"; 
       }
