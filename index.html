@@ -15,7 +15,7 @@
     /* ===================== TOOLBAR ===================== */
     .toolbar {
       width: calc(100% - 24px);
-      max-width: 430px;
+      max-width: 480px; /* ขยายความกว้างนิดหน่อยเพื่อรองรับปุ่มใหม่ */
       margin: 12px auto;
       background: #ffffff;
       padding: 10px;
@@ -578,7 +578,7 @@
   <!-- ========== TOOLBAR ========== -->
   <div class="toolbar">
     <button class="btn-green" onclick="openCreateForm()">+ เพิ่มงาน</button>
-    <button class="btn-blue" onclick="renderJobs()">อัปเดตสรุป</button>
+    <button class="btn-red" onclick="resetAllData()">เริ่มวันใหม่</button>
     <button class="btn-orange" onclick="downloadReportImage()">ดาวน์โหลดภาพ</button>
     <button class="btn-blue" onclick="window.print()">PDF</button>
   </div>
@@ -648,7 +648,6 @@
       <!-- ===== HEADER ===== -->
       <section class="header">
         <div class="logo-container">
-          <!-- เปลี่ยน src ตรงนี้ -->
           <img
             class="logo-img"
             id="headerLogo"
@@ -669,7 +668,6 @@
         </div>
 
         <div class="worker" id="workerBadge">
-          <!-- เปลี่ยน src ตรงนี้ -->
           <img
             class="worker-img"
             id="safetyIcon"
@@ -755,7 +753,6 @@
       <!-- ===== FOOTER ===== -->
       <footer class="footer">
         <div class="footer-brand">
-          <!-- เปลี่ยน src ตรงนี้ -->
           <img
             src="images/scg-logo-white.png"
             alt="SCG"
@@ -778,20 +775,42 @@
 
   <!-- ========== JAVASCRIPT ========== -->
   <script>
-    /* ========================================================
-       CONFIG - เปลี่ยน URL Base เป็น Relative
-       ======================================================== */
-    const IMG_BASE = "images/";
-
     let jobs = [];
     let formPhotos = ["", "", "", ""];
+    let operators = [];
 
-    /* ========== OPERATOR DATA ========== */
-    let operators = [
-      { id: "op1", name: "ธีระศักดิ์ บ.",     role: "ผู้ปฏิบัติงานประจำ", fixed: true, color: "" },
-      { id: "op2", name: "ช่างฟิตมิตรสกุณา",   role: "ช่างฟิต",          fixed: true, color: "green" },
-      { id: "op3", name: "ช่างฟิตบ้านแพรก",    role: "ช่างฟิต",          fixed: true, color: "orange" }
-    ];
+    /* ========== LOCAL STORAGE SYSTEM ========== */
+    function loadData() {
+      const savedJobs = localStorage.getItem("am_daily_jobs");
+      if (savedJobs) {
+        jobs = JSON.parse(savedJobs);
+      }
+
+      const savedOps = localStorage.getItem("am_daily_operators");
+      if (savedOps) {
+        operators = JSON.parse(savedOps);
+      } else {
+        // ค่าเริ่มต้นกรณีเข้าเว็บครั้งแรก
+        operators = [
+          { id: "op1", name: "ธีระศักดิ์ บ.",     role: "ผู้ปฏิบัติงานประจำ", fixed: true, color: "" },
+          { id: "op2", name: "ช่างฟิตมิตรสกุณา",   role: "ช่างฟิต",          fixed: true, color: "green" },
+          { id: "op3", name: "ช่างฟิตบ้านแพรก",    role: "ช่างฟิต",          fixed: true, color: "orange" }
+        ];
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem("am_daily_jobs", JSON.stringify(jobs));
+      localStorage.setItem("am_daily_operators", JSON.stringify(operators));
+    }
+
+    function resetAllData() {
+      if (!confirm("ต้องการลบข้อมูลงานทั้งหมดเพื่อเริ่มต้นวันใหม่ใช่หรือไม่? (ข้อมูลจะหายไปถาวร)")) return;
+      localStorage.removeItem("am_daily_jobs");
+      jobs = [];
+      renderJobs();
+      // ไม่ลบผู้ปฏิบัติงานเพราะปกติจะเป็นรายชื่อเดิม
+    }
 
     function createId() {
       return Date.now().toString() + Math.floor(Math.random() * 1000).toString();
@@ -843,12 +862,14 @@
       const role = document.getElementById("opRole").value.trim() || "ผู้ปฏิบัติงาน";
       if (!name) { alert("กรุณาระบุชื่อ"); return; }
       operators.push({ id: createId(), name, role, fixed: false, color: "" });
+      saveData();
       renderOperators();
       closeOpForm();
     }
     function removeOperator(id) {
       if (!confirm("ต้องการลบผู้ปฏิบัติงานนี้ใช่หรือไม่?")) return;
       operators = operators.filter(op => op.id !== id);
+      saveData();
       renderOperators();
     }
 
@@ -933,6 +954,7 @@
       } else {
         jobs.push(jobData);
       }
+      saveData();
       renderJobs();
       closeForm();
       clearForm();
@@ -940,6 +962,7 @@
     function deleteJob(id) {
       if (!confirm("ต้องการลบงานนี้ใช่หรือไม่?")) return;
       jobs = jobs.filter(item => item.id !== id);
+      saveData();
       renderJobs();
     }
 
@@ -1079,6 +1102,7 @@
     }
 
     /* ========== INIT ========== */
+    loadData();
     setTodayDate();
     renderJobs();
     renderOperators();
