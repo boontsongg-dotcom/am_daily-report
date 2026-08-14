@@ -205,13 +205,32 @@
     .status-badge.todo { background-color: #ef4444; } 
 
     /* ระบบ 4 รูปภาพ 2x2 */
-    .photos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: auto; }
-    .photo-box {
-      border-radius: 6px; background: #e2e8f0; border: 1px solid #cbd5e1;
-      overflow: hidden; position: relative; display: grid; place-items: center;
-      height: 65px; font-size: 9px; color: #64748b; text-align: center; font-weight: 600;
+    .photos { 
+      display: grid; 
+      grid-template-columns: repeat(2, 1fr); 
+      gap: 6px; 
+      margin-top: auto; 
     }
-    .photo-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .photo-box {
+      border-radius: 6px; 
+      background: #f1f5f9; 
+      border: 1px solid #cbd5e1;
+      overflow: hidden; 
+      position: relative; 
+      display: grid; 
+      place-items: center;
+      aspect-ratio: 4 / 3; 
+      font-size: 9px; 
+      color: #64748b; 
+      text-align: center; 
+      font-weight: 600;
+    }
+    .photo-box img { 
+      width: 100%; 
+      height: 100%; 
+      object-fit: contain; 
+      display: block; 
+    }
 
     /* ===================== OPERATOR ===================== */
     .operator {
