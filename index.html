@@ -93,11 +93,15 @@
     .photo-form-box {
       border: 1.5px dashed #cbd5e1; border-radius: 12px; padding: 8px;
       background: #f8fafc; text-align: center; font-size: 11px; color: #64748b; transition: 0.2s;
+      position: relative; overflow: hidden;
     }
     .photo-form-box:hover { border-color: #0ea5e9; background: #f0f9ff; }
     .photo-form-box img {
       width: 100%; height: 50px; object-fit: cover; display: none;
       border-radius: 8px; margin-bottom: 6px; background: #e2e8f0;
+    }
+    .photo-form-box input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
     }
 
     /* ===================== REPORT VIEWPORT ===================== */
@@ -169,7 +173,7 @@
     .metric .text { font-size: 10px; line-height: 1.1; font-weight: 700; color: #64748b; }
     .metric .num { display: block; font-size: 14px; color: #0f172a; margin-top: 2px; }
 
-    /* ===================== JOB CARDS (RESPONSIVE GRID) ===================== */
+    /* ===================== JOB CARDS ===================== */
     #jobList {
       display: grid;
       grid-template-columns: repeat(2, 1fr); 
@@ -384,10 +388,26 @@
       
       <div class="photo-form-title">แนบรูปภาพงาน (สูงสุด 4 รูป)</div>
       <div class="photo-form-grid">
-        <div class="photo-form-box"><img id="preview1"><div>+ รูปที่ 1</div><input type="file" accept="image/*" onchange="handleFormPhoto(this, 0)"></div>
-        <div class="photo-form-box"><img id="preview2"><div>+ รูปที่ 2</div><input type="file" accept="image/*" onchange="handleFormPhoto(this, 1)"></div>
-        <div class="photo-form-box"><img id="preview3"><div>+ รูปที่ 3</div><input type="file" accept="image/*" onchange="handleFormPhoto(this, 2)"></div>
-        <div class="photo-form-box"><img id="preview4"><div>+ รูปที่ 4</div><input type="file" accept="image/*" onchange="handleFormPhoto(this, 3)"></div>
+        <div class="photo-form-box">
+          <img id="preview1">
+          <div id="label1">+ รูปที่ 1</div>
+          <input type="file" accept="image/*" onchange="handleFormPhoto(this, 0)">
+        </div>
+        <div class="photo-form-box">
+          <img id="preview2">
+          <div id="label2">+ รูปที่ 2</div>
+          <input type="file" accept="image/*" onchange="handleFormPhoto(this, 1)">
+        </div>
+        <div class="photo-form-box">
+          <img id="preview3">
+          <div id="label3">+ รูปที่ 3</div>
+          <input type="file" accept="image/*" onchange="handleFormPhoto(this, 2)">
+        </div>
+        <div class="photo-form-box">
+          <img id="preview4">
+          <div id="label4">+ รูปที่ 4</div>
+          <input type="file" accept="image/*" onchange="handleFormPhoto(this, 3)">
+        </div>
       </div>
       <div class="form-buttons">
         <button class="btn-green" onclick="saveJob()">บันทึกข้อมูล</button>
@@ -570,7 +590,7 @@
       saveData(); renderOperators();
     }
 
-    /* ========== JOB FORM ========== */
+    /* ========== JOB FORM & PHOTOS ========== */
     function openCreateForm() {
       clearForm();
       document.getElementById("formTitle").innerText = "เพิ่มรายการงาน";
@@ -605,7 +625,7 @@
       document.getElementById("newPurpose").value = "";
       document.getElementById("newStatus").value = "100%";
       formPhotos = ["", "", "", ""];
-      document.querySelectorAll(".photo-form-box input").forEach(input => input.value = "");
+      document.querySelectorAll(".photo-form-box input[type='file']").forEach(input => input.value = "");
       updateFormPhotoPreviews();
     }
     function handleFormPhoto(input, index) {
@@ -621,28 +641,43 @@
     function updateFormPhotoPreviews() {
       for (let i = 0; i < 4; i++) {
         const img = document.getElementById("preview" + (i + 1));
+        const label = document.getElementById("label" + (i + 1));
         if (formPhotos[i]) {
-          img.src = formPhotos[i]; img.style.display = "block";
+          img.src = formPhotos[i]; 
+          img.style.display = "block";
+          if (label) label.style.display = "none";
         } else {
-          img.removeAttribute("src"); img.style.display = "none";
+          img.removeAttribute("src"); 
+          img.style.display = "none";
+          if (label) label.style.display = "block";
         }
       }
     }
 
-    /* ========== JOB CRUD ========== */
+    /* ========== JOB CRUD (SAVE) ========== */
     function saveJob() {
       const editId = document.getElementById("editId").value;
       const code    = document.getElementById("newCode").value.trim() || "-";
-      const status  = document.getElementById("newStatus").value.trim() || "0%";
+      const status  = document.getElementById("newStatus").value.trim() || "100%";
       const machine = document.getElementById("newMachine").value.trim() || "-";
       const detail  = document.getElementById("newDetail").value.trim() || "-";
       const purpose = document.getElementById("newPurpose").value.trim() || "-";
+      
       const jobData = {
         id: editId || createId(),
-        code, status, machine, detail, purpose, photos: [...formPhotos]
+        code, 
+        status, 
+        machine, 
+        detail, 
+        purpose, 
+        photos: [...formPhotos]
       };
-      if (editId) { jobs = jobs.map(item => item.id === editId ? jobData : item); } 
-      else { jobs.push(jobData); }
+
+      if (editId) { 
+        jobs = jobs.map(item => item.id === editId ? jobData : item); 
+      } else { 
+        jobs.push(jobData); 
+      }
       
       saveData();
       document.getElementById('searchInput').value = ""; 
@@ -650,6 +685,7 @@
       closeForm();
       clearForm();
     }
+
     function deleteJob(id) {
       if (!confirm("ต้องการลบงานนี้ใช่หรือไม่?")) return;
       jobs = jobs.filter(item => item.id !== id);
