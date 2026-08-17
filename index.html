@@ -50,17 +50,14 @@
 
     /* ===================== TOOLBAR & SEARCH ===================== */
     .controls-container { width: calc(100% - 24px); max-width: 840px; margin: 16px auto; }
-    
-    .search-box { margin-bottom: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .search-box { margin-bottom: 12px; }
     .search-box input {
-      padding: 12px 16px; border: 1px solid var(--eco-border); border-radius: 24px;
+      width: 100%; padding: 12px 16px; border: 1px solid var(--eco-border); border-radius: 24px;
       font-family: 'Noto Sans Thai', sans-serif; font-size: 14px; outline: none; transition: all 0.3s ease;
-      box-shadow: 0 2px 6px rgba(46,125,50,0.05); color: var(--eco-text);
+      box-shadow: 0 2px 6px rgba(46,125,50,0.05);
+      color: var(--eco-text); cursor: pointer;
     }
-    .search-box input[type="text"] { flex: 1; min-width: 200px; }
-    .search-box input[type="date"] { cursor: pointer; width: 150px; }
     .search-box input:focus { border-color: var(--eco-green); box-shadow: 0 4px 12px rgba(46,125,50,0.15); }
-
     .toolbar {
       background: #ffffff; padding: 12px; border-radius: 16px; display: flex;
       gap: 8px; justify-content: center; flex-wrap: wrap; box-shadow: 0 4px 16px rgba(46,125,50,0.06);
@@ -102,13 +99,11 @@
     .close-btn:hover { background: #ef4444; color: white; transform: rotate(90deg); }
     
     .form-panel input, .form-panel textarea {
-      width: 100%; padding: 10px 12px; border: 1px solid var(--eco-border); border-radius: 10px;
+      width: 100%; padding: 10px 12px; margin: 6px 0; border: 1px solid var(--eco-border); border-radius: 10px;
       font-family: inherit; font-size: 13.5px; transition: 0.2s;
     }
     .form-panel input:focus, .form-panel textarea:focus { border-color: var(--eco-green); outline: none; box-shadow: 0 0 0 3px var(--eco-mint); }
-    .form-row { display: grid; grid-template-columns: 1fr 95px; gap: 8px; margin: 6px 0; }
-    .form-row-date { display: grid; grid-template-columns: 1fr 130px; gap: 8px; margin: 6px 0; }
-    .form-row-date input { margin: 0 !important; }
+    .form-row { display: grid; grid-template-columns: 1fr 95px; gap: 8px; }
     .form-buttons { display: flex; gap: 8px; margin-top: 16px; }
 
     .photo-form-title { margin: 12px 0 6px; font-weight: 600; color: var(--eco-muted); }
@@ -410,8 +405,8 @@
   <!-- ========== CONTROLS (SEARCH & TOOLBAR) ========== -->
   <div class="controls-container">
     <div class="search-box">
-      <input type="text" id="searchInput" placeholder="🔍 ค้นหางาน, เครื่องจักร หรือรหัสงาน..." onkeyup="filterJobs()">
-      <input type="date" id="searchDate" onchange="filterJobs()" title="กรองตามวันที่">
+      <!-- เปลี่ยนเป็น Date Picker สำหรับค้นหา/กรองข้อมูลตามวันที่ -->
+      <input type="date" id="searchInput" onchange="filterJobs()" title="เลือกวันที่เพื่อค้นหางาน">
     </div>
     <div class="toolbar">
       <button class="btn-green" onclick="openCreateForm()">+ เพิ่มงาน</button>
@@ -434,11 +429,8 @@
         <input id="newCode" placeholder="รหัสงาน เช่น 3152">
         <input id="newStatus" placeholder="สถานะ (0-100%)" value="100%">
       </div>
-      <div class="form-row-date">
-        <input id="newMachine" placeholder="เครื่อง/ตำแหน่ง">
-        <input type="date" id="newDate" title="วันที่ดำเนินการ">
-      </div>
-      <textarea id="newDetail" rows="3" placeholder="สรุปรายละเอียดงาน" style="margin-top: 6px;"></textarea>
+      <input id="newMachine" placeholder="เครื่อง/ตำแหน่ง">
+      <textarea id="newDetail" rows="3" placeholder="สรุปรายละเอียดงาน"></textarea>
       <input id="newPurpose" placeholder="วัตถุประสงค์">
       
       <div class="photo-form-title">แนบรูปภาพงาน (สูงสุด 4 รูป)</div>
@@ -608,8 +600,8 @@
       localStorage.removeItem("am_daily_jobs");
       jobs = [];
       document.getElementById('searchInput').value = "";
-      document.getElementById('searchDate').value = "";
       renderJobs();
+      applyFilterVisually();
     }
     function createId() { return Date.now().toString() + Math.floor(Math.random() * 1000).toString(); }
 
@@ -622,26 +614,34 @@
       document.getElementById("reportDate").innerText = dd + "/" + mm + "/" + yyyy;
     }
 
-    /* ========== SEARCH / FILTER (อัปเดตกรองวันที่) ========== */
+    /* ========== DATE FILTER ========== */
     function filterJobs() {
-      const query = document.getElementById("searchInput").value.toLowerCase();
-      const dateQueryRaw = document.getElementById("searchDate").value;
-      
-      let dateQuery = "";
-      if (dateQueryRaw) {
-        const parts = dateQueryRaw.split("-");
-        if (parts.length === 3) {
-          dateQuery = `${parts[2]}/${parts[1]}/${parts[0]}`;
-        }
+      applyFilterVisually();
+    }
+
+    function applyFilterVisually() {
+      const dateVal = document.getElementById("searchInput").value; // Format: "YYYY-MM-DD"
+      let searchDate = "";
+      if (dateVal) {
+        const [y, m, d] = dateVal.split("-");
+        searchDate = `${d}/${m}/${y}`;
       }
 
       const cards = document.querySelectorAll(".job-card");
-      cards.forEach(card => {
-        const text = card.innerText.toLowerCase();
-        const matchesText = text.includes(query);
-        const matchesDate = dateQuery ? text.includes(dateQuery) : true;
-        card.style.display = (matchesText && matchesDate) ? "flex" : "none";
+      let visibleJobs = [];
+
+      cards.forEach((card, index) => {
+        const jobDate = card.getAttribute("data-date");
+        // แสดงงานที่ตรงกับวันที่ หรือแสดงทั้งหมดถ้าไม่ได้เลือกวันที่
+        if (!searchDate || searchDate === jobDate) {
+          card.style.display = "flex";
+          if (jobs[index]) visibleJobs.push(jobs[index]);
+        } else {
+          card.style.display = "none";
+        }
       });
+
+      updateSummary(visibleJobs);
     }
 
     /* ========== OPERATOR CRUD ========== */
@@ -675,7 +675,8 @@
         saveData(); 
         renderOperators(); 
         closeOpForm();
-      } catch (e) {}
+      } catch (e) {
+      }
     }
     function removeOperator(id) {
       if (!confirm("ต้องการลบผู้ปฏิบัติงานนี้ใช่หรือไม่?")) return;
@@ -691,13 +692,6 @@
       clearForm();
       document.getElementById("formTitle").innerText = "เพิ่มรายการงาน";
       document.getElementById("editId").value = "";
-
-      const now = new Date();
-      const yyyy = now.getFullYear();
-      const mm = String(now.getMonth() + 1).padStart(2, "0");
-      const dd = String(now.getDate()).padStart(2, "0");
-      document.getElementById("newDate").value = `${yyyy}-${mm}-${dd}`;
-
       document.getElementById("formOverlay").classList.add("show");
       setTimeout(() => document.getElementById("newCode").focus(), 100);
     }
@@ -709,7 +703,6 @@
       document.getElementById("newCode").value = job.code;
       document.getElementById("newStatus").value = job.status;
       document.getElementById("newMachine").value = job.machine;
-      document.getElementById("newDate").value = job.date || ""; 
       document.getElementById("newDetail").value = job.detail;
       document.getElementById("newPurpose").value = job.purpose;
       
@@ -725,7 +718,6 @@
       document.getElementById("editId").value = "";
       document.getElementById("newCode").value = "";
       document.getElementById("newMachine").value = "";
-      document.getElementById("newDate").value = ""; 
       document.getElementById("newDetail").value = "";
       document.getElementById("newPurpose").value = "";
       document.getElementById("newStatus").value = "100%";
@@ -789,12 +781,17 @@
       const code    = document.getElementById("newCode").value.trim() || "-";
       const status  = document.getElementById("newStatus").value.trim() || "0%";
       const machine = document.getElementById("newMachine").value.trim() || "-";
-      const date    = document.getElementById("newDate").value; 
       const detail  = document.getElementById("newDetail").value.trim() || "-";
       const purpose = document.getElementById("newPurpose").value.trim() || "-";
+      
+      // ดึงวันที่จากงานเดิมหากเป็นการแก้ไข เพื่อไม่ให้วันที่เพี้ยน
+      const existingJob = jobs.find(item => item.id === editId);
+      const jobDate = existingJob ? (existingJob.date || document.getElementById("reportDate").innerText) : document.getElementById("reportDate").innerText;
+
       const jobData = {
         id: editId || createId(),
-        code, status, machine, date, detail, purpose, photos: [...formPhotos]
+        date: jobDate,
+        code, status, machine, detail, purpose, photos: [...formPhotos]
       };
       
       const backupJobs = [...jobs];
@@ -804,8 +801,8 @@
       
       try {
         saveData();
-        document.getElementById('searchInput').value = ""; 
         renderJobs();
+        applyFilterVisually();
         closeForm();
         clearForm();
       } catch (e) {
@@ -819,6 +816,7 @@
       try {
         saveData(); 
         renderJobs();
+        applyFilterVisually();
       } catch (e) {}
     }
 
@@ -838,7 +836,6 @@
 
       if (jobs.length === 0) {
         jobList.innerHTML = `<div class="empty-job">ยังไม่มีรายการงาน<br>กดปุ่ม "+ เพิ่มงาน" ด้านบนเพื่อเริ่ม</div>`;
-        updateSummary();
         return;
       }
 
@@ -850,22 +847,18 @@
         if (percent >= 100) badgeClass = "done";
         else if (percent > 0) badgeClass = "progress";
 
-        let displayDate = "-";
-        if (job.date) {
-          const parts = job.date.split("-");
-          if (parts.length === 3) displayDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
-          else displayDate = job.date;
-        }
-
         const photoHTML = job.photos.slice(0, 4).map(photo => {
           if (photo) return `<div class="photo-box"><img src="${photo}"></div>`;
           return `<div class="photo-box">ไม่มีรูป</div>`;
         }).join("");
 
+        // ดึงวันที่จากข้อมูลงาน
+        const jobDate = job.date || document.getElementById("reportDate").innerText;
+
         html += `
-          <article class="job-card" data-status="${percent}">
+          <article class="job-card" data-status="${percent}" data-date="${jobDate}">
             <div class="job-code">
-              <h4 class="job-title">${escapeHTML(job.code)}</h4>
+              <h4 class="job-title">${escapeHTML(job.code)} <span style="font-size:10px; color:var(--eco-muted); font-weight:normal; margin-left:4px;">📅 ${jobDate}</span></h4>
               <div class="job-actions">
                 <button class="edit-job" onclick="openEditForm('${job.id}')">แก้ไข</button>
                 <button class="delete-job" onclick="deleteJob('${job.id}')">ลบ</button>
@@ -873,7 +866,7 @@
             </div>
             <div class="job-body">
               <div class="job-text">
-                <div><b>ตำแหน่ง:</b> ${escapeHTML(job.machine)} &nbsp; <span style="color:var(--eco-muted); font-size:10px;">(📅 ${displayDate})</span></div>
+                <div><b>ตำแหน่ง:</b> ${escapeHTML(job.machine)}</div>
                 <div><b>สรุปงาน:</b> ${nl2br(job.detail)}</div>
                 <div><b>เป้าหมาย:</b> ${escapeHTML(job.purpose)}</div>
                 <div class="status-row">
@@ -886,16 +879,13 @@
           </article>`;
       });
       jobList.innerHTML = html;
-      updateSummary();
-      filterJobs(); 
     }
 
-    /* อัปเดต Summary */
-    function updateSummary(totalOverride = null) {
-      const total = totalOverride !== null ? totalOverride : jobs.length;
-      
+    /* อัปเดต Summary (รับ parameter เป็น array ของงาน เพื่อให้คำนวณถูกตอน filter) */
+    function updateSummary(listToUse = jobs) {
+      const total = listToUse.length;
       let done = 0, full = 0;
-      jobs.forEach(job => {
+      listToUse.forEach(job => {
         const p = getPercent(job.status);
         if (p > 0) done++;
         if (p >= 100) full++;
@@ -907,7 +897,7 @@
     }
 
     /* ==========================================================
-       DOWNLOAD IMAGE (PAGINATED - ทีละ 4 งาน แบบ Eco)
+       DOWNLOAD IMAGE (PAGINATED - เฉพาะงานที่ถูก Filter)
        ========================================================== */
     async function downloadReportImage() {
       const loader = document.getElementById("loaderOverlay");
@@ -917,9 +907,18 @@
       await new Promise(resolve => setTimeout(resolve, 200));
 
       const report = document.getElementById("report");
-      const originalJobs = [...jobs];
       const originalSearch = document.getElementById("searchInput").value;
-      const originalSearchDate = document.getElementById("searchDate").value;
+
+      // หารายการงานที่จะ Export เฉพาะที่ตรงกับ Filter
+      let jobsToExport = jobs;
+      if (originalSearch) {
+        const [y, m, d] = originalSearch.split("-");
+        const searchDate = `${d}/${m}/${y}`;
+        jobsToExport = jobs.filter(j => (j.date || document.getElementById("reportDate").innerText) === searchDate);
+      }
+      
+      const originalJobs = [...jobs];
+      document.getElementById("searchInput").value = ""; // เคลียร์ filter ชั่วคราว
 
       const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
       const hiddenEls = [];
@@ -932,24 +931,29 @@
       });
 
       const editables = report.querySelectorAll("[contenteditable]");
-      editables.forEach(el => { el.style.outline = "none"; });
+      editables.forEach(el => {
+        el.style.outline = "none";
+      });
 
       try {
-        document.getElementById("searchInput").value = "";
-        document.getElementById("searchDate").value = "";
-
         const jobsPerImage = 4;
-        const jobPages = originalJobs.length > 0 ? chunkJobs(originalJobs, jobsPerImage) : [[]];
+        const jobPages = jobsToExport.length > 0
+          ? chunkJobs(jobsToExport, jobsPerImage)
+          : [[]];
 
         const now = new Date();
-        const dateStr = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0") + "-" + String(now.getDate()).padStart(2, "0");
+        const dateStr = now.getFullYear() + "-"
+          + String(now.getMonth() + 1).padStart(2, "0") + "-"
+          + String(now.getDate()).padStart(2, "0");
 
         for (let i = 0; i < jobPages.length; i++) {
-          document.getElementById("loaderText").innerText = "กำลังสร้างรูปภาพหน้า " + (i + 1) + " จาก " + jobPages.length + "...";
+          document.getElementById("loaderText").innerText =
+            "กำลังสร้างรูปภาพหน้า " + (i + 1) + " จาก " + jobPages.length + "...";
 
           jobs = jobPages[i];
           renderJobs();
-          updateSummary(originalJobs.length); 
+          // อัปเดต Summary ให้โชว์ผลรวมของงานทั้งหมดในหน้าต่างนั้นๆ ไม่ใช่แค่หน้าย่อย
+          updateSummary(jobsToExport); 
 
           await new Promise(resolve => setTimeout(resolve, 300));
 
@@ -984,17 +988,23 @@
       } finally {
         jobs = originalJobs;
         document.getElementById("searchInput").value = originalSearch;
-        document.getElementById("searchDate").value = originalSearchDate;
         renderJobs();
+        applyFilterVisually(); // นำ Filter กลับมาใช้งาน
 
-        hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
-        editables.forEach(el => { el.style.outline = ""; });
+        hiddenEls.forEach(({ el, prev }) => {
+          el.style.display = prev;
+        });
+
+        editables.forEach(el => {
+          el.style.outline = "";
+        });
+
         loader.style.display = "none";
       }
     }
 
     /* ==========================================================
-       DOWNLOAD PDF (A4 LANDSCAPE - ECO)
+       DOWNLOAD PDF (A4 LANDSCAPE - เฉพาะงานที่ถูก Filter)
        ========================================================== */
     async function downloadReportPDF() {
       const loader = document.getElementById("loaderOverlay");
@@ -1005,11 +1015,20 @@
 
       const report = document.getElementById("report");
       const originalSearch = document.getElementById("searchInput").value;
-      const originalSearchDate = document.getElementById("searchDate").value;
 
-      document.getElementById("searchInput").value = "";
-      document.getElementById("searchDate").value = "";
-      renderJobs(); 
+      let jobsToExport = jobs;
+      if (originalSearch) {
+        const [y, m, d] = originalSearch.split("-");
+        const searchDate = `${d}/${m}/${y}`;
+        jobsToExport = jobs.filter(j => (j.date || document.getElementById("reportDate").innerText) === searchDate);
+      }
+      
+      const originalJobs = [...jobs];
+      document.getElementById("searchInput").value = ""; 
+      
+      jobs = jobsToExport;
+      renderJobs();
+      updateSummary(jobsToExport);
 
       const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
       const hiddenEls = [];
@@ -1035,8 +1054,13 @@
         });
 
         const imgData = canvas.toDataURL("image/jpeg", 0.85);
+
         const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+        const pdf = new jsPDF({
+          orientation: 'landscape',
+          unit: 'mm',
+          format: 'a4'
+        });
 
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = pdf.internal.pageSize.getHeight();
@@ -1056,7 +1080,9 @@
         }
 
         const now = new Date();
-        const dateStr = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0") + "-" + String(now.getDate()).padStart(2, "0");
+        const dateStr = now.getFullYear() + "-"
+          + String(now.getMonth() + 1).padStart(2, "0") + "-"
+          + String(now.getDate()).padStart(2, "0");
 
         pdf.save("AM-Daily-Report-Eco-" + dateStr + ".pdf");
 
@@ -1064,18 +1090,20 @@
         console.error(err);
         alert("ไม่สามารถสร้าง PDF ได้ กรุณาลองใหม่อีกครั้ง");
       } finally {
+        jobs = originalJobs;
+        document.getElementById("searchInput").value = originalSearch;
+        renderJobs();
+        applyFilterVisually();
+
         hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
         editables.forEach(el => { el.style.outline = ""; });
         
-        document.getElementById("searchInput").value = originalSearch;
-        document.getElementById("searchDate").value = originalSearchDate;
-        renderJobs();
         loader.style.display = "none"; 
       }
     }
 
     /* ==========================================================
-       SAVE TO GOOGLE SHEET & DRIVE
+       SAVE TO GOOGLE SHEET & DRIVE (เฉพาะงานที่ถูก Filter)
        ========================================================== */
     async function saveToGoogleSheet() {
       const loader = document.getElementById("loaderOverlay");
@@ -1085,6 +1113,22 @@
       await new Promise(resolve => setTimeout(resolve, 200));
 
       const report = document.getElementById("report");
+      const originalSearch = document.getElementById("searchInput").value;
+
+      let jobsToExport = jobs;
+      if (originalSearch) {
+        const [y, m, d] = originalSearch.split("-");
+        const searchDate = `${d}/${m}/${y}`;
+        jobsToExport = jobs.filter(j => (j.date || document.getElementById("reportDate").innerText) === searchDate);
+      }
+      
+      const originalJobs = [...jobs];
+      document.getElementById("searchInput").value = ""; 
+      
+      jobs = jobsToExport;
+      renderJobs();
+      updateSummary(jobsToExport);
+
       const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
       const hiddenEls = [];
 
@@ -1100,7 +1144,7 @@
 
       try {
         const canvas = await html2canvas(report, {
-          scale: 1.5, 
+          scale: 2, 
           useCORS: true,
           allowTaint: false,
           backgroundColor: "#f7fff8",
@@ -1111,24 +1155,17 @@
         
         const base64Image = canvas.toDataURL("image/jpeg", 0.85);
 
-        const dateStr = document.getElementById("reportDate").innerText;
+        const dateStr = originalSearch ? `${originalSearch.split('-')[2]}/${originalSearch.split('-')[1]}/${originalSearch.split('-')[0]}` : document.getElementById("reportDate").innerText;
         const opNames = operators.map(op => op.name).join(", ") || "-";
         
         let doneCount = 0;
-        jobs.forEach(job => { if (getPercent(job.status) > 0) doneCount++; });
+        jobsToExport.forEach(job => { if (getPercent(job.status) > 0) doneCount++; });
         
-        const jobsSummary = jobs.map((j, i) => {
-          let d = "-";
-          if (j.date) {
-            const p = j.date.split("-");
-            if (p.length === 3) d = `${p[2]}/${p[1]}/${p[0]}`;
-          }
-          return `${i+1}. [${d}] [${j.code}] ${j.machine} - ${j.status}`;
-        }).join("\n") || "ไม่มีรายการงาน";
+        const jobsSummary = jobsToExport.map((j, i) => `${i+1}. [${j.code}] ${j.machine} - ${j.status}`).join("\n") || "ไม่มีรายการงาน";
 
         const payload = {
           date: dateStr,
-          totalJobs: jobs.length,
+          totalJobs: jobsToExport.length,
           doneJobs: doneCount,
           operators: opNames,
           jobsSummary: jobsSummary,
@@ -1155,6 +1192,11 @@
         console.error(err);
         alert("❌ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้\nกรุณาตรวจสอบอินเทอร์เน็ตหรือ Web App URL");
       } finally {
+        jobs = originalJobs;
+        document.getElementById("searchInput").value = originalSearch;
+        renderJobs();
+        applyFilterVisually();
+
         hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
         editables.forEach(el => { el.style.outline = ""; });
         loader.style.display = "none"; 
@@ -1165,6 +1207,7 @@
     loadData();
     setTodayDate();
     renderJobs();
+    applyFilterVisually();
     renderOperators();
   </script>
 
