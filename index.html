@@ -152,6 +152,17 @@
     [contenteditable="true"] { outline: 1px dashed transparent; border-radius: 4px; transition: 0.2s; }
     [contenteditable="true"]:focus { outline-color: var(--eco-green); background: rgba(255,255,255,0.8); }
 
+    /* ===================== EXPORT MODE (ซ่อนปุ่มอัตโนมัติ) ===================== */
+    .export-mode .job-actions,
+    .export-mode .operator-add-btn,
+    .export-mode .op-del {
+      display: none !important;
+    }
+    .export-mode [contenteditable="true"] {
+      outline: none !important;
+      background: transparent !important;
+    }
+
     /* ===================== HEADER ===================== */
     .header {
       background: linear-gradient(90deg, #ffffff 0%, var(--eco-green-light) 100%);
@@ -387,9 +398,12 @@
     @media print {
       @page { size: A4 landscape; margin: 10mm; }
       body { background: white; }
-      .controls-container, .form-overlay, .job-actions, .operator-add-btn, .op-del, .loader-overlay { display: none !important; }
+      .controls-container, .form-overlay, .loader-overlay { display: none !important; }
       .report-viewport { padding: 0; }
       #report { box-shadow: none; margin: 0 auto; border-radius: 0; width: 100% !important; max-width: none !important; min-height: 594px;}
+      
+      /* ซ่อนปุ่มแก้ไข/ลบตอนปริ้น */
+      .job-actions, .operator-add-btn, .op-del { display: none !important; }
       [contenteditable="true"] { outline: none !important; }
     }
   </style>
@@ -405,7 +419,7 @@
   <!-- ========== CONTROLS (SEARCH & TOOLBAR) ========== -->
   <div class="controls-container">
     <div class="search-box">
-      <!-- เปลี่ยนเป็น Date Picker สำหรับค้นหา/กรองข้อมูลตามวันที่ -->
+      <!-- Date Picker สำหรับค้นหา/กรองข้อมูลตามวันที่ -->
       <input type="date" id="searchInput" onchange="filterJobs()" title="เลือกวันที่เพื่อค้นหางาน">
     </div>
     <div class="toolbar">
@@ -585,6 +599,7 @@
         ];
       }
     }
+    
     function saveData() {
       try {
         localStorage.setItem("am_daily_jobs", JSON.stringify(jobs));
@@ -595,6 +610,7 @@
         throw e;
       }
     }
+    
     function resetAllData() {
       if (!confirm("ต้องการลบข้อมูลงานทั้งหมดเพื่อเริ่มต้นวันใหม่ใช่หรือไม่? (ข้อมูลจะหายไปถาวร)")) return;
       localStorage.removeItem("am_daily_jobs");
@@ -603,6 +619,7 @@
       renderJobs();
       applyFilterVisually();
     }
+    
     function createId() { return Date.now().toString() + Math.floor(Math.random() * 1000).toString(); }
 
     /* ========== AUTO DATE ========== */
@@ -659,13 +676,16 @@
       });
       list.innerHTML = html;
     }
+    
     function openOpForm() {
       document.getElementById("opName").value = "";
       document.getElementById("opFormOverlay").classList.add("show");
       setTimeout(() => document.getElementById("opName").focus(), 100);
     }
+    
     function closeOpForm() { document.getElementById("opFormOverlay").classList.remove("show"); }
     function closeOpFormByBackdrop(event) { if (event.target.id === "opFormOverlay") closeOpForm(); }
+    
     function addOperator() {
       const name = document.getElementById("opName").value.trim();
       if (!name) { alert("กรุณาระบุชื่อ"); return; }
@@ -675,9 +695,9 @@
         saveData(); 
         renderOperators(); 
         closeOpForm();
-      } catch (e) {
-      }
+      } catch (e) {}
     }
+    
     function removeOperator(id) {
       if (!confirm("ต้องการลบผู้ปฏิบัติงานนี้ใช่หรือไม่?")) return;
       operators = operators.filter(op => op.id !== id);
@@ -695,6 +715,7 @@
       document.getElementById("formOverlay").classList.add("show");
       setTimeout(() => document.getElementById("newCode").focus(), 100);
     }
+    
     function openEditForm(id) {
       const job = jobs.find(item => item.id === id);
       if (!job) return;
@@ -712,8 +733,10 @@
       document.getElementById("formOverlay").classList.add("show");
       setTimeout(() => document.getElementById("newCode").focus(), 100);
     }
+    
     function closeForm() { document.getElementById("formOverlay").classList.remove("show"); }
     function closeFormByBackdrop(event) { if (event.target.id === "formOverlay") closeForm(); }
+    
     function clearForm() {
       document.getElementById("editId").value = "";
       document.getElementById("newCode").value = "";
@@ -784,7 +807,6 @@
       const detail  = document.getElementById("newDetail").value.trim() || "-";
       const purpose = document.getElementById("newPurpose").value.trim() || "-";
       
-      // ดึงวันที่จากงานเดิมหากเป็นการแก้ไข เพื่อไม่ให้วันที่เพี้ยน
       const existingJob = jobs.find(item => item.id === editId);
       const jobDate = existingJob ? (existingJob.date || document.getElementById("reportDate").innerText) : document.getElementById("reportDate").innerText;
 
@@ -852,7 +874,6 @@
           return `<div class="photo-box">ไม่มีรูป</div>`;
         }).join("");
 
-        // ดึงวันที่จากข้อมูลงาน
         const jobDate = job.date || document.getElementById("reportDate").innerText;
 
         html += `
@@ -881,7 +902,7 @@
       jobList.innerHTML = html;
     }
 
-    /* อัปเดต Summary (รับ parameter เป็น array ของงาน เพื่อให้คำนวณถูกตอน filter) */
+    /* อัปเดต Summary */
     function updateSummary(listToUse = jobs) {
       const total = listToUse.length;
       let done = 0, full = 0;
@@ -907,9 +928,12 @@
       await new Promise(resolve => setTimeout(resolve, 200));
 
       const report = document.getElementById("report");
+      
+      // เพิ่มคลาสซ่อนปุ่ม
+      report.classList.add("export-mode");
+
       const originalSearch = document.getElementById("searchInput").value;
 
-      // หารายการงานที่จะ Export เฉพาะที่ตรงกับ Filter
       let jobsToExport = jobs;
       if (originalSearch) {
         const [y, m, d] = originalSearch.split("-");
@@ -918,22 +942,7 @@
       }
       
       const originalJobs = [...jobs];
-      document.getElementById("searchInput").value = ""; // เคลียร์ filter ชั่วคราว
-
-      const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
-      const hiddenEls = [];
-
-      hideSelectors.forEach(sel => {
-        report.querySelectorAll(sel).forEach(el => {
-          hiddenEls.push({ el, prev: el.style.display });
-          el.style.display = "none";
-        });
-      });
-
-      const editables = report.querySelectorAll("[contenteditable]");
-      editables.forEach(el => {
-        el.style.outline = "none";
-      });
+      document.getElementById("searchInput").value = ""; 
 
       try {
         const jobsPerImage = 4;
@@ -952,7 +961,6 @@
 
           jobs = jobPages[i];
           renderJobs();
-          // อัปเดต Summary ให้โชว์ผลรวมของงานทั้งหมดในหน้าต่างนั้นๆ ไม่ใช่แค่หน้าย่อย
           updateSummary(jobsToExport); 
 
           await new Promise(resolve => setTimeout(resolve, 300));
@@ -989,16 +997,10 @@
         jobs = originalJobs;
         document.getElementById("searchInput").value = originalSearch;
         renderJobs();
-        applyFilterVisually(); // นำ Filter กลับมาใช้งาน
+        applyFilterVisually(); 
 
-        hiddenEls.forEach(({ el, prev }) => {
-          el.style.display = prev;
-        });
-
-        editables.forEach(el => {
-          el.style.outline = "";
-        });
-
+        // เอาคลาสซ่อนปุ่มออก
+        report.classList.remove("export-mode");
         loader.style.display = "none";
       }
     }
@@ -1014,6 +1016,10 @@
       await new Promise(resolve => setTimeout(resolve, 200)); 
 
       const report = document.getElementById("report");
+      
+      // เพิ่มคลาสซ่อนปุ่ม
+      report.classList.add("export-mode");
+
       const originalSearch = document.getElementById("searchInput").value;
 
       let jobsToExport = jobs;
@@ -1029,18 +1035,6 @@
       jobs = jobsToExport;
       renderJobs();
       updateSummary(jobsToExport);
-
-      const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
-      const hiddenEls = [];
-      hideSelectors.forEach(sel => {
-        report.querySelectorAll(sel).forEach(el => {
-          hiddenEls.push({ el, prev: el.style.display });
-          el.style.display = "none";
-        });
-      });
-
-      const editables = report.querySelectorAll("[contenteditable]");
-      editables.forEach(el => { el.style.outline = "none"; });
 
       try {
         const canvas = await html2canvas(report, {
@@ -1095,9 +1089,8 @@
         renderJobs();
         applyFilterVisually();
 
-        hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
-        editables.forEach(el => { el.style.outline = ""; });
-        
+        // เอาคลาสซ่อนปุ่มออก
+        report.classList.remove("export-mode");
         loader.style.display = "none"; 
       }
     }
@@ -1113,6 +1106,10 @@
       await new Promise(resolve => setTimeout(resolve, 200));
 
       const report = document.getElementById("report");
+      
+      // เพิ่มคลาสซ่อนปุ่ม
+      report.classList.add("export-mode");
+
       const originalSearch = document.getElementById("searchInput").value;
 
       let jobsToExport = jobs;
@@ -1128,19 +1125,6 @@
       jobs = jobsToExport;
       renderJobs();
       updateSummary(jobsToExport);
-
-      const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
-      const hiddenEls = [];
-
-      hideSelectors.forEach(sel => {
-        report.querySelectorAll(sel).forEach(el => {
-          hiddenEls.push({ el, prev: el.style.display });
-          el.style.display = "none";
-        });
-      });
-
-      const editables = report.querySelectorAll("[contenteditable]");
-      editables.forEach(el => { el.style.outline = "none"; });
 
       try {
         const canvas = await html2canvas(report, {
@@ -1197,8 +1181,8 @@
         renderJobs();
         applyFilterVisually();
 
-        hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
-        editables.forEach(el => { el.style.outline = ""; });
+        // เอาคลาสซ่อนปุ่มออก
+        report.classList.remove("export-mode");
         loader.style.display = "none"; 
       }
     }
