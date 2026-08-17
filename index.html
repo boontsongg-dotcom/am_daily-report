@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AM Daily Report CRUD (Cloud Sync & Date Search)</title>
+  <title>AM Daily Report CRUD (Eco Infographic)</title>
   
   <!-- Google Fonts: Noto Sans Thai -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -40,7 +40,7 @@
     .loader-overlay {
       position: fixed; inset: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(4px);
       z-index: 10000; display: none; align-items: center; justify-content: center; flex-direction: column;
-      color: var(--eco-green); font-weight: 700; font-size: 16px; text-align: center;
+      color: var(--eco-green); font-weight: 700; font-size: 16px;
     }
     .spinner {
       width: 48px; height: 48px; border: 5px solid var(--eco-green-light); border-top: 5px solid var(--eco-green);
@@ -50,19 +50,13 @@
 
     /* ===================== TOOLBAR & SEARCH ===================== */
     .controls-container { width: calc(100% - 24px); max-width: 840px; margin: 16px auto; }
-    .search-box { margin-bottom: 12px; display: flex; gap: 8px; }
-    .search-box input[type="text"] {
-      flex: 1; padding: 12px 16px; border: 1px solid var(--eco-border); border-radius: 24px;
-      font-family: inherit; font-size: 14px; outline: none; transition: 0.3s;
+    .search-box { margin-bottom: 12px; }
+    .search-box input {
+      width: 100%; padding: 12px 16px; border: 1px solid var(--eco-border); border-radius: 24px;
+      font-family: 'Noto Sans Thai', sans-serif; font-size: 14px; outline: none; transition: all 0.3s ease;
       box-shadow: 0 2px 6px rgba(46,125,50,0.05);
     }
-    .search-box input[type="date"] {
-      width: 150px; padding: 12px 16px; border: 1px solid var(--eco-border); border-radius: 24px;
-      font-family: inherit; font-size: 13px; outline: none; transition: 0.3s; color: var(--eco-text);
-      box-shadow: 0 2px 6px rgba(46,125,50,0.05); cursor: pointer;
-    }
     .search-box input:focus { border-color: var(--eco-green); box-shadow: 0 4px 12px rgba(46,125,50,0.15); }
-    
     .toolbar {
       background: #ffffff; padding: 12px; border-radius: 16px; display: flex;
       gap: 8px; justify-content: center; flex-wrap: wrap; box-shadow: 0 4px 16px rgba(46,125,50,0.06);
@@ -123,24 +117,37 @@
       border-radius: 8px; margin-bottom: 6px; background: #e2e8f0;
     }
 
-    /* ===================== REPORT VIEWPORT ===================== */
+    /* ===================== REPORT VIEWPORT (ECO THEME) ===================== */
     .report-viewport { width: 100%; display: flex; justify-content: center; padding: 0 8px 32px; overflow-x: auto; }
     
     #report {
-      width: 100%; max-width: 840px; min-width: 320px;
+      width: 100%;
+      max-width: 840px; 
+      min-width: 320px;
       font-family: "Noto Sans Thai", sans-serif;
       background-color: #f7fff8;
+      /* พื้นหลังลายใบไม้ซ้อนกัน */
       background-image: 
         url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20,20 C40,0 60,20 40,40 C20,60 0,40 20,20 Z' fill='%232e7d32' fill-opacity='0.04' /%3E%3Cpath d='M70,70 C90,50 110,70 90,90 C70,110 50,90 70,70 Z' fill='%232e7d32' fill-opacity='0.03' /%3E%3Cpath d='M80,20 C100,10 100,30 80,40 C60,50 60,30 80,20 Z' fill='%234caf50' fill-opacity='0.03' /%3E%3Cpath d='M20,80 C10,100 30,100 40,80 C50,60 30,60 20,80 Z' fill='%234caf50' fill-opacity='0.03' /%3E%3C/svg%3E"),
         linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(238,249,240,0.85) 50%, rgba(248,250,252,0.85) 100%);
       color: var(--eco-text);
-      border-radius: 18px; padding: 22px; box-sizing: border-box;
-      position: relative; overflow: hidden;
+      border-radius: 18px;
+      padding: 22px;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
       box-shadow: 0 12px 32px rgba(46, 125, 50, 0.1);
     }
+
+    /* อิโมจิปลูกต้นไม้ มุมขวาบน */
     #report::before {
-      content: "🌱"; position: absolute; right: 24px; top: 18px;
-      font-size: 42px; opacity: 0.15; pointer-events: none;
+      content: "🌱";
+      position: absolute;
+      right: 24px;
+      top: 18px;
+      font-size: 42px;
+      opacity: 0.15;
+      pointer-events: none;
     }
 
     [contenteditable="true"] { outline: 1px dashed transparent; border-radius: 4px; transition: 0.2s; }
@@ -149,36 +156,81 @@
     /* ===================== HEADER ===================== */
     .header {
       background: linear-gradient(90deg, #ffffff 0%, var(--eco-green-light) 100%);
-      border: 1px solid var(--eco-border); border-left: 8px solid var(--eco-green); border-radius: 18px;
-      padding: 14px 18px; margin-bottom: 14px; box-shadow: 0 6px 18px rgba(46, 125, 50, 0.08);
-      display: grid; grid-template-columns: 110px 1fr 110px; gap: 24px; align-items: center; 
+      border: 1px solid var(--eco-border);
+      border-left: 8px solid var(--eco-green);
+      border-radius: 18px;
+      padding: 14px 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 6px 18px rgba(46, 125, 50, 0.08);
+      display: grid;
+      grid-template-columns: 110px 1fr 110px; 
+      gap: 24px; align-items: center; 
       position: relative; z-index: 2;
     }
-    .logo-box { 
-      display: flex; align-items: center; justify-content: center; background: #ffffff;
-      padding: 6px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); width: 110px; height: 54px; 
-    }
-    .logo-box img { max-width: 100%; max-height: 100%; width: auto; height: auto; display: block; }
     
-    .header-top-row { display: flex; align-items: center; width: 100%; margin-bottom: 4px; }
-    .title h1 { margin: 0; font-size: 26px; line-height: 1.1; color: var(--eco-green); font-weight: 800; letter-spacing: -0.3px; }
-    .title h1::before { content: "Eco Infographic • "; font-size: 0.65em; color: #43a047; font-weight: 700; display: block; margin-bottom: 2px; }
+    .logo-box { 
+      display: flex; align-items: center; justify-content: center; 
+      background: #ffffff;
+      padding: 6px; 
+      border-radius: 8px; 
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+      width: 110px; 
+      height: 54px; 
+    }
+    
+    .logo-box img { 
+      max-width: 100%; 
+      max-height: 100%; 
+      width: auto; 
+      height: auto; 
+      display: block; 
+    }
+    
+    .header-top-row {
+      display: flex; align-items: center; width: 100%; margin-bottom: 4px;
+    }
+    .title h1 { 
+      margin: 0; font-size: 26px; line-height: 1.1; 
+      color: var(--eco-green); font-weight: 800; letter-spacing: -0.3px; 
+    }
+    .title h1::before {
+      content: "Eco Infographic • ";
+      font-size: 0.65em;
+      color: #43a047;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 2px;
+    }
+    
     .title p { margin: 0 0 6px; font-size: 11px; font-weight: 600; color: var(--eco-muted); }
     .date { 
-      display: inline-flex; align-items: center; gap: 6px; background: #ffffff; border-radius: 16px; padding: 4px 14px; 
-      font-size: 12px; font-weight: 700; border: 1px solid var(--eco-border); color: var(--eco-green);
+      display: inline-flex; align-items: center; gap: 6px; 
+      background: #ffffff; border-radius: 16px; padding: 4px 14px; 
+      font-size: 12px; font-weight: 700; border: 1px solid var(--eco-border);
+      color: var(--eco-green);
     }
 
     /* ===================== ECO SUMMARY ===================== */
     .eco-summary {
-      display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 12px 0 14px; position: relative; z-index: 2;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 12px 0 14px;
+      position: relative; z-index: 2;
     }
     .eco-summary-card {
-      background: rgba(255, 255, 255, 0.95); border: 1px solid var(--eco-border); border-radius: 16px;
-      padding: 10px 12px; box-shadow: 0 5px 14px rgba(46, 125, 50, 0.05); display: flex; align-items: center; gap: 10px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--eco-border);
+      border-radius: 16px;
+      padding: 10px 12px;
+      box-shadow: 0 5px 14px rgba(46, 125, 50, 0.05);
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     .eco-summary-icon {
-      width: 36px; height: 36px; border-radius: 50%; background: var(--eco-green-light); color: var(--eco-green);
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--eco-green-light); color: var(--eco-green);
       display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
     }
     .eco-summary-label { font-size: 10px; color: var(--eco-muted); line-height: 1.2; font-weight: 600;}
@@ -186,38 +238,69 @@
 
     /* ===================== CONTENT / SECTIONS ===================== */
     .content { position: relative; z-index: 2; }
+
     .section {
-      background: rgba(255, 255, 255, 0.95); border: 1px solid var(--eco-border); border-radius: 16px;
-      padding: 12px 14px; margin-bottom: 12px; box-shadow: 0 5px 14px rgba(46, 125, 50, 0.05);
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--eco-border);
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 5px 14px rgba(46, 125, 50, 0.05);
     }
     .section-title {
-      color: var(--eco-green); font-weight: 800; font-size: 14px; border-bottom: 2px solid var(--eco-mint);
-      padding-bottom: 6px; margin: 0 0 10px 0; display: flex; justify-content: space-between; align-items: center;
+      color: var(--eco-green);
+      font-weight: 800; font-size: 14px;
+      border-bottom: 2px solid var(--eco-mint);
+      padding-bottom: 6px;
+      margin: 0 0 10px 0;
+      display: flex; justify-content: space-between; align-items: center;
     }
 
     /* ===================== JOB CARDS ===================== */
-    #jobList { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px; }
+    #jobList {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); 
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
     .empty-job {
       grid-column: 1 / -1; background: #ffffff; border: 2px dashed var(--eco-border); border-radius: 16px;
       padding: 24px; text-align: center; color: var(--eco-muted); font-size: 14px; font-weight: 600;
     }
+
     .job-card {
-      background: var(--eco-card); border: 1px solid var(--eco-border); border-left: 6px solid var(--eco-green);
-      border-radius: 16px; padding: 12px; box-shadow: 0 6px 16px rgba(46, 125, 50, 0.05);
-      position: relative; display: flex; flex-direction: column; 
+      background: var(--eco-card);
+      border: 1px solid var(--eco-border);
+      border-left: 6px solid var(--eco-green);
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: 0 6px 16px rgba(46, 125, 50, 0.05);
+      position: relative;
+      display: flex; flex-direction: column; 
     }
+    
     .job-card::before {
-      content: "AM"; position: absolute; right: 12px; top: 12px;
+      content: "AM";
+      position: absolute;
+      right: 12px; top: 12px;
       background: var(--eco-green-light); color: var(--eco-green);
-      border: 1px solid var(--eco-border); border-radius: 999px; padding: 2px 8px; font-size: 9px; font-weight: 800;
+      border: 1px solid var(--eco-border); border-radius: 999px;
+      padding: 2px 8px; font-size: 9px; font-weight: 800;
     }
-    .job-code { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; padding-right: 36px; }
+
+    .job-code {
+      display: flex; align-items: center; justify-content: space-between; 
+      margin-bottom: 6px; padding-right: 36px;
+    }
     .job-title { font-weight: 800; color: #1b5e20; font-size: 13.5px; margin: 0; line-height: 1.2; }
     
     .job-actions { display: flex; gap: 4px; position: absolute; right: 12px; top: 35px;}
     .job-actions button {
-      color: #fff; border: none; font-size: 9px; padding: 3px 8px; cursor: pointer; font-weight: 600; transition: 0.2s;
+      color: #fff; border: none; font-size: 9px;
+      padding: 3px 8px; cursor: pointer; font-weight: 600; transition: 0.2s;
     }
+    .edit-job { background: #f59e0b; } .edit-job:hover { background: #d97706; }
     .delete-job { background: #ef4444; } .delete-job:hover { background: #dc2626; }
     
     .job-body { display: flex; flex-direction: column; gap: 8px; flex: 1; }
@@ -227,14 +310,17 @@
     .status-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
     .progress { flex: 1; height: 8px; background: var(--eco-green-light); border-radius: 20px; overflow: hidden; border: 1px solid var(--eco-border); }
     .progress div { height: 100%; background: var(--eco-green); border-radius: 20px; transition: width 0.5s ease; }
+    
     .status-badge { 
       padding: 3px 9px; border-radius: 999px; font-size: 9px; font-weight: 700; 
       background: var(--eco-green-light); color: var(--eco-green); border: 1px solid var(--eco-border);
     }
     .status-badge.todo { background-color: var(--eco-danger); color: #d32f2f; border-color: #ffcdd2;} 
 
-    /* รูปภาพ 2x2 */
-    .photos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: auto; }
+    /* ระบบ 4 รูปภาพ 2x2 */
+    .photos { 
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: auto; 
+    }
     .photo-box {
       border-radius: 8px; background: var(--eco-green-soft); border: 1px solid var(--eco-border);
       overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;
@@ -251,38 +337,46 @@
     .operator-list { display: flex; flex-wrap: wrap; gap: 8px; }
     .operator-item {
       display: inline-flex; align-items: center; background: #ffffff;
-      padding: 5px 12px; border-radius: 20px; border: 1px solid var(--eco-border); gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      padding: 5px 12px; border-radius: 20px; border: 1px solid var(--eco-border); gap: 6px; 
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
     .operator-item .op-icon { font-size: 12px; color: var(--eco-green); }
     .operator-item .op-name { font-size: 11px; color: var(--eco-text); font-weight: 700; white-space: nowrap; }
     .operator-item .op-del {
       background: var(--eco-danger); color: #d32f2f; border: none; border-radius: 50%;
-      font-size: 8px; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; margin-left: 4px;
+      font-size: 8px; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: 0.2s; margin-left: 4px;
     }
     .operator-item .op-del:hover { background: #d32f2f; color: white; }
 
     /* ===================== SAFETY ===================== */
-    .safety-grid { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: nowrap; }
+    .safety-grid { 
+      display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: nowrap;
+    }
     .safety-title-main { 
       font-size: 16px; line-height: 1.1; font-weight: 900; color: var(--eco-green);
       white-space: nowrap; border-right: 1.5px solid var(--eco-border); padding-right: 12px;
     }
     .safety-item { 
-      display: flex; align-items: center; gap: 6px; text-align: left; font-size: 9.5px; line-height: 1.2; font-weight: 700; 
-      background: var(--eco-green-soft); padding: 5px 8px; border-radius: 8px; border: 1px solid var(--eco-border); flex: 1; justify-content: center; color: var(--eco-text);
+      display: flex; align-items: center; gap: 6px; text-align: left; 
+      font-size: 9.5px; line-height: 1.2; font-weight: 700; 
+      background: var(--eco-green-soft); padding: 5px 8px; border-radius: 8px;
+      border: 1px solid var(--eco-border); flex: 1; justify-content: center; color: var(--eco-text);
     }
     .safety-icon {
-      width: 24px; height: 24px; border-radius: 50%; background: var(--eco-green-light); color: var(--eco-green); display: grid; place-items: center; font-size: 12px; flex-shrink: 0;
+      width: 24px; height: 24px; border-radius: 50%; background: var(--eco-green-light);
+      color: var(--eco-green); display: grid; place-items: center; font-size: 12px; flex-shrink: 0;
     }
 
+    /* สำหรับ export ภาพให้คมและนิ่ง */
     #report * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
-    /* ===================== RESPONSIVE ===================== */
+    /* ===================== RESPONSIVE MEDIA QUERIES ===================== */
     @media (max-width: 768px) {
       #report { padding: 14px; }
       .header { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 12px; padding: 16px; }
-      .search-box { flex-direction: column; }
-      .search-box input[type="date"] { width: 100%; }
+      .header-top-row { justify-content: center; }
+      .title h1 { font-size: 22px; }
       .eco-summary { grid-template-columns: repeat(2, 1fr); gap: 8px;}
       #jobList { grid-template-columns: 1fr; }
       .safety-grid { flex-direction: column; align-items: stretch; gap: 6px; }
@@ -309,16 +403,17 @@
     <div id="loaderText">กำลังประมวลผล...</div>
   </div>
 
-  <!-- ========== CONTROLS ========== -->
+  <!-- ========== CONTROLS (SEARCH & TOOLBAR) ========== -->
   <div class="controls-container">
     <div class="search-box">
-      <input type="text" id="searchInput" placeholder="🔍 ค้นหางาน, เครื่องจักร..." onkeyup="filterJobs()">
-      <input type="date" id="dateSearchInput" onchange="filterJobs()" title="ค้นหางานตามวันที่">
+      <input type="text" id="searchInput" placeholder="🔍 ค้นหางาน, เครื่องจักร หรือรหัสงาน..." onkeyup="filterJobs()">
     </div>
     <div class="toolbar">
       <button class="btn-green" onclick="openCreateForm()">+ เพิ่มงาน</button>
+      <button class="btn-red" onclick="resetAllData()">เริ่มวันใหม่</button>
       <button class="btn-orange" onclick="downloadReportImage()">ดาวน์โหลดภาพ</button>
       <button class="btn-blue" onclick="downloadReportPDF()">PDF (A4 แนวนอน)</button>
+      <button class="btn-green" style="background-color:#059669;" onclick="saveToGoogleSheet()">☁️ บันทึกลง Sheet</button>
     </div>
   </div>
 
@@ -366,7 +461,7 @@
     </section>
   </div>
 
-  <!-- ========== REPORT ========== -->
+  <!-- ========== REPORT (ECO THEME) ========== -->
   <div class="report-viewport">
     <main id="report">
 
@@ -426,7 +521,7 @@
 
         <!-- JOB LIST -->
         <div id="jobList">
-          <div class="empty-job">กำลังโหลดข้อมูลจาก Google Sheets...</div>
+          <div class="empty-job">ยังไม่มีรายการงาน<br>กดปุ่ม "+ เพิ่มงาน" ด้านบนเพื่อเริ่ม</div>
         </div>
 
         <!-- OPERATOR -->
@@ -461,141 +556,11 @@
 
   <!-- ========== JAVASCRIPT ========== -->
   <script>
-    // ----------------------------------------------------
-    // ลิงก์เชื่อม API จาก Google Apps Script
-    // ----------------------------------------------------
-    const API_URL = "https://script.google.com/macros/s/AKfycbzGfPiHWfQJnmpq9z7pr_ZhF5zz33ScZZ8vZvpY_Nli4_GCMScjyfCgBZesjZbMKzXQ/exec";
-
-    let allJobs = []; // เก็บงานทั้งหมดจาก Cloud
-    let jobs = [];    // เก็บงานที่ถูกกรองตามวันที่แล้ว
+    let jobs = [];
     let formPhotos = ["", "", "", ""];
     let operators = [];
 
-    // เมื่อเปิดหน้าเว็บขึ้นมา
-    window.onload = function() {
-      // ตั้งค่ากล่องค้นหาวันที่ให้เป็นวันปัจจุบัน
-      const d = new Date();
-      const localDate = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-      document.getElementById("dateSearchInput").value = localDate;
-      
-      loadOperatorsLocal();
-      loadDataFromCloud();
-    };
-
-    /* ========== CLOUD SYSTEM (ดึง/ส่งข้อมูลไปยัง Google Sheets) ========== */
-    async function loadDataFromCloud() {
-      const loader = document.getElementById("loaderOverlay");
-      document.getElementById("loaderText").innerText = "กำลังโหลดข้อมูลจากคลาวด์...";
-      loader.style.display = "flex";
-
-      try {
-        const response = await fetch(API_URL);
-        const result = await response.json();
-        if(result.status === "success") {
-          allJobs = result.data;
-          filterJobs(); // คัดกรองงานให้ตรงกับวันที่เลือกปัจจุบัน
-        }
-      } catch (error) {
-        console.error(error);
-        document.getElementById("jobList").innerHTML = `<div class="empty-job">⚠️ ไม่สามารถเชื่อมต่อฐานข้อมูลได้ กรุณารีเฟรชหน้าเว็บ</div>`;
-      } finally {
-        loader.style.display = "none";
-      }
-    }
-
-    async function saveJob() {
-      const code    = document.getElementById("newCode").value.trim() || "-";
-      const status  = document.getElementById("newStatus").value.trim() || "0%";
-      const machine = document.getElementById("newMachine").value.trim() || "-";
-      const detail  = document.getElementById("newDetail").value.trim() || "-";
-      const purpose = document.getElementById("newPurpose").value.trim() || "-";
-      const jobDate = document.getElementById("dateSearchInput").value; // ผูกกับวันที่เลือก
-
-      const jobData = {
-        id: createId(),
-        date: jobDate,
-        code, status, machine, detail, purpose, photos: [...formPhotos]
-      };
-
-      const loader = document.getElementById("loaderOverlay");
-      document.getElementById("loaderText").innerText = "กำลังอัปโหลดข้อมูลและรูปภาพขึ้น Google Sheets...\n(อาจใช้เวลา 10-30 วินาที)";
-      loader.style.display = "flex";
-
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" }, // เลี่ยงปัญหา CORS ของ Apps Script
-          body: JSON.stringify(jobData)
-        });
-        const result = await response.json();
-        
-        if (result.status === "success") {
-          closeForm();
-          clearForm();
-          await loadDataFromCloud(); // ดึงข้อมูลใหม่หลังจากบันทึกเสร็จ
-        } else {
-          alert("เกิดข้อผิดพลาดจากเซิร์ฟเวอร์: " + result.message);
-        }
-      } catch (error) {
-        console.error(error);
-        alert("ไม่สามารถบันทึกข้อมูลได้ กรุณาลองใหม่");
-      } finally {
-        loader.style.display = "none";
-      }
-    }
-
-    // ฟังก์ชันซ่อนงานออกจากหน้าจอ (ไม่ลบในคลาวด์)
-    function deleteJob(id) {
-      if (!confirm("ซ่อนงานนี้จากหน้าจอชั่วคราวใช่หรือไม่?\n(ถ้าต้องการลบถาวร ต้องไปลบใน Google Sheets เท่านั้น)")) return;
-      jobs = jobs.filter(item => item.id !== id);
-      renderJobs();
-    }
-
-    /* ========== FILTER (ค้นหา & กรองวันที่) ========== */
-    function filterJobs() {
-      const query = document.getElementById("searchInput").value.toLowerCase();
-      const searchDate = document.getElementById("dateSearchInput").value;
-      
-      // อัปเดตหัวกระดาษรายงานให้อัตโนมัติ (แปลง YYYY-MM-DD เป็น DD/MM/YYYY)
-      if(searchDate) {
-        const parts = searchDate.split("-");
-        document.getElementById("reportDate").innerText = `${parts[2]}/${parts[1]}/${parts[0]}`;
-      }
-
-      // กรองงานใน allJobs
-      jobs = allJobs.filter(job => {
-        // จัดการฟอร์แมตวันที่ที่ได้จาก Google Sheets ให้ชัวร์
-        const jobDateStr = job.date ? String(job.date).substring(0, 10) : ""; 
-        const matchDate = jobDateStr === searchDate;
-        
-        const matchText = (job.code && String(job.code).toLowerCase().includes(query)) ||
-                          (job.machine && String(job.machine).toLowerCase().includes(query)) ||
-                          (job.detail && String(job.detail).toLowerCase().includes(query));
-        return matchDate && (query === "" || matchText);
-      });
-      
-      renderJobs();
-    }
-
-    /* ========== HELPERS ========== */
-    function createId() { return Date.now().toString() + Math.floor(Math.random() * 1000).toString(); }
-    function escapeHTML(text) { return String(text).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;"); }
-    function nl2br(text) { return escapeHTML(text).replace(/\n/g, "<br>"); }
-    function getPercent(status) {
-      const value = parseInt(String(status).replace("%", "")) || 0;
-      return Math.max(0, Math.min(100, value));
-    }
-    
-    // ดึงรูปภาพจากลิงก์ Google Drive แบบดูตรง
-    function getGoogleDriveImageUrl(url) {
-      if (!url) return "";
-      const match = url.match(/\/d\/(.+?)\//);
-      if (match && match[1]) {
-        return `https://drive.google.com/uc?export=view&id=${match[1]}`;
-      }
-      return url;
-    }
-
+    /* ========== CHUNK FUNCTION (แบ่งหน้างาน) ========== */
     function chunkJobs(list, size) {
       const chunks = [];
       for (let i = 0; i < list.length; i += size) {
@@ -604,27 +569,72 @@
       return chunks;
     }
 
-    /* ========== OPERATORS (เก็บเครื่องตัวเองเหมือนเดิม) ========== */
-    function loadOperatorsLocal() {
+    /* ========== LOCAL STORAGE SYSTEM ========== */
+    function loadData() {
+      const savedJobs = localStorage.getItem("am_daily_jobs");
+      if (savedJobs) jobs = JSON.parse(savedJobs);
+
       const savedOps = localStorage.getItem("am_daily_operators");
-      if (savedOps) { operators = JSON.parse(savedOps); } 
-      else {
+      if (savedOps) {
+        operators = JSON.parse(savedOps);
+      } else {
         operators = [
           { id: "op1", name: "ธีระศักดิ์ บ.", fixed: true },
           { id: "op2", name: "ช่างฟิตมิตรสกุณา", fixed: true },
           { id: "op3", name: "ช่างฟิตบ้านแพรก", fixed: true }
         ];
       }
-      renderOperators();
     }
-    function saveOperatorsLocal() { localStorage.setItem("am_daily_operators", JSON.stringify(operators)); }
-    
+    function saveData() {
+      try {
+        localStorage.setItem("am_daily_jobs", JSON.stringify(jobs));
+        localStorage.setItem("am_daily_operators", JSON.stringify(operators));
+      } catch (e) {
+        alert("❌ ไม่สามารถบันทึกได้! พื้นที่ความจำเต็ม\n\nสาเหตุ: รูปภาพมีขนาดใหญ่เกินไป หรือจำนวนงานมากเกินไป\nวิธีแก้: ลบงานเก่าก่อน หรือกดเริ่มวันใหม่");
+        console.error("Storage Quota Exceeded:", e);
+        throw e;
+      }
+    }
+    function resetAllData() {
+      if (!confirm("ต้องการลบข้อมูลงานทั้งหมดเพื่อเริ่มต้นวันใหม่ใช่หรือไม่? (ข้อมูลจะหายไปถาวร)")) return;
+      localStorage.removeItem("am_daily_jobs");
+      jobs = [];
+      document.getElementById('searchInput').value = "";
+      renderJobs();
+    }
+    function createId() { return Date.now().toString() + Math.floor(Math.random() * 1000).toString(); }
+
+    /* ========== AUTO DATE ========== */
+    function setTodayDate() {
+      const now = new Date();
+      const dd = String(now.getDate()).padStart(2, "0");
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const yyyy = now.getFullYear();
+      document.getElementById("reportDate").innerText = dd + "/" + mm + "/" + yyyy;
+    }
+
+    /* ========== SEARCH ========== */
+    function filterJobs() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const cards = document.querySelectorAll(".job-card");
+      cards.forEach(card => {
+        const text = card.innerText.toLowerCase();
+        card.style.display = text.includes(query) ? "flex" : "none";
+      });
+    }
+
+    /* ========== OPERATOR CRUD ========== */
     function renderOperators() {
       const list = document.getElementById("operatorList");
       let html = "";
       operators.forEach((op) => {
         const delBtn = op.fixed ? "" : `<button class="op-del" onclick="removeOperator('${op.id}')" title="ลบ">✕</button>`;
-        html += `<div class="operator-item"><span class="op-icon">👤</span><span class="op-name">${escapeHTML(op.name)}</span>${delBtn}</div>`;
+        html += `
+          <div class="operator-item">
+            <span class="op-icon">👤</span>
+            <span class="op-name">${escapeHTML(op.name)}</span>
+            ${delBtn}
+          </div>`;
       });
       list.innerHTML = html;
     }
@@ -639,23 +649,52 @@
       const name = document.getElementById("opName").value.trim();
       if (!name) { alert("กรุณาระบุชื่อ"); return; }
       operators.push({ id: createId(), name, fixed: false });
-      saveOperatorsLocal(); renderOperators(); closeOpForm();
+      
+      try {
+        saveData(); 
+        renderOperators(); 
+        closeOpForm();
+      } catch (e) {
+      }
     }
     function removeOperator(id) {
       if (!confirm("ต้องการลบผู้ปฏิบัติงานนี้ใช่หรือไม่?")) return;
       operators = operators.filter(op => op.id !== id);
-      saveOperatorsLocal(); renderOperators();
+      try {
+        saveData(); 
+        renderOperators();
+      } catch (e) {}
     }
 
-    /* ========== JOB FORM (เพิ่มรูปภาพ) ========== */
+    /* ========== JOB FORM ========== */
     function openCreateForm() {
       clearForm();
+      document.getElementById("formTitle").innerText = "เพิ่มรายการงาน";
+      document.getElementById("editId").value = "";
+      document.getElementById("formOverlay").classList.add("show");
+      setTimeout(() => document.getElementById("newCode").focus(), 100);
+    }
+    function openEditForm(id) {
+      const job = jobs.find(item => item.id === id);
+      if (!job) return;
+      document.getElementById("formTitle").innerText = "แก้ไขรายการงาน";
+      document.getElementById("editId").value = job.id;
+      document.getElementById("newCode").value = job.code;
+      document.getElementById("newStatus").value = job.status;
+      document.getElementById("newMachine").value = job.machine;
+      document.getElementById("newDetail").value = job.detail;
+      document.getElementById("newPurpose").value = job.purpose;
+      
+      formPhotos = [...job.photos.slice(0, 4)];
+      while (formPhotos.length < 4) formPhotos.push("");
+      updateFormPhotoPreviews();
       document.getElementById("formOverlay").classList.add("show");
       setTimeout(() => document.getElementById("newCode").focus(), 100);
     }
     function closeForm() { document.getElementById("formOverlay").classList.remove("show"); }
     function closeFormByBackdrop(event) { if (event.target.id === "formOverlay") closeForm(); }
     function clearForm() {
+      document.getElementById("editId").value = "";
       document.getElementById("newCode").value = "";
       document.getElementById("newMachine").value = "";
       document.getElementById("newDetail").value = "";
@@ -675,15 +714,25 @@
         img.onload = function() {
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
-          const MAX_WIDTH = 800; const MAX_HEIGHT = 800;
-          let width = img.width; let height = img.height;
+          
+          const MAX_WIDTH = 800; 
+          const MAX_HEIGHT = 800;
+          let width = img.width;
+          let height = img.height;
 
           if (width > height) {
-            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
           } else {
-            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
           }
-          canvas.width = width; canvas.height = height;
+          canvas.width = width;
+          canvas.height = height;
           ctx.drawImage(img, 0, 0, width, height);
 
           formPhotos[index] = canvas.toDataURL('image/jpeg', 0.7);
@@ -693,6 +742,7 @@
       };
       reader.readAsDataURL(file);
     }
+
     function updateFormPhotoPreviews() {
       for (let i = 0; i < 4; i++) {
         const img = document.getElementById("preview" + (i + 1));
@@ -704,27 +754,74 @@
       }
     }
 
+    /* ========== JOB CRUD ========== */
+    function saveJob() {
+      const editId = document.getElementById("editId").value;
+      const code    = document.getElementById("newCode").value.trim() || "-";
+      const status  = document.getElementById("newStatus").value.trim() || "0%";
+      const machine = document.getElementById("newMachine").value.trim() || "-";
+      const detail  = document.getElementById("newDetail").value.trim() || "-";
+      const purpose = document.getElementById("newPurpose").value.trim() || "-";
+      const jobData = {
+        id: editId || createId(),
+        code, status, machine, detail, purpose, photos: [...formPhotos]
+      };
+      
+      const backupJobs = [...jobs];
+
+      if (editId) { jobs = jobs.map(item => item.id === editId ? jobData : item); } 
+      else { jobs.push(jobData); }
+      
+      try {
+        saveData();
+        document.getElementById('searchInput').value = ""; 
+        renderJobs();
+        closeForm();
+        clearForm();
+      } catch (e) {
+        jobs = backupJobs;
+      }
+    }
+    
+    function deleteJob(id) {
+      if (!confirm("ต้องการลบงานนี้ใช่หรือไม่?")) return;
+      jobs = jobs.filter(item => item.id !== id);
+      try {
+        saveData(); 
+        renderJobs();
+      } catch (e) {}
+    }
+
+    /* ========== HELPERS ========== */
+    function escapeHTML(text) {
+      return String(text).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+    }
+    function nl2br(text) { return escapeHTML(text).replace(/\n/g, "<br>"); }
+    function getPercent(status) {
+      const value = parseInt(String(status).replace("%", "")) || 0;
+      return Math.max(0, Math.min(100, value));
+    }
+
     /* ========== RENDER JOBS ========== */
     function renderJobs() {
       const jobList = document.getElementById("jobList");
 
       if (jobs.length === 0) {
-        jobList.innerHTML = `<div class="empty-job">ไม่มีรายการงานในวันที่กำหนด<br>กดปุ่ม "+ เพิ่มงาน" ด้านบนเพื่อเริ่ม</div>`;
-        updateSummary(0);
+        jobList.innerHTML = `<div class="empty-job">ยังไม่มีรายการงาน<br>กดปุ่ม "+ เพิ่มงาน" ด้านบนเพื่อเริ่ม</div>`;
+        updateSummary();
         return;
       }
 
       let html = "";
-      jobs.forEach((job) => {
+      jobs.forEach((job, index) => {
         const percent = getPercent(job.status);
+        
         let badgeClass = "todo";
         if (percent >= 100) badgeClass = "done";
         else if (percent > 0) badgeClass = "progress";
 
-        const photoHTML = job.photos.slice(0, 4).map(photoUrl => {
-          const src = getGoogleDriveImageUrl(photoUrl);
-          // ใส่ crossorigin="anonymous" เผื่อให้ html2canvas โหลดจาก Google Drive ได้
-          if (src) return `<div class="photo-box"><img src="${src}" crossorigin="anonymous"></div>`;
+        const photoHTML = job.photos.slice(0, 4).map(photo => {
+          if (photo) return `<div class="photo-box"><img src="${photo}"></div>`;
           return `<div class="photo-box">ไม่มีรูป</div>`;
         }).join("");
 
@@ -733,8 +830,8 @@
             <div class="job-code">
               <h4 class="job-title">${escapeHTML(job.code)}</h4>
               <div class="job-actions">
-                <!-- นำปุ่มแก้ไขออกเนื่องจาก API เป็นแบบ Append Log ลง Sheet -->
-                <button class="delete-job" onclick="deleteJob('${job.id}')">ซ่อน (ลบ)</button>
+                <button class="edit-job" onclick="openEditForm('${job.id}')">แก้ไข</button>
+                <button class="delete-job" onclick="deleteJob('${job.id}')">ลบ</button>
               </div>
             </div>
             <div class="job-body">
@@ -752,11 +849,14 @@
           </article>`;
       });
       jobList.innerHTML = html;
-      updateSummary(jobs.length);
+      updateSummary();
+      filterJobs(); 
     }
 
+    /* อัปเดต Summary (ใช้พารามิเตอร์เพื่อรับค่าจำนวนงานทั้งหมดเวลา Export) */
     function updateSummary(totalOverride = null) {
       const total = totalOverride !== null ? totalOverride : jobs.length;
+      
       let done = 0, full = 0;
       jobs.forEach(job => {
         const p = getPercent(job.status);
@@ -781,9 +881,11 @@
 
       const report = document.getElementById("report");
       const originalJobs = [...jobs];
-      
+      const originalSearch = document.getElementById("searchInput").value;
+
       const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
       const hiddenEls = [];
+
       hideSelectors.forEach(sel => {
         report.querySelectorAll(sel).forEach(el => {
           hiddenEls.push({ el, prev: el.style.display });
@@ -792,20 +894,30 @@
       });
 
       const editables = report.querySelectorAll("[contenteditable]");
-      editables.forEach(el => { el.style.outline = "none"; });
+      editables.forEach(el => {
+        el.style.outline = "none";
+      });
 
       try {
-        const jobsPerImage = 4;
-        const jobPages = originalJobs.length > 0 ? chunkJobs(originalJobs, jobsPerImage) : [[]];
+        document.getElementById("searchInput").value = "";
 
-        const dateSearch = document.getElementById("dateSearchInput").value;
-        const dateStr = dateSearch ? dateSearch : "Report";
+        const jobsPerImage = 4;
+        const jobPages = originalJobs.length > 0
+          ? chunkJobs(originalJobs, jobsPerImage)
+          : [[]];
+
+        const now = new Date();
+        const dateStr = now.getFullYear() + "-"
+          + String(now.getMonth() + 1).padStart(2, "0") + "-"
+          + String(now.getDate()).padStart(2, "0");
 
         for (let i = 0; i < jobPages.length; i++) {
-          document.getElementById("loaderText").innerText = "กำลังสร้างรูปภาพหน้า " + (i + 1) + " จาก " + jobPages.length + "...";
+          document.getElementById("loaderText").innerText =
+            "กำลังสร้างรูปภาพหน้า " + (i + 1) + " จาก " + jobPages.length + "...";
 
           jobs = jobPages[i];
           renderJobs();
+          // อัปเดต Summary ให้โชว์จำนวนงานจริงของทั้งหมด ไม่ใช่แค่ 4 งานในหน้านี้
           updateSummary(originalJobs.length); 
 
           await new Promise(resolve => setTimeout(resolve, 300));
@@ -821,10 +933,11 @@
           });
 
           const link = document.createElement("a");
+
           if (jobPages.length === 1) {
-            link.download = "AM-Daily-Report-Eco-" + dateStr + ".png";
+            link.download = "AM-Daily-Report-Eco-Infographic-" + dateStr + ".png";
           } else {
-            link.download = "AM-Daily-Report-Eco-" + dateStr + "-page-" + String(i + 1).padStart(2, "0") + ".png";
+            link.download = "AM-Daily-Report-Eco-Infographic-" + dateStr + "-page-" + String(i + 1).padStart(2, "0") + ".png";
           }
 
           link.href = canvas.toDataURL("image/png");
@@ -836,13 +949,20 @@
         }
 
       } catch (err) {
-        alert("ไม่สามารถสร้างภาพได้ (อาจเกิดจากการจำกัดการเข้าถึงรูปภาพของ Google Drive) กรุณาลองโหลดแบบ PDF แทน");
+        alert("ไม่สามารถสร้างภาพได้ กรุณาลองใหม่อีกครั้ง");
       } finally {
         jobs = originalJobs;
+        document.getElementById("searchInput").value = originalSearch;
         renderJobs();
 
-        hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
-        editables.forEach(el => { el.style.outline = ""; });
+        hiddenEls.forEach(({ el, prev }) => {
+          el.style.display = prev;
+        });
+
+        editables.forEach(el => {
+          el.style.outline = "";
+        });
+
         loader.style.display = "none";
       }
     }
@@ -857,8 +977,8 @@
       
       await new Promise(resolve => setTimeout(resolve, 200)); 
 
+      renderJobs(); 
       const report = document.getElementById("report");
-      const originalJobs = [...jobs];
 
       const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
       const hiddenEls = [];
@@ -884,8 +1004,13 @@
         });
 
         const imgData = canvas.toDataURL("image/jpeg", 0.85);
+
         const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
+        const pdf = new jsPDF({
+          orientation: 'landscape',
+          unit: 'mm',
+          format: 'a4'
+        });
 
         const pdfWidth = pdf.internal.pageSize.getWidth();
         const pdfHeight = pdf.internal.pageSize.getHeight();
@@ -904,13 +1029,97 @@
           heightLeft -= pdfHeight;
         }
 
-        const dateSearch = document.getElementById("dateSearchInput").value;
-        const dateStr = dateSearch ? dateSearch : "Report";
-        pdf.save("AM-Daily-Report-Eco-" + dateStr + ".pdf");
+        const now = new Date();
+        const dateStr = now.getFullYear() + "-"
+          + String(now.getMonth() + 1).padStart(2, "0") + "-"
+          + String(now.getDate()).padStart(2, "0");
+
+        pdf.save("AM-Daily-Report-Eco-Infographic-" + dateStr + ".pdf");
 
       } catch (err) {
         console.error(err);
-        alert("ไม่สามารถสร้าง PDF ได้ (อาจเกิดจากการบล็อกการดูรูปจาก Google Drive)");
+        alert("ไม่สามารถสร้าง PDF ได้ กรุณาลองใหม่อีกครั้ง");
+      } finally {
+        hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
+        editables.forEach(el => { el.style.outline = ""; });
+        
+        loader.style.display = "none"; 
+      }
+    }
+
+    /* ==========================================================
+       SAVE TO GOOGLE SHEET & DRIVE
+       ========================================================== */
+    async function saveToGoogleSheet() {
+      const loader = document.getElementById("loaderOverlay");
+      document.getElementById("loaderText").innerText = "กำลังอัปโหลดข้อมูลและรูปภาพลง Cloud...";
+      loader.style.display = "flex";
+
+      await new Promise(resolve => setTimeout(resolve, 200));
+
+      const report = document.getElementById("report");
+      const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
+      const hiddenEls = [];
+
+      hideSelectors.forEach(sel => {
+        report.querySelectorAll(sel).forEach(el => {
+          hiddenEls.push({ el, prev: el.style.display });
+          el.style.display = "none";
+        });
+      });
+
+      const editables = report.querySelectorAll("[contenteditable]");
+      editables.forEach(el => { el.style.outline = "none"; });
+
+      try {
+        const canvas = await html2canvas(report, {
+          scale: 2, 
+          useCORS: true,
+          allowTaint: false,
+          backgroundColor: "#f7fff8",
+          logging: false,
+          width: 840,
+          windowWidth: 840
+        });
+        
+        const base64Image = canvas.toDataURL("image/jpeg", 0.85);
+
+        const dateStr = document.getElementById("reportDate").innerText;
+        const opNames = operators.map(op => op.name).join(", ") || "-";
+        
+        let doneCount = 0;
+        jobs.forEach(job => { if (getPercent(job.status) > 0) doneCount++; });
+        
+        const jobsSummary = jobs.map((j, i) => `${i+1}. [${j.code}] ${j.machine} - ${j.status}`).join("\n") || "ไม่มีรายการงาน";
+
+        const payload = {
+          date: dateStr,
+          totalJobs: jobs.length,
+          doneJobs: doneCount,
+          operators: opNames,
+          jobsSummary: jobsSummary,
+          imageBase64: base64Image
+        };
+
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzGfPiHWfQJnmpq9z7pr_ZhF5zz33ScZZ8vZvpY_Nli4_GCMScjyfCgBZesjZbMKzXQ/exec";
+        
+        const response = await fetch(WEB_APP_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        
+        if (result.status === "success") {
+          alert("✅ บันทึกข้อมูลและรูปภาพลง Google Sheet สำเร็จ!");
+        } else {
+          alert("❌ เกิดข้อผิดพลาดจากเซิร์ฟเวอร์:\n" + result.message);
+        }
+
+      } catch (err) {
+        console.error(err);
+        alert("❌ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้\nกรุณาตรวจสอบอินเทอร์เน็ตหรือ Web App URL");
       } finally {
         hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
         editables.forEach(el => { el.style.outline = ""; });
@@ -918,6 +1127,11 @@
       }
     }
 
+    /* ========== INIT ========== */
+    loadData();
+    setTodayDate();
+    renderJobs();
+    renderOperators();
   </script>
 
 </body>
