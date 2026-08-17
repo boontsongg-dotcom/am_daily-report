@@ -203,21 +203,26 @@
     
     .title p { margin: 2px 0 8px; font-size: 11px; font-weight: 700; color: var(--eco-muted); letter-spacing: 0.5px; }
     
-    /* ปรับแต่งกล่องวันที่ให้คมชัด เด่นสะดุดตา */
-    .date { 
-      display: inline-flex; 
-      align-items: center; 
-      gap: 8px; 
-      background: linear-gradient(135deg, var(--eco-green-dark) 0%, var(--eco-green) 100%); 
-      border-radius: 20px; 
-      padding: 5px 16px; 
-      font-size: 13.5px; 
-      font-weight: 800; 
-      color: #ffffff;
-      box-shadow: 0 3px 10px rgba(27, 94, 32, 0.25);
-      border: 1.5px solid #a5d6a7;
+    /* แก้ไขส่วนวันที่: ป้องกัน Canvas ยุบตัว และเรนเดอร์ตัวหนังสือสีขาวชัดเจน */
+    .date-badge-wrapper {
+      display: inline-block;
+      margin-top: 4px;
     }
-    .date span { color: #ffffff; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+    .date { 
+      display: inline-block; 
+      background: #1b5e20 !important; 
+      border-radius: 20px; 
+      padding: 6px 16px; 
+      font-size: 13.5px; 
+      font-weight: 700; 
+      color: #ffffff !important;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+      border: 1px solid #4caf50;
+      white-space: nowrap;
+    }
+    .date * {
+      color: #ffffff !important;
+    }
 
     /* ===================== ECO SUMMARY ===================== */
     .eco-summary {
@@ -483,7 +488,11 @@
             <h1 contenteditable="true">สรุปงาน AM บดซีเมนต์</h1>
           </div>
           <p contenteditable="true">CEMENT MILL AM DAILY REPORT</p>
-          <div class="date">📅 <span contenteditable="true" id="reportDate"></span></div>
+          <div class="date-badge-wrapper">
+            <div class="date">
+              📅 <span id="reportDate" contenteditable="true">กำลังโหลดวันที่...</span>
+            </div>
+          </div>
         </div>
 
         <div class="logo-box" contenteditable="true">
@@ -611,7 +620,7 @@
     }
     function createId() { return Date.now().toString() + Math.floor(Math.random() * 1000).toString(); }
 
-    /* ========== AUTO DATE (ปรับปรุงให้แสดงผลภาษาไทยชัดเจน) ========== */
+    /* ========== AUTO DATE (แสดงผลวัน/เดือน/ปี พ.ศ. ชัดเจน) ========== */
     function setTodayDate() {
       const now = new Date();
       const thaiMonths = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
@@ -620,9 +629,13 @@
       const dayName = thaiDays[now.getDay()];
       const dd = now.getDate();
       const mm = thaiMonths[now.getMonth()];
-      const yyyy = now.getFullYear() + 543; // แปลงเป็น พ.ศ.
+      const yyyy = now.getFullYear() + 543;
       
-      document.getElementById("reportDate").innerText = dayName + "ที่ " + dd + " " + mm + " " + yyyy;
+      const formattedDate = `${dayName}ที่ ${dd} ${mm} ${yyyy}`;
+      const target = document.getElementById("reportDate");
+      if (target) {
+        target.innerText = formattedDate;
+      }
     }
 
     /* ========== SEARCH ========== */
@@ -963,7 +976,7 @@
     }
 
     /* ==========================================================
-       DOWNLOAD PDF (A4 LANDSCAPE - จัดหน้าละ 4 งาน ไม่ตัดขาด)
+       DOWNLOAD PDF (A4 LANDSCAPE - จัดหน้าละ 4 งาน พอดีแผ่น)
        ========================================================== */
     async function downloadReportPDF() {
       const loader = document.getElementById("loaderOverlay");
@@ -1015,7 +1028,7 @@
           await new Promise(resolve => setTimeout(resolve, 300));
 
           const canvas = await html2canvas(report, {
-            scale: 2.5, // เพิ่มความคมชัดระดับสิ่งพิมพ์
+            scale: 2.5,
             useCORS: true,
             allowTaint: false,
             backgroundColor: "#f7fff8",
@@ -1028,14 +1041,13 @@
 
           if (i > 0) pdf.addPage();
 
-          // ปรับขนาดให้อยู่กึ่งกลางหน้า A4 Landscape พอดี
           const margin = 8;
           const targetWidth = pdfWidth - (margin * 2);
           const targetHeight = (canvas.height * targetWidth) / canvas.width;
           
           let yPos = margin;
           if (targetHeight < pdfHeight - (margin * 2)) {
-            yPos = (pdfHeight - targetHeight) / 2; // จัดกึ่งกลางแนวตั้งถ้าไม่ล้นหน้า
+            yPos = (pdfHeight - targetHeight) / 2;
           }
 
           pdf.addImage(imgData, 'JPEG', margin, yPos, targetWidth, targetHeight);
