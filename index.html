@@ -216,8 +216,12 @@
     .date { 
       display: inline-flex; align-items: center; gap: 6px; 
       background: #ffffff; border-radius: 16px; padding: 4px 14px; 
-      font-size: 12px; font-weight: 700; border: 1px solid var(--eco-border);
-      color: var(--eco-green);
+      font-size: 13px; font-weight: 700; border: 1px solid var(--eco-border);
+      color: var(--eco-green) !important;
+    }
+    /* บังคับให้แสดงผลเป็น block เพื่อป้องกันบัก html2canvas */
+    #reportDate {
+      display: inline-block; min-width: 60px; color: var(--eco-green);
     }
 
     /* ===================== ECO SUMMARY (INFOGRAPHIC) ===================== */
@@ -298,7 +302,7 @@
       display: flex; justify-content: space-between; align-items: center;
     }
 
-    /* ===================== JOB CARDS (INFOGRAPHIC STYLE) ===================== */
+    /* ===================== JOB CARDS ===================== */
     #jobList {
       display: grid;
       grid-template-columns: repeat(2, 1fr); 
@@ -440,7 +444,6 @@
       .report-viewport { padding: 0; }
       #report { box-shadow: none; margin: 0 auto; border-radius: 0; width: 100% !important; max-width: none !important; min-height: 594px;}
       
-      /* ซ่อนปุ่มแก้ไข/ลบตอนปริ้น */
       .job-actions, .operator-add-btn, .op-del { display: none !important; }
       [contenteditable="true"] { outline: none !important; }
     }
@@ -1010,20 +1013,36 @@
       await new Promise(resolve => setTimeout(resolve, 200));
 
       const report = document.getElementById("report");
-      
       report.classList.add("export-mode");
 
       const originalSearch = document.getElementById("searchInput").value;
+      const originalReportDate = document.getElementById("reportDate").innerText;
 
       let jobsToExport = jobs;
       if (originalSearch) {
         const [y, m, d] = originalSearch.split("-");
         const searchDate = `${d}/${m}/${y}`;
-        jobsToExport = jobs.filter(j => (j.date || document.getElementById("reportDate").innerText) === searchDate);
+        jobsToExport = jobs.filter(j => (j.date || originalReportDate) === searchDate);
+        document.getElementById("reportDate").innerText = searchDate; // Update date in header for the print
       }
       
       const originalJobs = [...jobs];
       document.getElementById("searchInput").value = ""; 
+
+      const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
+      const hiddenEls = [];
+      hideSelectors.forEach(sel => {
+        report.querySelectorAll(sel).forEach(el => {
+          hiddenEls.push({ el, prev: el.style.display });
+          el.style.display = "none";
+        });
+      });
+
+      const editables = report.querySelectorAll("[contenteditable]");
+      editables.forEach(el => {
+        el.removeAttribute("contenteditable"); // Remove during export
+        el.style.outline = "none";
+      });
 
       try {
         const jobsPerImage = 4;
@@ -1077,8 +1096,18 @@
       } finally {
         jobs = originalJobs;
         document.getElementById("searchInput").value = originalSearch;
+        document.getElementById("reportDate").innerText = originalReportDate; // Restore
         renderJobs();
         applyFilterVisually(); 
+
+        hiddenEls.forEach(({ el, prev }) => {
+          el.style.display = prev;
+        });
+
+        editables.forEach(el => {
+          el.setAttribute("contenteditable", "true"); // Put it back
+          el.style.outline = "";
+        });
 
         report.classList.remove("export-mode");
         loader.style.display = "none";
@@ -1096,16 +1125,17 @@
       await new Promise(resolve => setTimeout(resolve, 200)); 
 
       const report = document.getElementById("report");
-      
       report.classList.add("export-mode");
 
       const originalSearch = document.getElementById("searchInput").value;
+      const originalReportDate = document.getElementById("reportDate").innerText;
 
       let jobsToExport = jobs;
       if (originalSearch) {
         const [y, m, d] = originalSearch.split("-");
         const searchDate = `${d}/${m}/${y}`;
-        jobsToExport = jobs.filter(j => (j.date || document.getElementById("reportDate").innerText) === searchDate);
+        jobsToExport = jobs.filter(j => (j.date || originalReportDate) === searchDate);
+        document.getElementById("reportDate").innerText = searchDate; // Update date in header for the print
       }
       
       const originalJobs = [...jobs];
@@ -1114,6 +1144,21 @@
       jobs = jobsToExport;
       renderJobs();
       updateSummary(jobsToExport);
+
+      const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
+      const hiddenEls = [];
+      hideSelectors.forEach(sel => {
+        report.querySelectorAll(sel).forEach(el => {
+          hiddenEls.push({ el, prev: el.style.display });
+          el.style.display = "none";
+        });
+      });
+
+      const editables = report.querySelectorAll("[contenteditable]");
+      editables.forEach(el => {
+        el.removeAttribute("contenteditable"); // Remove during export
+        el.style.outline = "none";
+      });
 
       try {
         const canvas = await html2canvas(report, {
@@ -1165,9 +1210,16 @@
       } finally {
         jobs = originalJobs;
         document.getElementById("searchInput").value = originalSearch;
+        document.getElementById("reportDate").innerText = originalReportDate; // Restore
         renderJobs();
         applyFilterVisually();
 
+        hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
+        editables.forEach(el => {
+          el.setAttribute("contenteditable", "true"); // Put it back
+          el.style.outline = "";
+        });
+        
         report.classList.remove("export-mode");
         loader.style.display = "none"; 
       }
@@ -1184,16 +1236,17 @@
       await new Promise(resolve => setTimeout(resolve, 200));
 
       const report = document.getElementById("report");
-      
       report.classList.add("export-mode");
 
       const originalSearch = document.getElementById("searchInput").value;
+      const originalReportDate = document.getElementById("reportDate").innerText;
 
       let jobsToExport = jobs;
       if (originalSearch) {
         const [y, m, d] = originalSearch.split("-");
         const searchDate = `${d}/${m}/${y}`;
-        jobsToExport = jobs.filter(j => (j.date || document.getElementById("reportDate").innerText) === searchDate);
+        jobsToExport = jobs.filter(j => (j.date || originalReportDate) === searchDate);
+        document.getElementById("reportDate").innerText = searchDate; // Update date in header for the print
       }
       
       const originalJobs = [...jobs];
@@ -1202,6 +1255,22 @@
       jobs = jobsToExport;
       renderJobs();
       updateSummary(jobsToExport);
+
+      const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
+      const hiddenEls = [];
+
+      hideSelectors.forEach(sel => {
+        report.querySelectorAll(sel).forEach(el => {
+          hiddenEls.push({ el, prev: el.style.display });
+          el.style.display = "none";
+        });
+      });
+
+      const editables = report.querySelectorAll("[contenteditable]");
+      editables.forEach(el => {
+        el.removeAttribute("contenteditable"); // Remove during export
+        el.style.outline = "none";
+      });
 
       try {
         const canvas = await html2canvas(report, {
@@ -1216,7 +1285,7 @@
         
         const base64Image = canvas.toDataURL("image/jpeg", 0.85);
 
-        const dateStr = originalSearch ? `${originalSearch.split('-')[2]}/${originalSearch.split('-')[1]}/${originalSearch.split('-')[0]}` : document.getElementById("reportDate").innerText;
+        const dateStr = document.getElementById("reportDate").innerText;
         const opNames = operators.map(op => op.name).join(", ") || "-";
         
         let doneCount = 0;
@@ -1255,8 +1324,15 @@
       } finally {
         jobs = originalJobs;
         document.getElementById("searchInput").value = originalSearch;
+        document.getElementById("reportDate").innerText = originalReportDate; // Restore
         renderJobs();
         applyFilterVisually();
+
+        hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
+        editables.forEach(el => {
+          el.setAttribute("contenteditable", "true"); // Put it back
+          el.style.outline = "";
+        });
 
         report.classList.remove("export-mode");
         loader.style.display = "none"; 
