@@ -212,14 +212,14 @@
     
     /* ===================== แก้ไขกล่องวันที่ (DATE BOX) ===================== */
     .date { 
-      display: inline-block; /* เลิกใช้ flex ป้องกัน html2canvas บั๊ก */
-      background: var(--eco-green); /* เปลี่ยนพื้นเป็นสีเขียว */
-      color: #ffffff; /* ตัวหนังสือสีขาว */
+      display: inline-block; 
+      background: var(--eco-green); 
+      color: #ffffff; 
       border-radius: 16px; 
       padding: 6px 16px; 
       font-size: 13px; 
       font-weight: 700; 
-      box-shadow: 0 4px 6px rgba(46,125,50,0.2); /* เงาสีเขียว */
+      box-shadow: 0 4px 6px rgba(46,125,50,0.2); 
       white-space: nowrap;
     }
     .date svg {
@@ -230,7 +230,7 @@
     #reportDate {
       display: inline-block;
       vertical-align: middle;
-      min-width: 75px; /* ล็อกความกว้างกันข้อความพับ */
+      min-width: 75px; 
     }
 
     /* ===================== ECO SUMMARY ===================== */
@@ -431,6 +431,7 @@
   <!-- ========== CONTROLS (SEARCH & TOOLBAR) ========== -->
   <div class="controls-container">
     <div class="search-box">
+      <!-- Date Picker สำหรับค้นหา/กรองข้อมูลตามวันที่ -->
       <input type="date" id="searchInput" onchange="filterJobs()" title="เลือกวันที่เพื่อค้นหางาน">
     </div>
     <div class="toolbar">
@@ -526,7 +527,8 @@
         <div class="eco-summary-card">
           <div class="eco-summary-icon">⏱</div>
           <div>
-            <div class="eco-summary-label">งานสำเร็จ</div>
+            <!-- แก้ไขข้อความจาก "งานสำเร็จ" เป็น "งานที่ทำ" -->
+            <div class="eco-summary-label">งานที่ทำ</div>
             <div class="eco-summary-value" id="doneJobs">0 งาน</div>
           </div>
         </div>
