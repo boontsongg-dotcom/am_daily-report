@@ -118,7 +118,7 @@
       border-radius: 8px; margin-bottom: 6px; background: #e2e8f0;
     }
 
-    /* ===================== REPORT VIEWPORT ===================== */
+    /* ===================== REPORT VIEWPORT (ECO THEME) ===================== */
     .report-viewport { width: 100%; display: flex; justify-content: center; padding: 0 8px 32px; overflow-x: auto; }
     
     #report {
@@ -152,16 +152,11 @@
     [contenteditable="true"] { outline: 1px dashed transparent; border-radius: 4px; transition: 0.2s; }
     [contenteditable="true"]:focus { outline-color: var(--eco-green); background: rgba(255,255,255,0.8); }
 
-    /* ===================== EXPORT MODE ===================== */
+    /* ===================== EXPORT MODE (ซ่อนปุ่มอัตโนมัติ) ===================== */
     .export-mode .job-actions,
     .export-mode .operator-add-btn,
     .export-mode .op-del {
       display: none !important;
-    }
-    /* ซ่อนกรอบของ Contenteditable ตอน export แทนการลบ attribute ทิ้ง (ป้องกันบักข้อมูลหาย) */
-    .export-mode [contenteditable="true"] {
-      outline: none !important;
-      background: transparent !important;
     }
 
     /* ===================== HEADER ===================== */
@@ -214,72 +209,38 @@
     }
     
     .title p { margin: 0 0 6px; font-size: 11px; font-weight: 600; color: var(--eco-muted); }
-    
-    /* แก้ไขการล็อกสีวันที่แบบฮาร์ดโค้ด เพื่อป้องกันบักเวลาแคปรูป */
     .date { 
       display: inline-flex; align-items: center; gap: 6px; 
       background: #ffffff; border-radius: 16px; padding: 4px 14px; 
-      font-size: 13px; font-weight: 700; border: 1px solid #c8e6c9;
-      color: #2e7d32 !important;
-    }
-    #reportDate {
-      display: inline-block; min-width: 60px; color: #2e7d32 !important;
+      font-size: 12px; font-weight: 700; border: 1px solid var(--eco-border);
+      color: var(--eco-green);
     }
 
-    /* ===================== ECO SUMMARY (INFOGRAPHIC) ===================== */
+    /* ===================== ECO SUMMARY ===================== */
     .eco-summary {
       display: grid;
-      grid-template-columns: 150px 1fr;
-      gap: 12px;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
       margin: 12px 0 14px;
       position: relative; z-index: 2;
     }
-
-    .eco-donut-card {
-      background: rgba(255,255,255,0.95);
+    .eco-summary-card {
+      background: rgba(255, 255, 255, 0.95);
       border: 1px solid var(--eco-border);
       border-radius: 16px;
-      padding: 12px;
-      box-shadow: 0 5px 14px rgba(46,125,50,0.05);
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center; gap: 6px;
+      padding: 10px 12px;
+      box-shadow: 0 5px 14px rgba(46, 125, 50, 0.05);
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-    .donut {
-      width: 96px; height: 96px; border-radius: 50%;
-      display: grid; place-items: center;
-      background: conic-gradient(var(--eco-green) 0deg, var(--eco-green-light) 0deg);
-      transition: background 0.6s ease;
-    }
-    .donut-inner {
-      width: 70px; height: 70px; border-radius: 50%;
-      background: #fff; display: grid; place-items: center;
-      font-size: 20px; font-weight: 900; color: var(--eco-green);
-    }
-    .donut-label { font-size: 11px; font-weight: 700; color: var(--eco-muted); }
-
-    .eco-stat-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
-    }
-    .eco-summary-card {
-      background: rgba(255,255,255,0.95);
-      border: 1px solid var(--eco-border);
-      border-radius: 16px; padding: 10px 12px;
-      box-shadow: 0 5px 14px rgba(46,125,50,0.05);
-      display: flex; flex-direction: column; gap: 4px;
-      justify-content: center;
-    }
-    .eco-summary-top { display: flex; align-items: center; gap: 8px; }
     .eco-summary-icon {
-      width: 34px; height: 34px; border-radius: 12px;
+      width: 36px; height: 36px; border-radius: 50%;
       background: var(--eco-green-light); color: var(--eco-green);
-      display: flex; align-items: center; justify-content: center; font-size: 18px;
+      display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
     }
-    .eco-summary-label { font-size: 10px; color: var(--eco-muted); font-weight: 600; }
-    .eco-summary-value { font-size: 22px; font-weight: 900; color: var(--eco-green); line-height: 1; }
-    .eco-summary-unit { font-size: 10px; font-weight: 600; color: var(--eco-muted); }
-
-    .eco-bar-track { height: 6px; background: var(--eco-green-light); border-radius: 20px; overflow: hidden; margin-top: 4px; }
-    .eco-bar-fill { height: 100%; border-radius: 20px; transition: width 0.6s ease, background-color 0.6s ease; }
+    .eco-summary-label { font-size: 10px; color: var(--eco-muted); line-height: 1.2; font-weight: 600;}
+    .eco-summary-value { font-size: 16px; font-weight: 800; color: var(--eco-green); line-height: 1.2; margin-top: 2px;}
 
     /* ===================== CONTENT / SECTIONS ===================== */
     .content { position: relative; z-index: 2; }
@@ -336,11 +297,11 @@
 
     .job-code {
       display: flex; align-items: center; justify-content: space-between; 
-      margin-bottom: 6px; padding-right: 45px;
+      margin-bottom: 6px; padding-right: 36px;
     }
     .job-title { font-weight: 800; color: #1b5e20; font-size: 13.5px; margin: 0; line-height: 1.2; }
     
-    .job-actions { display: flex; gap: 4px; position: absolute; right: 12px; top: 32px;}
+    .job-actions { display: flex; gap: 4px; position: absolute; right: 12px; top: 35px;}
     .job-actions button {
       color: #fff; border: none; font-size: 9px;
       padding: 3px 8px; cursor: pointer; font-weight: 600; transition: 0.2s;
@@ -354,15 +315,15 @@
     
     .status-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
     .progress { flex: 1; height: 8px; background: var(--eco-green-light); border-radius: 20px; overflow: hidden; border: 1px solid var(--eco-border); }
-    .progress div { height: 100%; border-radius: 20px; transition: width 0.5s ease, background-color 0.5s ease; }
+    .progress div { height: 100%; background: var(--eco-green); border-radius: 20px; transition: width 0.5s ease; }
     
     .status-badge { 
       padding: 3px 9px; border-radius: 999px; font-size: 9px; font-weight: 700; 
       background: var(--eco-green-light); color: var(--eco-green); border: 1px solid var(--eco-border);
     }
     .status-badge.todo { background-color: var(--eco-danger); color: #d32f2f; border-color: #ffcdd2;} 
-    .status-badge.progress { background-color: #fffbeb; color: #f59e0b; border-color: #fde68a;} 
 
+    /* ระบบ 4 รูปภาพ 2x2 */
     .photos { 
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: auto; 
     }
@@ -413,6 +374,7 @@
       color: var(--eco-green); display: grid; place-items: center; font-size: 12px; flex-shrink: 0;
     }
 
+    /* สำหรับ export ภาพให้คมและนิ่ง */
     #report * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
     /* ===================== RESPONSIVE MEDIA QUERIES ===================== */
@@ -421,12 +383,7 @@
       .header { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 12px; padding: 16px; }
       .header-top-row { justify-content: center; }
       .title h1 { font-size: 22px; }
-      
-      .eco-summary { grid-template-columns: 1fr; }
-      .eco-stat-grid { grid-template-columns: repeat(3, 1fr); gap: 6px;}
-      .eco-summary-card { padding: 8px; }
-      .eco-summary-value { font-size: 18px; }
-
+      .eco-summary { grid-template-columns: repeat(2, 1fr); gap: 8px;}
       #jobList { grid-template-columns: 1fr; }
       .safety-grid { flex-direction: column; align-items: stretch; gap: 6px; }
       .safety-title-main { border-right: none; border-bottom: 1px solid var(--eco-border); padding-bottom: 4px; text-align: center; }
@@ -457,6 +414,7 @@
   <!-- ========== CONTROLS (SEARCH & TOOLBAR) ========== -->
   <div class="controls-container">
     <div class="search-box">
+      <!-- Date Picker สำหรับค้นหา/กรองข้อมูลตามวันที่ -->
       <input type="date" id="searchInput" onchange="filterJobs()" title="เลือกวันที่เพื่อค้นหางาน">
     </div>
     <div class="toolbar">
@@ -518,9 +476,8 @@
 
       <!-- ===== HEADER ===== -->
       <section class="header">
-        <!-- ลบ crossorigin ออกเพื่อป้องกันภาพหายตอนโหลด -->
         <div class="logo-box">
-          <img id="headerLogo" src="images/scg-logo.png" alt="SCG Logo">
+          <img id="headerLogo" src="images/scg-logo.png" alt="SCG Logo" crossorigin="anonymous" onerror="this.style.display='none';">
         </div>
         
         <div class="title">
@@ -528,49 +485,47 @@
             <h1 contenteditable="true">สรุปงาน AM บดซีเมนต์</h1>
           </div>
           <p contenteditable="true">CEMENT MILL AM DAILY REPORT</p>
-          <div class="date">📅 <span contenteditable="true" id="reportDate"></span></div>
+          
+          <!-- เปลี่ยน Emoji เป็น SVG Icon เพื่อป้องกันบั๊ก html2canvas -->
+          <div class="date">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <span contenteditable="true" id="reportDate"></span>
+          </div>
         </div>
 
         <div class="logo-box" contenteditable="true">
-          <img src="images/scg_green.png" alt="SCG GREEN">
+          <img src="images/scg_green.png" alt="SCG GREEN" crossorigin="anonymous" onerror="this.style.display='none';">
         </div>
       </section>
 
-      <!-- ===== ECO SUMMARY (INFOGRAPHIC) ===== -->
+      <!-- ===== ECO SUMMARY ===== -->
       <div class="eco-summary" id="ecoSummary">
-        <div class="eco-donut-card">
-          <div class="donut" id="donutChart">
-            <div class="donut-inner" id="donutPercent">0%</div>
+        <div class="eco-summary-card">
+          <div class="eco-summary-icon">📋</div>
+          <div>
+            <div class="eco-summary-label">งานทั้งหมด</div>
+            <div class="eco-summary-value" id="totalJobs">0 งาน</div>
           </div>
-          <div class="donut-label">ความคืบหน้ารวม</div>
         </div>
-
-        <div class="eco-stat-grid">
-          <div class="eco-summary-card">
-            <div class="eco-summary-top">
-              <div class="eco-summary-icon">📋</div>
-              <div class="eco-summary-label">งานทั้งหมด</div>
-            </div>
-            <div><span class="eco-summary-value" id="totalJobs">0</span> <span class="eco-summary-unit">งาน</span></div>
-            <div class="eco-bar-track"><div class="eco-bar-fill" id="barTotal" style="width:100%;background:#64748b;"></div></div>
+        <div class="eco-summary-card">
+          <div class="eco-summary-icon">⏱</div>
+          <div>
+            <div class="eco-summary-label">งานสำเร็จ</div>
+            <div class="eco-summary-value" id="doneJobs">0 งาน</div>
           </div>
-
-          <div class="eco-summary-card">
-            <div class="eco-summary-top">
-              <div class="eco-summary-icon">🌱</div>
-              <div class="eco-summary-label">งานสำเร็จ</div>
-            </div>
-            <div><span class="eco-summary-value" id="doneJobs">0</span> <span class="eco-summary-unit">งาน</span></div>
-            <div class="eco-bar-track"><div class="eco-bar-fill" id="barDone" style="width:0%;background:var(--eco-green);"></div></div>
+        </div>
+        <div class="eco-summary-card">
+          <div class="eco-summary-icon" style="background:var(--eco-danger); color:#d32f2f;">⚠️</div>
+          <div>
+            <div class="eco-summary-label">ไม่สำเร็จ</div>
+            <div class="eco-summary-value" style="color:#d32f2f;" id="notDoneJobs">0 งาน</div>
           </div>
-
-          <div class="eco-summary-card">
-            <div class="eco-summary-top">
-              <div class="eco-summary-icon" style="background:var(--eco-danger);color:#d32f2f;">⚠️</div>
-              <div class="eco-summary-label">ไม่สำเร็จ</div>
-            </div>
-            <div><span class="eco-summary-value" style="color:#d32f2f;" id="notDoneJobs">0</span> <span class="eco-summary-unit">งาน</span></div>
-            <div class="eco-bar-track"><div class="eco-bar-fill" id="barNotDone" style="width:0%;background:#ef4444;"></div></div>
+        </div>
+        <div class="eco-summary-card">
+          <div class="eco-summary-icon">🌱</div>
+          <div>
+            <div class="eco-summary-label">เสร็จ 100%</div>
+            <div class="eco-summary-value" id="fullJobs">0 งาน</div>
           </div>
         </div>
       </div>
@@ -619,6 +574,7 @@
     let formPhotos = ["", "", "", ""];
     let operators = [];
 
+    /* ========== CHUNK FUNCTION (แบ่งหน้างาน) ========== */
     function chunkJobs(list, size) {
       const chunks = [];
       for (let i = 0; i < list.length; i += size) {
@@ -627,6 +583,7 @@
       return chunks;
     }
 
+    /* ========== LOCAL STORAGE SYSTEM ========== */
     function loadData() {
       const savedJobs = localStorage.getItem("am_daily_jobs");
       if (savedJobs) jobs = JSON.parse(savedJobs);
@@ -665,6 +622,7 @@
     
     function createId() { return Date.now().toString() + Math.floor(Math.random() * 1000).toString(); }
 
+    /* ========== AUTO DATE ========== */
     function setTodayDate() {
       const now = new Date();
       const dd = String(now.getDate()).padStart(2, "0");
@@ -673,12 +631,13 @@
       document.getElementById("reportDate").innerText = dd + "/" + mm + "/" + yyyy;
     }
 
+    /* ========== DATE FILTER ========== */
     function filterJobs() {
       applyFilterVisually();
     }
 
     function applyFilterVisually() {
-      const dateVal = document.getElementById("searchInput").value;
+      const dateVal = document.getElementById("searchInput").value; // Format: "YYYY-MM-DD"
       let searchDate = "";
       if (dateVal) {
         const [y, m, d] = dateVal.split("-");
@@ -690,6 +649,7 @@
 
       cards.forEach((card, index) => {
         const jobDate = card.getAttribute("data-date");
+        // แสดงงานที่ตรงกับวันที่ หรือแสดงทั้งหมดถ้าไม่ได้เลือกวันที่
         if (!searchDate || searchDate === jobDate) {
           card.style.display = "flex";
           if (jobs[index]) visibleJobs.push(jobs[index]);
@@ -701,6 +661,7 @@
       updateSummary(visibleJobs);
     }
 
+    /* ========== OPERATOR CRUD ========== */
     function renderOperators() {
       const list = document.getElementById("operatorList");
       let html = "";
@@ -746,6 +707,7 @@
       } catch (e) {}
     }
 
+    /* ========== JOB FORM ========== */
     function openCreateForm() {
       clearForm();
       document.getElementById("formTitle").innerText = "เพิ่มรายการงาน";
@@ -836,6 +798,7 @@
       }
     }
 
+    /* ========== JOB CRUD ========== */
     function saveJob() {
       const editId = document.getElementById("editId").value;
       const code    = document.getElementById("newCode").value.trim() || "-";
@@ -879,6 +842,7 @@
       } catch (e) {}
     }
 
+    /* ========== HELPERS ========== */
     function escapeHTML(text) {
       return String(text).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
     }
@@ -888,6 +852,7 @@
       return Math.max(0, Math.min(100, value));
     }
 
+    /* ========== RENDER JOBS ========== */
     function renderJobs() {
       const jobList = document.getElementById("jobList");
 
@@ -901,18 +866,8 @@
         const percent = getPercent(job.status);
         
         let badgeClass = "todo";
-        let barColor = "#ef4444"; 
-        let iconStr = "⭕";
-        
-        if (percent >= 100) {
-          badgeClass = "done";
-          barColor = "#2e7d32"; 
-          iconStr = "✅";
-        } else if (percent > 0) {
-          badgeClass = "progress";
-          barColor = "#f59e0b"; 
-          iconStr = "⏳";
-        }
+        if (percent >= 100) badgeClass = "done";
+        else if (percent > 0) badgeClass = "progress";
 
         const photoHTML = job.photos.slice(0, 4).map(photo => {
           if (photo) return `<div class="photo-box"><img src="${photo}"></div>`;
@@ -924,13 +879,12 @@
         html += `
           <article class="job-card" data-status="${percent}" data-date="${jobDate}">
             <div class="job-code">
-              <div style="display:flex; align-items:center; gap:10px;">
-                <div style="width:32px; height:32px; background:var(--eco-mint); color:var(--eco-green); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:900; flex-shrink:0;">${index + 1}</div>
-                <div>
-                    <h4 class="job-title" style="padding-right:0;">${escapeHTML(job.code)}</h4>
-                    <span style="font-size:10px; color:var(--eco-muted); font-weight:normal;">📅 ${jobDate}</span>
-                </div>
-              </div>
+              <h4 class="job-title">${escapeHTML(job.code)} 
+                <span style="font-size:10px; color:var(--eco-muted); font-weight:normal; margin-left:4px; display:inline-flex; align-items:center; gap:3px;">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                  ${jobDate}
+                </span>
+              </h4>
               <div class="job-actions">
                 <button class="edit-job" onclick="openEditForm('${job.id}')">แก้ไข</button>
                 <button class="delete-job" onclick="deleteJob('${job.id}')">ลบ</button>
@@ -942,8 +896,8 @@
                 <div><b>สรุปงาน:</b> ${nl2br(job.detail)}</div>
                 <div><b>เป้าหมาย:</b> ${escapeHTML(job.purpose)}</div>
                 <div class="status-row">
-                  <div class="progress"><div style="width:${percent}%; background-color:${barColor};"></div></div>
-                  <span class="status-badge ${badgeClass}">${iconStr} ${escapeHTML(job.status)}</span>
+                  <div class="progress"><div style="width:${percent}%"></div></div>
+                  <span class="status-badge ${badgeClass}">${escapeHTML(job.status)}</span>
                 </div>
               </div>
               <div class="photos">${photoHTML}</div>
@@ -953,38 +907,23 @@
       jobList.innerHTML = html;
     }
 
+    /* อัปเดต Summary */
     function updateSummary(listToUse = jobs) {
       const total = listToUse.length;
-      let done = 0, full = 0, sumPercent = 0;
-
+      let done = 0, full = 0;
       listToUse.forEach(job => {
         const p = getPercent(job.status);
-        sumPercent += p;
         if (p > 0) done++;
         if (p >= 100) full++;
       });
-
-      const notDone = total - done;
-
-      document.getElementById("totalJobs").innerText = total;
-      document.getElementById("doneJobs").innerText = done;
-      document.getElementById("notDoneJobs").innerText = notDone;
-
-      const avg = total > 0 ? Math.round(sumPercent / total) : 0;
-      document.getElementById("donutPercent").innerText = avg + "%";
-
-      const deg = (avg / 100) * 360;
-      const color = avg >= 100 ? "#2e7d32" : (avg > 0 ? "#f59e0b" : "#ef4444");
-      document.getElementById("donutChart").style.background = `conic-gradient(${color} ${deg}deg, var(--eco-green-light) ${deg}deg)`;
-
-      const donePct = total > 0 ? (done / total) * 100 : 0;
-      const notDonePct = total > 0 ? (notDone / total) * 100 : 0;
-      document.getElementById("barDone").style.width = donePct + "%";
-      document.getElementById("barNotDone").style.width = notDonePct + "%";
+      document.getElementById("totalJobs").innerText = total + " งาน";
+      document.getElementById("doneJobs").innerText = done + " งาน";
+      document.getElementById("notDoneJobs").innerText = (total - done) + " งาน";
+      document.getElementById("fullJobs").innerText = full + " งาน";
     }
 
     /* ==========================================================
-       DOWNLOAD IMAGE
+       DOWNLOAD IMAGE (PAGINATED - เฉพาะงานที่ถูก Filter)
        ========================================================== */
     async function downloadReportImage() {
       const loader = document.getElementById("loaderOverlay");
@@ -994,21 +933,28 @@
       await new Promise(resolve => setTimeout(resolve, 200));
 
       const report = document.getElementById("report");
-      report.classList.add("export-mode"); // ใช้คลาสซ่อนกรอบและการตั้งค่าแทนการลบ attributes ทิ้ง
+      
+      report.classList.add("export-mode");
 
       const originalSearch = document.getElementById("searchInput").value;
-      const originalReportDate = document.getElementById("reportDate").innerText;
 
       let jobsToExport = jobs;
       if (originalSearch) {
         const [y, m, d] = originalSearch.split("-");
         const searchDate = `${d}/${m}/${y}`;
-        jobsToExport = jobs.filter(j => (j.date || originalReportDate) === searchDate);
-        document.getElementById("reportDate").innerText = searchDate; 
+        jobsToExport = jobs.filter(j => (j.date || document.getElementById("reportDate").innerText) === searchDate);
       }
       
       const originalJobs = [...jobs];
       document.getElementById("searchInput").value = ""; 
+
+      // ลบคุณสมบัติ contenteditable ชั่วคราว ป้องกันบั๊กข้อความหาย
+      const editables = report.querySelectorAll("[contenteditable='true']");
+      editables.forEach(el => {
+        el.setAttribute("data-editable", "true");
+        el.removeAttribute("contenteditable");
+        el.style.outline = "none";
+      });
 
       try {
         const jobsPerImage = 4;
@@ -1062,9 +1008,16 @@
       } finally {
         jobs = originalJobs;
         document.getElementById("searchInput").value = originalSearch;
-        document.getElementById("reportDate").innerText = originalReportDate; 
         renderJobs();
         applyFilterVisually(); 
+
+        // นำโหมด contenteditable กลับมา
+        const restoreEditables = report.querySelectorAll("[data-editable='true']");
+        restoreEditables.forEach(el => {
+          el.setAttribute("contenteditable", "true");
+          el.removeAttribute("data-editable");
+          el.style.outline = "";
+        });
 
         report.classList.remove("export-mode");
         loader.style.display = "none";
@@ -1072,7 +1025,7 @@
     }
 
     /* ==========================================================
-       DOWNLOAD PDF
+       DOWNLOAD PDF (A4 LANDSCAPE - เฉพาะงานที่ถูก Filter)
        ========================================================== */
     async function downloadReportPDF() {
       const loader = document.getElementById("loaderOverlay");
@@ -1082,17 +1035,16 @@
       await new Promise(resolve => setTimeout(resolve, 200)); 
 
       const report = document.getElementById("report");
+      
       report.classList.add("export-mode");
 
       const originalSearch = document.getElementById("searchInput").value;
-      const originalReportDate = document.getElementById("reportDate").innerText;
 
       let jobsToExport = jobs;
       if (originalSearch) {
         const [y, m, d] = originalSearch.split("-");
         const searchDate = `${d}/${m}/${y}`;
-        jobsToExport = jobs.filter(j => (j.date || originalReportDate) === searchDate);
-        document.getElementById("reportDate").innerText = searchDate; 
+        jobsToExport = jobs.filter(j => (j.date || document.getElementById("reportDate").innerText) === searchDate);
       }
       
       const originalJobs = [...jobs];
@@ -1101,6 +1053,13 @@
       jobs = jobsToExport;
       renderJobs();
       updateSummary(jobsToExport);
+
+      const editables = report.querySelectorAll("[contenteditable='true']");
+      editables.forEach(el => {
+        el.setAttribute("data-editable", "true");
+        el.removeAttribute("contenteditable");
+        el.style.outline = "none";
+      });
 
       try {
         const canvas = await html2canvas(report, {
@@ -1152,9 +1111,15 @@
       } finally {
         jobs = originalJobs;
         document.getElementById("searchInput").value = originalSearch;
-        document.getElementById("reportDate").innerText = originalReportDate; 
         renderJobs();
         applyFilterVisually();
+
+        const restoreEditables = report.querySelectorAll("[data-editable='true']");
+        restoreEditables.forEach(el => {
+          el.setAttribute("contenteditable", "true");
+          el.removeAttribute("data-editable");
+          el.style.outline = "";
+        });
 
         report.classList.remove("export-mode");
         loader.style.display = "none"; 
@@ -1162,7 +1127,7 @@
     }
 
     /* ==========================================================
-       SAVE TO GOOGLE SHEET & DRIVE
+       SAVE TO GOOGLE SHEET & DRIVE (เฉพาะงานที่ถูก Filter)
        ========================================================== */
     async function saveToGoogleSheet() {
       const loader = document.getElementById("loaderOverlay");
@@ -1172,17 +1137,16 @@
       await new Promise(resolve => setTimeout(resolve, 200));
 
       const report = document.getElementById("report");
+      
       report.classList.add("export-mode");
 
       const originalSearch = document.getElementById("searchInput").value;
-      const originalReportDate = document.getElementById("reportDate").innerText;
 
       let jobsToExport = jobs;
       if (originalSearch) {
         const [y, m, d] = originalSearch.split("-");
         const searchDate = `${d}/${m}/${y}`;
-        jobsToExport = jobs.filter(j => (j.date || originalReportDate) === searchDate);
-        document.getElementById("reportDate").innerText = searchDate; 
+        jobsToExport = jobs.filter(j => (j.date || document.getElementById("reportDate").innerText) === searchDate);
       }
       
       const originalJobs = [...jobs];
@@ -1191,6 +1155,13 @@
       jobs = jobsToExport;
       renderJobs();
       updateSummary(jobsToExport);
+
+      const editables = report.querySelectorAll("[contenteditable='true']");
+      editables.forEach(el => {
+        el.setAttribute("data-editable", "true");
+        el.removeAttribute("contenteditable");
+        el.style.outline = "none";
+      });
 
       try {
         const canvas = await html2canvas(report, {
@@ -1244,9 +1215,15 @@
       } finally {
         jobs = originalJobs;
         document.getElementById("searchInput").value = originalSearch;
-        document.getElementById("reportDate").innerText = originalReportDate;
         renderJobs();
         applyFilterVisually();
+
+        const restoreEditables = report.querySelectorAll("[data-editable='true']");
+        restoreEditables.forEach(el => {
+          el.setAttribute("contenteditable", "true");
+          el.removeAttribute("data-editable");
+          el.style.outline = "";
+        });
 
         report.classList.remove("export-mode");
         loader.style.display = "none"; 
