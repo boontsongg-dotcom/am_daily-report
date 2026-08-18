@@ -158,6 +158,7 @@
     .export-mode .op-del {
       display: none !important;
     }
+    /* ซ่อนกรอบของ Contenteditable ตอน export แทนการลบ attribute ทิ้ง (ป้องกันบักข้อมูลหาย) */
     .export-mode [contenteditable="true"] {
       outline: none !important;
       background: transparent !important;
@@ -213,15 +214,16 @@
     }
     
     .title p { margin: 0 0 6px; font-size: 11px; font-weight: 600; color: var(--eco-muted); }
+    
+    /* แก้ไขการล็อกสีวันที่แบบฮาร์ดโค้ด เพื่อป้องกันบักเวลาแคปรูป */
     .date { 
       display: inline-flex; align-items: center; gap: 6px; 
       background: #ffffff; border-radius: 16px; padding: 4px 14px; 
-      font-size: 13px; font-weight: 700; border: 1px solid var(--eco-border);
-      color: var(--eco-green) !important;
+      font-size: 13px; font-weight: 700; border: 1px solid #c8e6c9;
+      color: #2e7d32 !important;
     }
-    /* บังคับให้แสดงผลเป็น block เพื่อป้องกันบัก html2canvas */
     #reportDate {
-      display: inline-block; min-width: 60px; color: var(--eco-green);
+      display: inline-block; min-width: 60px; color: #2e7d32 !important;
     }
 
     /* ===================== ECO SUMMARY (INFOGRAPHIC) ===================== */
@@ -233,7 +235,6 @@
       position: relative; z-index: 2;
     }
 
-    /* วงกลมแสดง % ความสำเร็จรวม */
     .eco-donut-card {
       background: rgba(255,255,255,0.95);
       border: 1px solid var(--eco-border);
@@ -256,7 +257,6 @@
     }
     .donut-label { font-size: 11px; font-weight: 700; color: var(--eco-muted); }
 
-    /* กลุ่มการ์ดสถิติเล็ก */
     .eco-stat-grid {
       display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
     }
@@ -278,7 +278,6 @@
     .eco-summary-value { font-size: 22px; font-weight: 900; color: var(--eco-green); line-height: 1; }
     .eco-summary-unit { font-size: 10px; font-weight: 600; color: var(--eco-muted); }
 
-    /* กราฟแท่งเปรียบเทียบ */
     .eco-bar-track { height: 6px; background: var(--eco-green-light); border-radius: 20px; overflow: hidden; margin-top: 4px; }
     .eco-bar-fill { height: 100%; border-radius: 20px; transition: width 0.6s ease, background-color 0.6s ease; }
 
@@ -364,7 +363,6 @@
     .status-badge.todo { background-color: var(--eco-danger); color: #d32f2f; border-color: #ffcdd2;} 
     .status-badge.progress { background-color: #fffbeb; color: #f59e0b; border-color: #fde68a;} 
 
-    /* ระบบ 4 รูปภาพ 2x2 */
     .photos { 
       display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: auto; 
     }
@@ -415,7 +413,6 @@
       color: var(--eco-green); display: grid; place-items: center; font-size: 12px; flex-shrink: 0;
     }
 
-    /* สำหรับ export ภาพให้คมและนิ่ง */
     #report * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
     /* ===================== RESPONSIVE MEDIA QUERIES ===================== */
@@ -521,8 +518,9 @@
 
       <!-- ===== HEADER ===== -->
       <section class="header">
+        <!-- ลบ crossorigin ออกเพื่อป้องกันภาพหายตอนโหลด -->
         <div class="logo-box">
-          <img id="headerLogo" src="images/scg-logo.png" alt="SCG Logo" crossorigin="anonymous" onerror="this.style.display='none';">
+          <img id="headerLogo" src="images/scg-logo.png" alt="SCG Logo">
         </div>
         
         <div class="title">
@@ -534,13 +532,12 @@
         </div>
 
         <div class="logo-box" contenteditable="true">
-          <img src="images/scg_green.png" alt="SCG GREEN" crossorigin="anonymous" onerror="this.style.display='none';">
+          <img src="images/scg_green.png" alt="SCG GREEN">
         </div>
       </section>
 
       <!-- ===== ECO SUMMARY (INFOGRAPHIC) ===== -->
       <div class="eco-summary" id="ecoSummary">
-        <!-- วงกลมสรุปรวม -->
         <div class="eco-donut-card">
           <div class="donut" id="donutChart">
             <div class="donut-inner" id="donutPercent">0%</div>
@@ -548,7 +545,6 @@
           <div class="donut-label">ความคืบหน้ารวม</div>
         </div>
 
-        <!-- การ์ดสถิติ -->
         <div class="eco-stat-grid">
           <div class="eco-summary-card">
             <div class="eco-summary-top">
@@ -623,7 +619,6 @@
     let formPhotos = ["", "", "", ""];
     let operators = [];
 
-    /* ========== CHUNK FUNCTION (แบ่งหน้างาน) ========== */
     function chunkJobs(list, size) {
       const chunks = [];
       for (let i = 0; i < list.length; i += size) {
@@ -632,7 +627,6 @@
       return chunks;
     }
 
-    /* ========== LOCAL STORAGE SYSTEM ========== */
     function loadData() {
       const savedJobs = localStorage.getItem("am_daily_jobs");
       if (savedJobs) jobs = JSON.parse(savedJobs);
@@ -671,7 +665,6 @@
     
     function createId() { return Date.now().toString() + Math.floor(Math.random() * 1000).toString(); }
 
-    /* ========== AUTO DATE ========== */
     function setTodayDate() {
       const now = new Date();
       const dd = String(now.getDate()).padStart(2, "0");
@@ -680,13 +673,12 @@
       document.getElementById("reportDate").innerText = dd + "/" + mm + "/" + yyyy;
     }
 
-    /* ========== DATE FILTER ========== */
     function filterJobs() {
       applyFilterVisually();
     }
 
     function applyFilterVisually() {
-      const dateVal = document.getElementById("searchInput").value; // Format: "YYYY-MM-DD"
+      const dateVal = document.getElementById("searchInput").value;
       let searchDate = "";
       if (dateVal) {
         const [y, m, d] = dateVal.split("-");
@@ -698,7 +690,6 @@
 
       cards.forEach((card, index) => {
         const jobDate = card.getAttribute("data-date");
-        // แสดงงานที่ตรงกับวันที่ หรือแสดงทั้งหมดถ้าไม่ได้เลือกวันที่
         if (!searchDate || searchDate === jobDate) {
           card.style.display = "flex";
           if (jobs[index]) visibleJobs.push(jobs[index]);
@@ -710,7 +701,6 @@
       updateSummary(visibleJobs);
     }
 
-    /* ========== OPERATOR CRUD ========== */
     function renderOperators() {
       const list = document.getElementById("operatorList");
       let html = "";
@@ -756,7 +746,6 @@
       } catch (e) {}
     }
 
-    /* ========== JOB FORM ========== */
     function openCreateForm() {
       clearForm();
       document.getElementById("formTitle").innerText = "เพิ่มรายการงาน";
@@ -847,7 +836,6 @@
       }
     }
 
-    /* ========== JOB CRUD ========== */
     function saveJob() {
       const editId = document.getElementById("editId").value;
       const code    = document.getElementById("newCode").value.trim() || "-";
@@ -891,7 +879,6 @@
       } catch (e) {}
     }
 
-    /* ========== HELPERS ========== */
     function escapeHTML(text) {
       return String(text).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
     }
@@ -901,7 +888,6 @@
       return Math.max(0, Math.min(100, value));
     }
 
-    /* ========== RENDER JOBS (INFOGRAPHIC CARDS) ========== */
     function renderJobs() {
       const jobList = document.getElementById("jobList");
 
@@ -915,16 +901,16 @@
         const percent = getPercent(job.status);
         
         let badgeClass = "todo";
-        let barColor = "#ef4444"; // แดง (0%)
+        let barColor = "#ef4444"; 
         let iconStr = "⭕";
         
         if (percent >= 100) {
           badgeClass = "done";
-          barColor = "#2e7d32"; // เขียว (100%)
+          barColor = "#2e7d32"; 
           iconStr = "✅";
         } else if (percent > 0) {
           badgeClass = "progress";
-          barColor = "#f59e0b"; // ส้ม (กำลังทำ)
+          barColor = "#f59e0b"; 
           iconStr = "⏳";
         }
 
@@ -967,7 +953,6 @@
       jobList.innerHTML = html;
     }
 
-    /* ========== UPDATE SUMMARY (INFOGRAPHIC) ========== */
     function updateSummary(listToUse = jobs) {
       const total = listToUse.length;
       let done = 0, full = 0, sumPercent = 0;
@@ -981,21 +966,17 @@
 
       const notDone = total - done;
 
-      // อัปเดตตัวเลขในการ์ดสถิติ
       document.getElementById("totalJobs").innerText = total;
       document.getElementById("doneJobs").innerText = done;
       document.getElementById("notDoneJobs").innerText = notDone;
 
-      // คำนวณเปอร์เซ็นต์ความคืบหน้ารวมเฉลี่ย
       const avg = total > 0 ? Math.round(sumPercent / total) : 0;
       document.getElementById("donutPercent").innerText = avg + "%";
 
-      // วาดวงกลม Donut
       const deg = (avg / 100) * 360;
       const color = avg >= 100 ? "#2e7d32" : (avg > 0 ? "#f59e0b" : "#ef4444");
       document.getElementById("donutChart").style.background = `conic-gradient(${color} ${deg}deg, var(--eco-green-light) ${deg}deg)`;
 
-      // วาดกราฟแท่งเปรียบเทียบ
       const donePct = total > 0 ? (done / total) * 100 : 0;
       const notDonePct = total > 0 ? (notDone / total) * 100 : 0;
       document.getElementById("barDone").style.width = donePct + "%";
@@ -1003,7 +984,7 @@
     }
 
     /* ==========================================================
-       DOWNLOAD IMAGE (PAGINATED - เฉพาะงานที่ถูก Filter)
+       DOWNLOAD IMAGE
        ========================================================== */
     async function downloadReportImage() {
       const loader = document.getElementById("loaderOverlay");
@@ -1013,7 +994,7 @@
       await new Promise(resolve => setTimeout(resolve, 200));
 
       const report = document.getElementById("report");
-      report.classList.add("export-mode");
+      report.classList.add("export-mode"); // ใช้คลาสซ่อนกรอบและการตั้งค่าแทนการลบ attributes ทิ้ง
 
       const originalSearch = document.getElementById("searchInput").value;
       const originalReportDate = document.getElementById("reportDate").innerText;
@@ -1023,26 +1004,11 @@
         const [y, m, d] = originalSearch.split("-");
         const searchDate = `${d}/${m}/${y}`;
         jobsToExport = jobs.filter(j => (j.date || originalReportDate) === searchDate);
-        document.getElementById("reportDate").innerText = searchDate; // Update date in header for the print
+        document.getElementById("reportDate").innerText = searchDate; 
       }
       
       const originalJobs = [...jobs];
       document.getElementById("searchInput").value = ""; 
-
-      const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
-      const hiddenEls = [];
-      hideSelectors.forEach(sel => {
-        report.querySelectorAll(sel).forEach(el => {
-          hiddenEls.push({ el, prev: el.style.display });
-          el.style.display = "none";
-        });
-      });
-
-      const editables = report.querySelectorAll("[contenteditable]");
-      editables.forEach(el => {
-        el.removeAttribute("contenteditable"); // Remove during export
-        el.style.outline = "none";
-      });
 
       try {
         const jobsPerImage = 4;
@@ -1096,18 +1062,9 @@
       } finally {
         jobs = originalJobs;
         document.getElementById("searchInput").value = originalSearch;
-        document.getElementById("reportDate").innerText = originalReportDate; // Restore
+        document.getElementById("reportDate").innerText = originalReportDate; 
         renderJobs();
         applyFilterVisually(); 
-
-        hiddenEls.forEach(({ el, prev }) => {
-          el.style.display = prev;
-        });
-
-        editables.forEach(el => {
-          el.setAttribute("contenteditable", "true"); // Put it back
-          el.style.outline = "";
-        });
 
         report.classList.remove("export-mode");
         loader.style.display = "none";
@@ -1115,7 +1072,7 @@
     }
 
     /* ==========================================================
-       DOWNLOAD PDF (A4 LANDSCAPE - เฉพาะงานที่ถูก Filter)
+       DOWNLOAD PDF
        ========================================================== */
     async function downloadReportPDF() {
       const loader = document.getElementById("loaderOverlay");
@@ -1135,7 +1092,7 @@
         const [y, m, d] = originalSearch.split("-");
         const searchDate = `${d}/${m}/${y}`;
         jobsToExport = jobs.filter(j => (j.date || originalReportDate) === searchDate);
-        document.getElementById("reportDate").innerText = searchDate; // Update date in header for the print
+        document.getElementById("reportDate").innerText = searchDate; 
       }
       
       const originalJobs = [...jobs];
@@ -1144,21 +1101,6 @@
       jobs = jobsToExport;
       renderJobs();
       updateSummary(jobsToExport);
-
-      const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
-      const hiddenEls = [];
-      hideSelectors.forEach(sel => {
-        report.querySelectorAll(sel).forEach(el => {
-          hiddenEls.push({ el, prev: el.style.display });
-          el.style.display = "none";
-        });
-      });
-
-      const editables = report.querySelectorAll("[contenteditable]");
-      editables.forEach(el => {
-        el.removeAttribute("contenteditable"); // Remove during export
-        el.style.outline = "none";
-      });
 
       try {
         const canvas = await html2canvas(report, {
@@ -1210,23 +1152,17 @@
       } finally {
         jobs = originalJobs;
         document.getElementById("searchInput").value = originalSearch;
-        document.getElementById("reportDate").innerText = originalReportDate; // Restore
+        document.getElementById("reportDate").innerText = originalReportDate; 
         renderJobs();
         applyFilterVisually();
 
-        hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
-        editables.forEach(el => {
-          el.setAttribute("contenteditable", "true"); // Put it back
-          el.style.outline = "";
-        });
-        
         report.classList.remove("export-mode");
         loader.style.display = "none"; 
       }
     }
 
     /* ==========================================================
-       SAVE TO GOOGLE SHEET & DRIVE (เฉพาะงานที่ถูก Filter)
+       SAVE TO GOOGLE SHEET & DRIVE
        ========================================================== */
     async function saveToGoogleSheet() {
       const loader = document.getElementById("loaderOverlay");
@@ -1246,7 +1182,7 @@
         const [y, m, d] = originalSearch.split("-");
         const searchDate = `${d}/${m}/${y}`;
         jobsToExport = jobs.filter(j => (j.date || originalReportDate) === searchDate);
-        document.getElementById("reportDate").innerText = searchDate; // Update date in header for the print
+        document.getElementById("reportDate").innerText = searchDate; 
       }
       
       const originalJobs = [...jobs];
@@ -1255,22 +1191,6 @@
       jobs = jobsToExport;
       renderJobs();
       updateSummary(jobsToExport);
-
-      const hideSelectors = [".job-actions", ".operator-add-btn", ".op-del"];
-      const hiddenEls = [];
-
-      hideSelectors.forEach(sel => {
-        report.querySelectorAll(sel).forEach(el => {
-          hiddenEls.push({ el, prev: el.style.display });
-          el.style.display = "none";
-        });
-      });
-
-      const editables = report.querySelectorAll("[contenteditable]");
-      editables.forEach(el => {
-        el.removeAttribute("contenteditable"); // Remove during export
-        el.style.outline = "none";
-      });
 
       try {
         const canvas = await html2canvas(report, {
@@ -1285,7 +1205,7 @@
         
         const base64Image = canvas.toDataURL("image/jpeg", 0.85);
 
-        const dateStr = document.getElementById("reportDate").innerText;
+        const dateStr = originalSearch ? `${originalSearch.split('-')[2]}/${originalSearch.split('-')[1]}/${originalSearch.split('-')[0]}` : document.getElementById("reportDate").innerText;
         const opNames = operators.map(op => op.name).join(", ") || "-";
         
         let doneCount = 0;
@@ -1324,15 +1244,9 @@
       } finally {
         jobs = originalJobs;
         document.getElementById("searchInput").value = originalSearch;
-        document.getElementById("reportDate").innerText = originalReportDate; // Restore
+        document.getElementById("reportDate").innerText = originalReportDate;
         renderJobs();
         applyFilterVisually();
-
-        hiddenEls.forEach(({ el, prev }) => { el.style.display = prev; });
-        editables.forEach(el => {
-          el.setAttribute("contenteditable", "true"); // Put it back
-          el.style.outline = "";
-        });
 
         report.classList.remove("export-mode");
         loader.style.display = "none"; 
