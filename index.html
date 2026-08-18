@@ -118,7 +118,7 @@
       border-radius: 8px; margin-bottom: 6px; background: #e2e8f0;
     }
 
-    /* ===================== REPORT VIEWPORT (ECO THEME) ===================== */
+    /* ===================== REPORT VIEWPORT ===================== */
     .report-viewport { width: 100%; display: flex; justify-content: center; padding: 0 8px 32px; overflow-x: auto; }
     
     #report {
@@ -152,7 +152,7 @@
     [contenteditable="true"] { outline: 1px dashed transparent; border-radius: 4px; transition: 0.2s; }
     [contenteditable="true"]:focus { outline-color: var(--eco-green); background: rgba(255,255,255,0.8); }
 
-    /* ===================== EXPORT MODE (ซ่อนปุ่มอัตโนมัติ) ===================== */
+    /* ===================== EXPORT MODE ===================== */
     .export-mode .job-actions,
     .export-mode .operator-add-btn,
     .export-mode .op-del {
@@ -220,31 +220,63 @@
       color: var(--eco-green);
     }
 
-    /* ===================== ECO SUMMARY ===================== */
+    /* ===================== ECO SUMMARY (INFOGRAPHIC) ===================== */
     .eco-summary {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
+      grid-template-columns: 150px 1fr;
+      gap: 12px;
       margin: 12px 0 14px;
       position: relative; z-index: 2;
     }
-    .eco-summary-card {
-      background: rgba(255, 255, 255, 0.95);
+
+    /* วงกลมแสดง % ความสำเร็จรวม */
+    .eco-donut-card {
+      background: rgba(255,255,255,0.95);
       border: 1px solid var(--eco-border);
       border-radius: 16px;
-      padding: 10px 12px;
-      box-shadow: 0 5px 14px rgba(46, 125, 50, 0.05);
-      display: flex;
-      align-items: center;
-      gap: 10px;
+      padding: 12px;
+      box-shadow: 0 5px 14px rgba(46,125,50,0.05);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 6px;
     }
+    .donut {
+      width: 96px; height: 96px; border-radius: 50%;
+      display: grid; place-items: center;
+      background: conic-gradient(var(--eco-green) 0deg, var(--eco-green-light) 0deg);
+      transition: background 0.6s ease;
+    }
+    .donut-inner {
+      width: 70px; height: 70px; border-radius: 50%;
+      background: #fff; display: grid; place-items: center;
+      font-size: 20px; font-weight: 900; color: var(--eco-green);
+    }
+    .donut-label { font-size: 11px; font-weight: 700; color: var(--eco-muted); }
+
+    /* กลุ่มการ์ดสถิติเล็ก */
+    .eco-stat-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+    }
+    .eco-summary-card {
+      background: rgba(255,255,255,0.95);
+      border: 1px solid var(--eco-border);
+      border-radius: 16px; padding: 10px 12px;
+      box-shadow: 0 5px 14px rgba(46,125,50,0.05);
+      display: flex; flex-direction: column; gap: 4px;
+      justify-content: center;
+    }
+    .eco-summary-top { display: flex; align-items: center; gap: 8px; }
     .eco-summary-icon {
-      width: 36px; height: 36px; border-radius: 50%;
+      width: 34px; height: 34px; border-radius: 12px;
       background: var(--eco-green-light); color: var(--eco-green);
-      display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 18px;
     }
-    .eco-summary-label { font-size: 10px; color: var(--eco-muted); line-height: 1.2; font-weight: 600;}
-    .eco-summary-value { font-size: 16px; font-weight: 800; color: var(--eco-green); line-height: 1.2; margin-top: 2px;}
+    .eco-summary-label { font-size: 10px; color: var(--eco-muted); font-weight: 600; }
+    .eco-summary-value { font-size: 22px; font-weight: 900; color: var(--eco-green); line-height: 1; }
+    .eco-summary-unit { font-size: 10px; font-weight: 600; color: var(--eco-muted); }
+
+    /* กราฟแท่งเปรียบเทียบ */
+    .eco-bar-track { height: 6px; background: var(--eco-green-light); border-radius: 20px; overflow: hidden; margin-top: 4px; }
+    .eco-bar-fill { height: 100%; border-radius: 20px; transition: width 0.6s ease, background-color 0.6s ease; }
 
     /* ===================== CONTENT / SECTIONS ===================== */
     .content { position: relative; z-index: 2; }
@@ -266,7 +298,7 @@
       display: flex; justify-content: space-between; align-items: center;
     }
 
-    /* ===================== JOB CARDS ===================== */
+    /* ===================== JOB CARDS (INFOGRAPHIC STYLE) ===================== */
     #jobList {
       display: grid;
       grid-template-columns: repeat(2, 1fr); 
@@ -301,11 +333,11 @@
 
     .job-code {
       display: flex; align-items: center; justify-content: space-between; 
-      margin-bottom: 6px; padding-right: 36px;
+      margin-bottom: 6px; padding-right: 45px;
     }
     .job-title { font-weight: 800; color: #1b5e20; font-size: 13.5px; margin: 0; line-height: 1.2; }
     
-    .job-actions { display: flex; gap: 4px; position: absolute; right: 12px; top: 35px;}
+    .job-actions { display: flex; gap: 4px; position: absolute; right: 12px; top: 32px;}
     .job-actions button {
       color: #fff; border: none; font-size: 9px;
       padding: 3px 8px; cursor: pointer; font-weight: 600; transition: 0.2s;
@@ -319,13 +351,14 @@
     
     .status-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
     .progress { flex: 1; height: 8px; background: var(--eco-green-light); border-radius: 20px; overflow: hidden; border: 1px solid var(--eco-border); }
-    .progress div { height: 100%; background: var(--eco-green); border-radius: 20px; transition: width 0.5s ease; }
+    .progress div { height: 100%; border-radius: 20px; transition: width 0.5s ease, background-color 0.5s ease; }
     
     .status-badge { 
       padding: 3px 9px; border-radius: 999px; font-size: 9px; font-weight: 700; 
       background: var(--eco-green-light); color: var(--eco-green); border: 1px solid var(--eco-border);
     }
     .status-badge.todo { background-color: var(--eco-danger); color: #d32f2f; border-color: #ffcdd2;} 
+    .status-badge.progress { background-color: #fffbeb; color: #f59e0b; border-color: #fde68a;} 
 
     /* ระบบ 4 รูปภาพ 2x2 */
     .photos { 
@@ -387,7 +420,12 @@
       .header { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 12px; padding: 16px; }
       .header-top-row { justify-content: center; }
       .title h1 { font-size: 22px; }
-      .eco-summary { grid-template-columns: repeat(2, 1fr); gap: 8px;}
+      
+      .eco-summary { grid-template-columns: 1fr; }
+      .eco-stat-grid { grid-template-columns: repeat(3, 1fr); gap: 6px;}
+      .eco-summary-card { padding: 8px; }
+      .eco-summary-value { font-size: 18px; }
+
       #jobList { grid-template-columns: 1fr; }
       .safety-grid { flex-direction: column; align-items: stretch; gap: 6px; }
       .safety-title-main { border-right: none; border-bottom: 1px solid var(--eco-border); padding-bottom: 4px; text-align: center; }
@@ -419,7 +457,6 @@
   <!-- ========== CONTROLS (SEARCH & TOOLBAR) ========== -->
   <div class="controls-container">
     <div class="search-box">
-      <!-- Date Picker สำหรับค้นหา/กรองข้อมูลตามวันที่ -->
       <input type="date" id="searchInput" onchange="filterJobs()" title="เลือกวันที่เพื่อค้นหางาน">
     </div>
     <div class="toolbar">
@@ -498,34 +535,43 @@
         </div>
       </section>
 
-      <!-- ===== ECO SUMMARY ===== -->
+      <!-- ===== ECO SUMMARY (INFOGRAPHIC) ===== -->
       <div class="eco-summary" id="ecoSummary">
-        <div class="eco-summary-card">
-          <div class="eco-summary-icon">📋</div>
-          <div>
-            <div class="eco-summary-label">งานทั้งหมด</div>
-            <div class="eco-summary-value" id="totalJobs">0 งาน</div>
+        <!-- วงกลมสรุปรวม -->
+        <div class="eco-donut-card">
+          <div class="donut" id="donutChart">
+            <div class="donut-inner" id="donutPercent">0%</div>
           </div>
+          <div class="donut-label">ความคืบหน้ารวม</div>
         </div>
-        <div class="eco-summary-card">
-          <div class="eco-summary-icon">⏱</div>
-          <div>
-            <div class="eco-summary-label">งานสำเร็จ</div>
-            <div class="eco-summary-value" id="doneJobs">0 งาน</div>
+
+        <!-- การ์ดสถิติ -->
+        <div class="eco-stat-grid">
+          <div class="eco-summary-card">
+            <div class="eco-summary-top">
+              <div class="eco-summary-icon">📋</div>
+              <div class="eco-summary-label">งานทั้งหมด</div>
+            </div>
+            <div><span class="eco-summary-value" id="totalJobs">0</span> <span class="eco-summary-unit">งาน</span></div>
+            <div class="eco-bar-track"><div class="eco-bar-fill" id="barTotal" style="width:100%;background:#64748b;"></div></div>
           </div>
-        </div>
-        <div class="eco-summary-card">
-          <div class="eco-summary-icon" style="background:var(--eco-danger); color:#d32f2f;">⚠️</div>
-          <div>
-            <div class="eco-summary-label">ไม่สำเร็จ</div>
-            <div class="eco-summary-value" style="color:#d32f2f;" id="notDoneJobs">0 งาน</div>
+
+          <div class="eco-summary-card">
+            <div class="eco-summary-top">
+              <div class="eco-summary-icon">🌱</div>
+              <div class="eco-summary-label">งานสำเร็จ</div>
+            </div>
+            <div><span class="eco-summary-value" id="doneJobs">0</span> <span class="eco-summary-unit">งาน</span></div>
+            <div class="eco-bar-track"><div class="eco-bar-fill" id="barDone" style="width:0%;background:var(--eco-green);"></div></div>
           </div>
-        </div>
-        <div class="eco-summary-card">
-          <div class="eco-summary-icon">🌱</div>
-          <div>
-            <div class="eco-summary-label">เสร็จ 100%</div>
-            <div class="eco-summary-value" id="fullJobs">0 งาน</div>
+
+          <div class="eco-summary-card">
+            <div class="eco-summary-top">
+              <div class="eco-summary-icon" style="background:var(--eco-danger);color:#d32f2f;">⚠️</div>
+              <div class="eco-summary-label">ไม่สำเร็จ</div>
+            </div>
+            <div><span class="eco-summary-value" style="color:#d32f2f;" id="notDoneJobs">0</span> <span class="eco-summary-unit">งาน</span></div>
+            <div class="eco-bar-track"><div class="eco-bar-fill" id="barNotDone" style="width:0%;background:#ef4444;"></div></div>
           </div>
         </div>
       </div>
@@ -852,7 +898,7 @@
       return Math.max(0, Math.min(100, value));
     }
 
-    /* ========== RENDER JOBS ========== */
+    /* ========== RENDER JOBS (INFOGRAPHIC CARDS) ========== */
     function renderJobs() {
       const jobList = document.getElementById("jobList");
 
@@ -866,8 +912,18 @@
         const percent = getPercent(job.status);
         
         let badgeClass = "todo";
-        if (percent >= 100) badgeClass = "done";
-        else if (percent > 0) badgeClass = "progress";
+        let barColor = "#ef4444"; // แดง (0%)
+        let iconStr = "⭕";
+        
+        if (percent >= 100) {
+          badgeClass = "done";
+          barColor = "#2e7d32"; // เขียว (100%)
+          iconStr = "✅";
+        } else if (percent > 0) {
+          badgeClass = "progress";
+          barColor = "#f59e0b"; // ส้ม (กำลังทำ)
+          iconStr = "⏳";
+        }
 
         const photoHTML = job.photos.slice(0, 4).map(photo => {
           if (photo) return `<div class="photo-box"><img src="${photo}"></div>`;
@@ -879,7 +935,13 @@
         html += `
           <article class="job-card" data-status="${percent}" data-date="${jobDate}">
             <div class="job-code">
-              <h4 class="job-title">${escapeHTML(job.code)} <span style="font-size:10px; color:var(--eco-muted); font-weight:normal; margin-left:4px;">📅 ${jobDate}</span></h4>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div style="width:32px; height:32px; background:var(--eco-mint); color:var(--eco-green); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:900; flex-shrink:0;">${index + 1}</div>
+                <div>
+                    <h4 class="job-title" style="padding-right:0;">${escapeHTML(job.code)}</h4>
+                    <span style="font-size:10px; color:var(--eco-muted); font-weight:normal;">📅 ${jobDate}</span>
+                </div>
+              </div>
               <div class="job-actions">
                 <button class="edit-job" onclick="openEditForm('${job.id}')">แก้ไข</button>
                 <button class="delete-job" onclick="deleteJob('${job.id}')">ลบ</button>
@@ -891,8 +953,8 @@
                 <div><b>สรุปงาน:</b> ${nl2br(job.detail)}</div>
                 <div><b>เป้าหมาย:</b> ${escapeHTML(job.purpose)}</div>
                 <div class="status-row">
-                  <div class="progress"><div style="width:${percent}%"></div></div>
-                  <span class="status-badge ${badgeClass}">${escapeHTML(job.status)}</span>
+                  <div class="progress"><div style="width:${percent}%; background-color:${barColor};"></div></div>
+                  <span class="status-badge ${badgeClass}">${iconStr} ${escapeHTML(job.status)}</span>
                 </div>
               </div>
               <div class="photos">${photoHTML}</div>
@@ -902,19 +964,39 @@
       jobList.innerHTML = html;
     }
 
-    /* อัปเดต Summary */
+    /* ========== UPDATE SUMMARY (INFOGRAPHIC) ========== */
     function updateSummary(listToUse = jobs) {
       const total = listToUse.length;
-      let done = 0, full = 0;
+      let done = 0, full = 0, sumPercent = 0;
+
       listToUse.forEach(job => {
         const p = getPercent(job.status);
+        sumPercent += p;
         if (p > 0) done++;
         if (p >= 100) full++;
       });
-      document.getElementById("totalJobs").innerText = total + " งาน";
-      document.getElementById("doneJobs").innerText = done + " งาน";
-      document.getElementById("notDoneJobs").innerText = (total - done) + " งาน";
-      document.getElementById("fullJobs").innerText = full + " งาน";
+
+      const notDone = total - done;
+
+      // อัปเดตตัวเลขในการ์ดสถิติ
+      document.getElementById("totalJobs").innerText = total;
+      document.getElementById("doneJobs").innerText = done;
+      document.getElementById("notDoneJobs").innerText = notDone;
+
+      // คำนวณเปอร์เซ็นต์ความคืบหน้ารวมเฉลี่ย
+      const avg = total > 0 ? Math.round(sumPercent / total) : 0;
+      document.getElementById("donutPercent").innerText = avg + "%";
+
+      // วาดวงกลม Donut
+      const deg = (avg / 100) * 360;
+      const color = avg >= 100 ? "#2e7d32" : (avg > 0 ? "#f59e0b" : "#ef4444");
+      document.getElementById("donutChart").style.background = `conic-gradient(${color} ${deg}deg, var(--eco-green-light) ${deg}deg)`;
+
+      // วาดกราฟแท่งเปรียบเทียบ
+      const donePct = total > 0 ? (done / total) * 100 : 0;
+      const notDonePct = total > 0 ? (notDone / total) * 100 : 0;
+      document.getElementById("barDone").style.width = donePct + "%";
+      document.getElementById("barNotDone").style.width = notDonePct + "%";
     }
 
     /* ==========================================================
@@ -929,7 +1011,6 @@
 
       const report = document.getElementById("report");
       
-      // เพิ่มคลาสซ่อนปุ่ม
       report.classList.add("export-mode");
 
       const originalSearch = document.getElementById("searchInput").value;
@@ -999,7 +1080,6 @@
         renderJobs();
         applyFilterVisually(); 
 
-        // เอาคลาสซ่อนปุ่มออก
         report.classList.remove("export-mode");
         loader.style.display = "none";
       }
@@ -1017,7 +1097,6 @@
 
       const report = document.getElementById("report");
       
-      // เพิ่มคลาสซ่อนปุ่ม
       report.classList.add("export-mode");
 
       const originalSearch = document.getElementById("searchInput").value;
@@ -1089,7 +1168,6 @@
         renderJobs();
         applyFilterVisually();
 
-        // เอาคลาสซ่อนปุ่มออก
         report.classList.remove("export-mode");
         loader.style.display = "none"; 
       }
@@ -1107,7 +1185,6 @@
 
       const report = document.getElementById("report");
       
-      // เพิ่มคลาสซ่อนปุ่ม
       report.classList.add("export-mode");
 
       const originalSearch = document.getElementById("searchInput").value;
@@ -1181,7 +1258,6 @@
         renderJobs();
         applyFilterVisually();
 
-        // เอาคลาสซ่อนปุ่มออก
         report.classList.remove("export-mode");
         loader.style.display = "none"; 
       }
