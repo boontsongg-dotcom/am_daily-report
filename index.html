@@ -152,7 +152,7 @@
     [contenteditable="true"] { outline: 1px dashed transparent; border-radius: 4px; transition: 0.2s; }
     [contenteditable="true"]:focus { outline-color: var(--eco-green); background: rgba(255,255,255,0.8); }
 
-    /* ===================== EXPORT MODE (ซ่อนปุ่มอัตโนมัติ) ===================== */
+    /* ===================== EXPORT MODE ===================== */
     .export-mode .job-actions,
     .export-mode .operator-add-btn,
     .export-mode .op-del {
@@ -210,7 +210,6 @@
     
     .title p { margin: 0 0 6px; font-size: 11px; font-weight: 600; color: var(--eco-muted); }
     
-    /* ===================== แก้ไขกล่องวันที่ (DATE BOX) ===================== */
     .date { 
       display: inline-block; 
       background: var(--eco-green); 
@@ -340,16 +339,41 @@
     }
     .status-badge.todo { background-color: var(--eco-danger); color: #d32f2f; border-color: #ffcdd2;} 
 
-    /* ระบบ 4 รูปภาพ 2x2 */
+    /* ระบบจัดการรูปภาพ (ปกติ vs รูปเดียวตรงกลาง) */
     .photos { 
-      display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; margin-top: auto; 
+      display: grid; 
+      grid-template-columns: repeat(2, 1fr); 
+      gap: 6px; 
+      margin-top: auto; 
     }
+    
+    .photos.single-photo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 6px;
+    }
+    .photos.single-photo .photo-box {
+      width: 70%;
+      max-width: 220px;
+    }
+
     .photo-box {
-      border-radius: 8px; background: var(--eco-green-soft); border: 1px solid var(--eco-border);
-      overflow: hidden; position: relative; display: flex; align-items: center; justify-content: center;
-      aspect-ratio: 4 / 3; font-size: 9px; color: var(--eco-muted); text-align: center; font-weight: 600;
+      border-radius: 8px; 
+      background: var(--eco-green-soft); 
+      border: 1px solid var(--eco-border);
+      overflow: hidden; 
+      position: relative; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      aspect-ratio: 4 / 3; 
+      font-size: 9px; 
+      color: var(--eco-muted); 
+      text-align: center; 
+      font-weight: 600;
     }
-    .photo-box img { max-width: 100%; max-height: 100%; width: auto; height: auto; display: block; }
+    .photo-box img { max-width: 100%; max-height: 100%; width: auto; height: auto; display: block; object-fit: contain; }
 
     /* ===================== OPERATOR ===================== */
     .operator-add-btn {
@@ -391,7 +415,6 @@
       color: var(--eco-green); display: grid; place-items: center; font-size: 12px; flex-shrink: 0;
     }
 
-    /* สำหรับ export ภาพให้คมและนิ่ง */
     #report * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 
     /* ===================== RESPONSIVE MEDIA QUERIES ===================== */
@@ -431,7 +454,6 @@
   <!-- ========== CONTROLS (SEARCH & TOOLBAR) ========== -->
   <div class="controls-container">
     <div class="search-box">
-      <!-- Date Picker สำหรับค้นหา/กรองข้อมูลตามวันที่ -->
       <input type="date" id="searchInput" onchange="filterJobs()" title="เลือกวันที่เพื่อค้นหางาน">
     </div>
     <div class="toolbar">
@@ -503,7 +525,6 @@
           </div>
           <p contenteditable="true">CEMENT MILL AM DAILY REPORT</p>
           
-          <!-- กล่องวันที่ดีไซน์ใหม่ ป้องกัน html2canvas บั๊ก และเน้นพื้นเขียว -->
           <div class="date">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
             <span contenteditable="true" id="reportDate"></span>
@@ -527,7 +548,6 @@
         <div class="eco-summary-card">
           <div class="eco-summary-icon">⏱</div>
           <div>
-            <!-- แก้ไขข้อความจาก "งานสำเร็จ" เป็น "งานที่ทำ" -->
             <div class="eco-summary-label">งานที่ทำ</div>
             <div class="eco-summary-value" id="doneJobs">0 งาน</div>
           </div>
@@ -592,7 +612,7 @@
     let formPhotos = ["", "", "", ""];
     let operators = [];
 
-    /* ========== CHUNK FUNCTION (แบ่งหน้างาน) ========== */
+    /* ========== CHUNK FUNCTION ========== */
     function chunkJobs(list, size) {
       const chunks = [];
       for (let i = 0; i < list.length; i += size) {
@@ -655,7 +675,7 @@
     }
 
     function applyFilterVisually() {
-      const dateVal = document.getElementById("searchInput").value; // Format: "YYYY-MM-DD"
+      const dateVal = document.getElementById("searchInput").value;
       let searchDate = "";
       if (dateVal) {
         const [y, m, d] = dateVal.split("-");
@@ -667,7 +687,6 @@
 
       cards.forEach((card, index) => {
         const jobDate = card.getAttribute("data-date");
-        // แสดงงานที่ตรงกับวันที่ หรือแสดงทั้งหมดถ้าไม่ได้เลือกวันที่
         if (!searchDate || searchDate === jobDate) {
           card.style.display = "flex";
           if (jobs[index]) visibleJobs.push(jobs[index]);
@@ -721,7 +740,7 @@
       operators = operators.filter(op => op.id !== id);
       try {
         saveData(); 
-        renderOperators();
+        renderOperators(); 
       } catch (e) {}
     }
 
@@ -855,8 +874,8 @@
       jobs = jobs.filter(item => item.id !== id);
       try {
         saveData(); 
-        renderJobs();
-        applyFilterVisually();
+        renderJobs(); 
+        applyFilterVisually(); 
       } catch (e) {}
     }
 
@@ -870,7 +889,7 @@
       return Math.max(0, Math.min(100, value));
     }
 
-    /* ========== RENDER JOBS ========== */
+    /* ========== RENDER JOBS (จัดรูปภาพกึ่งกลางเมื่อมี 1 รูป) ========== */
     function renderJobs() {
       const jobList = document.getElementById("jobList");
 
@@ -880,17 +899,26 @@
       }
 
       let html = "";
-      jobs.forEach((job, index) => {
+      jobs.forEach((job) => {
         const percent = getPercent(job.status);
         
         let badgeClass = "todo";
         if (percent >= 100) badgeClass = "done";
         else if (percent > 0) badgeClass = "progress";
 
-        const photoHTML = job.photos.slice(0, 4).map(photo => {
-          if (photo) return `<div class="photo-box"><img src="${photo}"></div>`;
-          return `<div class="photo-box">ไม่มีรูป</div>`;
-        }).join("");
+        // กรองเฉพาะรูปที่มีอยู่จริง
+        const validPhotos = (job.photos || []).filter(photo => photo && photo.trim() !== "");
+        let photosContainerHTML = "";
+
+        if (validPhotos.length === 1) {
+          photosContainerHTML = `
+            <div class="photos single-photo">
+              <div class="photo-box"><img src="${validPhotos[0]}"></div>
+            </div>`;
+        } else if (validPhotos.length > 1) {
+          const photoItems = validPhotos.slice(0, 4).map(photo => `<div class="photo-box"><img src="${photo}"></div>`).join("");
+          photosContainerHTML = `<div class="photos">${photoItems}</div>`;
+        }
 
         const jobDate = job.date || document.getElementById("reportDate").innerText;
 
@@ -918,14 +946,13 @@
                   <span class="status-badge ${badgeClass}">${escapeHTML(job.status)}</span>
                 </div>
               </div>
-              <div class="photos">${photoHTML}</div>
+              ${photosContainerHTML}
             </div>
           </article>`;
       });
       jobList.innerHTML = html;
     }
 
-    /* อัปเดต Summary */
     function updateSummary(listToUse = jobs) {
       const total = listToUse.length;
       let done = 0, full = 0;
@@ -940,9 +967,7 @@
       document.getElementById("fullJobs").innerText = full + " งาน";
     }
 
-    /* ==========================================================
-       DOWNLOAD IMAGE (PAGINATED - เฉพาะงานที่ถูก Filter)
-       ========================================================== */
+    /* ===================== DOWNLOAD IMAGE ===================== */
     async function downloadReportImage() {
       const loader = document.getElementById("loaderOverlay");
       document.getElementById("loaderText").innerText = "กำลังสร้างรูปภาพ...";
@@ -951,7 +976,6 @@
       await new Promise(resolve => setTimeout(resolve, 200));
 
       const report = document.getElementById("report");
-      
       report.classList.add("export-mode");
 
       const originalSearch = document.getElementById("searchInput").value;
@@ -966,7 +990,6 @@
       const originalJobs = [...jobs];
       document.getElementById("searchInput").value = ""; 
 
-      // ลบคุณสมบัติ contenteditable ชั่วคราว ป้องกันกล่องข้อความหายตอนถ่ายภาพ
       const editables = report.querySelectorAll("[contenteditable='true']");
       editables.forEach(el => {
         el.setAttribute("data-editable", "true");
@@ -976,9 +999,7 @@
 
       try {
         const jobsPerImage = 4;
-        const jobPages = jobsToExport.length > 0
-          ? chunkJobs(jobsToExport, jobsPerImage)
-          : [[]];
+        const jobPages = jobsToExport.length > 0 ? chunkJobs(jobsToExport, jobsPerImage) : [[]];
 
         const now = new Date();
         const dateStr = now.getFullYear() + "-"
@@ -1006,7 +1027,6 @@
           });
 
           const link = document.createElement("a");
-
           if (jobPages.length === 1) {
             link.download = "AM-Daily-Report-Eco-" + dateStr + ".png";
           } else {
@@ -1029,7 +1049,6 @@
         renderJobs();
         applyFilterVisually(); 
 
-        // นำโหมด contenteditable กลับมา
         const restoreEditables = report.querySelectorAll("[data-editable='true']");
         restoreEditables.forEach(el => {
           el.setAttribute("contenteditable", "true");
@@ -1042,18 +1061,15 @@
       }
     }
 
-    /* ==========================================================
-       DOWNLOAD PDF (A4 LANDSCAPE - เฉพาะงานที่ถูก Filter)
-       ========================================================== */
+    /* ===================== DOWNLOAD PDF ===================== */
     async function downloadReportPDF() {
       const loader = document.getElementById("loaderOverlay");
-      document.getElementById("loaderText").innerText = "กำลังสร้างไฟล์ PDF และแบ่งหน้าอัตโนมัติ...";
+      document.getElementById("loaderText").innerText = "กำลังสร้างไฟล์ PDF...";
       loader.style.display = "flex";
       
       await new Promise(resolve => setTimeout(resolve, 200)); 
 
       const report = document.getElementById("report");
-      
       report.classList.add("export-mode");
 
       const originalSearch = document.getElementById("searchInput").value;
@@ -1144,9 +1160,7 @@
       }
     }
 
-    /* ==========================================================
-       SAVE TO GOOGLE SHEET & DRIVE (เฉพาะงานที่ถูก Filter)
-       ========================================================== */
+    /* ===================== SAVE TO GOOGLE SHEET ===================== */
     async function saveToGoogleSheet() {
       const loader = document.getElementById("loaderOverlay");
       document.getElementById("loaderText").innerText = "กำลังอัปโหลดข้อมูลและรูปภาพลง Cloud...";
@@ -1155,7 +1169,6 @@
       await new Promise(resolve => setTimeout(resolve, 200));
 
       const report = document.getElementById("report");
-      
       report.classList.add("export-mode");
 
       const originalSearch = document.getElementById("searchInput").value;
