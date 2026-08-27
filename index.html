@@ -1,1275 +1,1458 @@
-
-
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AM Daily Report CRUD (Eco Infographic)</title>
-  
-  <!-- Google Fonts: Noto Sans Thai -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AM Daily Report</title>
 
-  <style>
-    /* ===============================
-       ECO FRIENDLY INFOGRAPHIC THEME
-       =============================== */
-    :root {
-      --eco-green: #2e7d32;
-      --eco-green-light: #e8f5e9;
-      --eco-green-soft: #f1f8e9;
-      --eco-mint: #dff5e1;
-      --eco-blue: #e3f2fd;
-      --eco-text: #1f2933;
-      --eco-muted: #607d68;
-      --eco-border: #c8e6c9;
-      --eco-card: #ffffff;
-      --eco-warning: #fff8e1;
-      --eco-danger: #ffebee;
-    }
+<style>
+:root {
+  --primary: #16803c;
+  --primary-dark: #0f5f2b;
+  --primary-soft: #eaf7ee;
+  --surface: #ffffff;
+  --surface-muted: #f6f9f7;
+  --text-main: #17221b;
+  --text-muted: #6b7c70;
+  --border: #dce9df;
+  --success: #16803c;
+  --warning: #d88900;
+  --danger: #d64545;
+  --blue: #168bd0;
+  --shadow-sm: 0 2px 8px rgba(20,75,38,.06);
+  --shadow-md: 0 12px 30px rgba(20,75,38,.10);
+}
 
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: 'Noto Sans Thai', Tahoma, sans-serif; 
-      background: #eef9f0; 
-      color: var(--eco-text);
-    }
+* {
+  box-sizing: border-box;
+}
 
-    /* ===================== LOADING OVERLAY ===================== */
-    .loader-overlay {
-      position: fixed; inset: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(4px);
-      z-index: 10000; display: none; align-items: center; justify-content: center; flex-direction: column;
-      color: var(--eco-green); font-weight: 700; font-size: 16px;
-    }
-    .spinner {
-      width: 48px; height: 48px; border: 5px solid var(--eco-green-light); border-top: 5px solid var(--eco-green);
-      border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px;
-    }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+body {
+  margin: 0;
+  color: var(--text-main);
+  font-family: Tahoma, Arial, sans-serif;
+  background:
+    radial-gradient(circle at 10% 0%, rgba(22,128,60,.08), transparent 28%),
+    linear-gradient(135deg, #f4faf5, #eef5f0);
+}
 
-    /* ===================== TOOLBAR & SEARCH ===================== */
-    .controls-container { width: calc(100% - 24px); max-width: 840px; margin: 16px auto; }
-    .search-box { margin-bottom: 12px; }
-    .search-box input {
-      width: 100%; padding: 12px 16px; border: 1px solid var(--eco-border); border-radius: 24px;
-      font-family: 'Noto Sans Thai', sans-serif; font-size: 14px; outline: none; transition: all 0.3s ease;
-      box-shadow: 0 2px 6px rgba(46,125,50,0.05);
-      color: var(--eco-text); cursor: pointer;
-    }
-    .search-box input:focus { border-color: var(--eco-green); box-shadow: 0 4px 12px rgba(46,125,50,0.15); }
-    .toolbar {
-      background: #ffffff; padding: 12px; border-radius: 16px; display: flex;
-      gap: 8px; justify-content: center; flex-wrap: wrap; box-shadow: 0 4px 16px rgba(46,125,50,0.06);
-    }
-    button { font-family: inherit; border-radius: 999px; }
-    .toolbar button, .form-panel button {
-      border: none; color: white; padding: 10px 14px; 
-      font-weight: 600; cursor: pointer; font-size: 13px; flex: 1 1 auto;
-      min-width: 78px; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .toolbar button:hover, .form-panel button:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.15); filter: brightness(1.05); }
-    .toolbar button:active, .form-panel button:active { transform: translateY(0); }
+button,
+input,
+textarea {
+  font: inherit;
+}
 
-    .btn-blue   { background: #0ea5e9; } 
-    .btn-green  { background: var(--eco-green); } 
-    .btn-orange { background: #f59e0b; } 
-    .btn-red    { background: #ef4444; } 
-    .btn-gray   { background: #64748b; }
+button {
+  border: 0;
+  cursor: pointer;
+}
 
-    /* ===================== FORM OVERLAY ===================== */
-    .form-overlay {
-      position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(2px);
-      display: none; align-items: center; justify-content: center; z-index: 9999; padding: 16px;
-    }
-    .form-overlay.show { display: flex; }
-    .form-panel {
-      width: 100%; max-width: 430px; max-height: 92vh; overflow-y: auto;
-      background: #ffffff; border-radius: 20px; padding: 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2); font-size: 13px;
-      animation: popupIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    @keyframes popupIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
-    .form-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    .form-header h3 { margin: 0; color: var(--eco-green); font-size: 18px; font-weight: 700; }
-    .close-btn {
-      width: 32px; height: 32px; border: none; border-radius: 50%;
-      background: var(--eco-green-light); color: var(--eco-green); font-size: 20px; line-height: 1; cursor: pointer; transition: 0.2s;
-    }
-    .close-btn:hover { background: #ef4444; color: white; transform: rotate(90deg); }
-    
-    .form-panel input, .form-panel textarea {
-      width: 100%; padding: 10px 12px; margin: 6px 0; border: 1px solid var(--eco-border); border-radius: 10px;
-      font-family: inherit; font-size: 13.5px; transition: 0.2s;
-    }
-    .form-panel input:focus, .form-panel textarea:focus { border-color: var(--eco-green); outline: none; box-shadow: 0 0 0 3px var(--eco-mint); }
-    .form-row { display: grid; grid-template-columns: 1fr 95px; gap: 8px; }
-    .form-buttons { display: flex; gap: 8px; margin-top: 16px; }
+.controls {
+  width: calc(100% - 32px);
+  max-width: 1100px;
+  margin: 20px auto 14px;
+  position: sticky;
+  top: 12px;
+  z-index: 100;
+}
 
-    .photo-form-title { margin: 12px 0 6px; font-weight: 600; color: var(--eco-muted); }
-    .photo-form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .photo-form-box {
-      border: 1.5px dashed var(--eco-border); border-radius: 12px; padding: 8px;
-      background: var(--eco-green-soft); text-align: center; font-size: 11px; color: var(--eco-muted); transition: 0.2s;
-    }
-    .photo-form-box:hover { border-color: var(--eco-green); background: var(--eco-green-light); }
-    .photo-form-box img {
-      width: 100%; height: 50px; object-fit: cover; display: none;
-      border-radius: 8px; margin-bottom: 6px; background: #e2e8f0;
-    }
+.search {
+  margin-bottom: 10px;
+}
 
-    /* ===================== REPORT VIEWPORT (ECO THEME) ===================== */
-    .report-viewport { width: 100%; display: flex; justify-content: center; padding: 0 8px 32px; overflow-x: auto; }
-    
-    #report {
-      width: 100%;
-      max-width: 840px; 
-      min-width: 320px;
-      font-family: "Noto Sans Thai", sans-serif;
-      background-color: #f7fff8;
-      background-image: 
-        url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20,20 C40,0 60,20 40,40 C20,60 0,40 20,20 Z' fill='%232e7d32' fill-opacity='0.04' /%3E%3Cpath d='M70,70 C90,50 110,70 90,90 C70,110 50,90 70,70 Z' fill='%232e7d32' fill-opacity='0.03' /%3E%3Cpath d='M80,20 C100,10 100,30 80,40 C60,50 60,30 80,20 Z' fill='%234caf50' fill-opacity='0.03' /%3E%3Cpath d='M20,80 C10,100 30,100 40,80 C50,60 30,60 20,80 Z' fill='%234caf50' fill-opacity='0.03' /%3E%3C/svg%3E"),
-        linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(238,249,240,0.85) 50%, rgba(248,250,252,0.85) 100%);
-      color: var(--eco-text);
-      border-radius: 18px;
-      padding: 22px;
-      box-sizing: border-box;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 12px 32px rgba(46, 125, 50, 0.1);
-    }
+.search input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,.95);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-main);
+}
 
-    #report::before {
-      content: "🌱";
-      position: absolute;
-      right: 24px;
-      top: 18px;
-      font-size: 42px;
-      opacity: 0.15;
-      pointer-events: none;
-    }
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: rgba(255,255,255,.94);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(10px);
+}
 
-    [contenteditable="true"] { outline: 1px dashed transparent; border-radius: 4px; transition: 0.2s; }
-    [contenteditable="true"]:focus { outline-color: var(--eco-green); background: rgba(255,255,255,0.8); }
+.btn {
+  min-width: 120px;
+  padding: 10px 15px;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  transition: .2s ease;
+}
 
-    /* ===================== EXPORT MODE ===================== */
-    .export-mode .job-actions,
-    .export-mode .operator-add-btn,
-    .export-mode .op-del {
-      display: none !important;
-    }
+.btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.06);
+}
 
-    /* ===================== HEADER ===================== */
-    .header {
-      background: linear-gradient(90deg, #ffffff 0%, var(--eco-green-light) 100%);
-      border: 1px solid var(--eco-border);
-      border-left: 8px solid var(--eco-green);
-      border-radius: 18px;
-      padding: 14px 18px;
-      margin-bottom: 14px;
-      box-shadow: 0 6px 18px rgba(46, 125, 50, 0.08);
-      display: grid;
-      grid-template-columns: 110px 1fr 110px; 
-      gap: 24px; align-items: center; 
-      position: relative; z-index: 2;
-    }
-    
-    .logo-box { 
-      display: flex; align-items: center; justify-content: center; 
-      background: #ffffff;
-      padding: 6px; 
-      border-radius: 8px; 
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
-      width: 110px; 
-      height: 54px; 
-    }
-    
-    .logo-box img { 
-      max-width: 100%; 
-      max-height: 100%; 
-      width: auto; 
-      height: auto; 
-      display: block; 
-    }
-    
-    .header-top-row {
-      display: flex; align-items: center; width: 100%; margin-bottom: 4px;
-    }
-    .title h1 { 
-      margin: 0; font-size: 26px; line-height: 1.1; 
-      color: var(--eco-green); font-weight: 800; letter-spacing: -0.3px; 
-    }
-    .title h1::before {
-      content: "Eco Infographic • ";
-      font-size: 0.65em;
-      color: #43a047;
-      font-weight: 700;
-      display: block;
-      margin-bottom: 2px;
-    }
-    
-    .title p { margin: 0 0 6px; font-size: 11px; font-weight: 600; color: var(--eco-muted); }
-    
-    .date { 
-      display: inline-block; 
-      background: var(--eco-green); 
-      color: #ffffff; 
-      border-radius: 16px; 
-      padding: 6px 16px; 
-      font-size: 13px; 
-      font-weight: 700; 
-      box-shadow: 0 4px 6px rgba(46,125,50,0.2); 
-      white-space: nowrap;
-    }
-    .date svg {
-      vertical-align: middle;
-      margin-right: 4px;
-      margin-bottom: 2px;
-    }
-    #reportDate {
-      display: inline-block;
-      vertical-align: middle;
-      min-width: 75px; 
-    }
+.btn-green { background: var(--primary); }
+.btn-red { background: var(--danger); }
+.btn-orange { background: #ed9900; }
+.btn-blue { background: var(--blue); }
+.btn-gray { background: #64748b; }
 
-    /* ===================== ECO SUMMARY ===================== */
-    .eco-summary {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      margin: 12px 0 14px;
-      position: relative; z-index: 2;
-    }
-    .eco-summary-card {
-      background: rgba(255, 255, 255, 0.95);
-      border: 1px solid var(--eco-border);
-      border-radius: 16px;
-      padding: 10px 12px;
-      box-shadow: 0 5px 14px rgba(46, 125, 50, 0.05);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .eco-summary-icon {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: var(--eco-green-light); color: var(--eco-green);
-      display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
-    }
-    .eco-summary-label { font-size: 10px; color: var(--eco-muted); line-height: 1.2; font-weight: 600;}
-    .eco-summary-value { font-size: 16px; font-weight: 800; color: var(--eco-green); line-height: 1.2; margin-top: 2px;}
+.viewport {
+  width: 100%;
+  padding: 0 16px 40px;
+}
 
-    /* ===================== CONTENT / SECTIONS ===================== */
-    .content { position: relative; z-index: 2; }
+#report {
+  width: 100%;
+  max-width: 1100px;
+  margin: auto;
+  padding: 28px;
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.98), rgba(246,251,247,.98));
+  box-shadow: var(--shadow-md);
+}
 
-    .section {
-      background: rgba(255, 255, 255, 0.95);
-      border: 1px solid var(--eco-border);
-      border-radius: 16px;
-      padding: 12px 14px;
-      margin-bottom: 12px;
-      box-shadow: 0 5px 14px rgba(46, 125, 50, 0.05);
-    }
-    .section-title {
-      color: var(--eco-green);
-      font-weight: 800; font-size: 14px;
-      border-bottom: 2px solid var(--eco-mint);
-      padding-bottom: 6px;
-      margin: 0 0 10px 0;
-      display: flex; justify-content: space-between; align-items: center;
-    }
+.header {
+  display: grid;
+  grid-template-columns: 130px 1fr 130px;
+  gap: 28px;
+  align-items: center;
+  padding: 20px 24px;
+  border: 1px solid var(--border);
+  border-left: 8px solid var(--primary);
+  border-radius: 20px;
+  background: linear-gradient(110deg, #fff 20%, #edf8ef);
+}
 
-    /* ===================== JOB CARDS ===================== */
-    #jobList {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr); 
-      gap: 12px;
-      margin-bottom: 16px;
-    }
+.logo {
+  width: 130px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fff;
+}
 
-    .empty-job {
-      grid-column: 1 / -1; background: #ffffff; border: 2px dashed var(--eco-border); border-radius: 16px;
-      padding: 24px; text-align: center; color: var(--eco-muted); font-size: 14px; font-weight: 600;
-    }
+.logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
 
-    .job-card {
-      background: var(--eco-card);
-      border: 1px solid var(--eco-border);
-      border-left: 6px solid var(--eco-green);
-      border-radius: 16px;
-      padding: 12px;
-      box-shadow: 0 6px 16px rgba(46, 125, 50, 0.05);
-      position: relative;
-      display: flex; flex-direction: column; 
-    }
-    
-    .job-card::before {
-      content: "AM";
-      position: absolute;
-      right: 12px; top: 12px;
-      background: var(--eco-green-light); color: var(--eco-green);
-      border: 1px solid var(--eco-border); border-radius: 999px;
-      padding: 2px 8px; font-size: 9px; font-weight: 800;
-    }
+.logo-placeholder {
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+}
 
-    .job-code {
-      display: flex; align-items: center; justify-content: space-between; 
-      margin-bottom: 6px; padding-right: 36px;
-    }
-    .job-title { font-weight: 800; color: #1b5e20; font-size: 13.5px; margin: 0; line-height: 1.2; }
-    
-    .job-actions { display: flex; gap: 4px; position: absolute; right: 12px; top: 35px;}
-    .job-actions button {
-      color: #fff; border: none; font-size: 9px;
-      padding: 3px 8px; cursor: pointer; font-weight: 600; transition: 0.2s;
-    }
-    .edit-job { background: #f59e0b; } .edit-job:hover { background: #d97706; }
-    .delete-job { background: #ef4444; } .delete-job:hover { background: #dc2626; }
-    
-    .job-body { display: flex; flex-direction: column; gap: 8px; flex: 1; }
-    .job-text { font-size: 11px; line-height: 1.45; color: #374151; }
-    .job-text b { color: var(--eco-green); font-weight: 700; }
-    
-    .status-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
-    .progress { flex: 1; height: 8px; background: var(--eco-green-light); border-radius: 20px; overflow: hidden; border: 1px solid var(--eco-border); }
-    .progress div { height: 100%; background: var(--eco-green); border-radius: 20px; transition: width 0.5s ease; }
-    
-    .status-badge { 
-      padding: 3px 9px; border-radius: 999px; font-size: 9px; font-weight: 700; 
-      background: var(--eco-green-light); color: var(--eco-green); border: 1px solid var(--eco-border);
-    }
-    .status-badge.todo { background-color: var(--eco-danger); color: #d32f2f; border-color: #ffcdd2;} 
+.title h1 {
+  margin: 0;
+  color: var(--primary-dark);
+  font-size: clamp(22px, 3vw, 32px);
+  line-height: 1.2;
+}
 
-    /* ระบบจัดการรูปภาพ (ปกติ vs รูปเดียวตรงกลาง) */
-    .photos { 
-      display: grid; 
-      grid-template-columns: repeat(2, 1fr); 
-      gap: 6px; 
-      margin-top: auto; 
-    }
-    
-    .photos.single-photo {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-top: 6px;
-    }
-    .photos.single-photo .photo-box {
-      width: 70%;
-      max-width: 220px;
-    }
+.title h1::before {
+  content: "DAILY MAINTENANCE REPORT";
+  display: block;
+  margin-bottom: 8px;
+  color: var(--primary);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+}
 
-    .photo-box {
-      border-radius: 8px; 
-      background: var(--eco-green-soft); 
-      border: 1px solid var(--eco-border);
-      overflow: hidden; 
-      position: relative; 
-      display: flex; 
-      align-items: center; 
-      justify-content: center;
-      aspect-ratio: 4 / 3; 
-      font-size: 9px; 
-      color: var(--eco-muted); 
-      text-align: center; 
-      font-weight: 600;
-    }
-    .photo-box img { max-width: 100%; max-height: 100%; width: auto; height: auto; display: block; object-fit: contain; }
+.title p {
+  margin: 8px 0;
+  color: var(--text-muted);
+  font-size: 11px;
+  letter-spacing: .5px;
+}
 
-    /* ===================== OPERATOR ===================== */
-    .operator-add-btn {
-      background: var(--eco-green); color: #fff; border: none; border-radius: 999px;
-      font-size: 10px; padding: 4px 10px; cursor: pointer; font-weight: 600; transition: 0.2s;
-    }
-    .operator-add-btn:hover { filter: brightness(1.1); }
-    .operator-list { display: flex; flex-wrap: wrap; gap: 8px; }
-    .operator-item {
-      display: inline-flex; align-items: center; background: #ffffff;
-      padding: 5px 12px; border-radius: 20px; border: 1px solid var(--eco-border); gap: 6px; 
-      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-    }
-    .operator-item .op-icon { font-size: 12px; color: var(--eco-green); }
-    .operator-item .op-name { font-size: 11px; color: var(--eco-text); font-weight: 700; white-space: nowrap; }
-    .operator-item .op-del {
-      background: var(--eco-danger); color: #d32f2f; border: none; border-radius: 50%;
-      font-size: 8px; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: 0.2s; margin-left: 4px;
-    }
-    .operator-item .op-del:hover { background: #d32f2f; color: white; }
+.date {
+  display: inline-block;
+  padding: 8px 14px;
+  border-radius: 10px;
+  color: #fff;
+  background: var(--primary);
+  font-size: 13px;
+  font-weight: 700;
+}
 
-    /* ===================== SAFETY ===================== */
-    .safety-grid { 
-      display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: nowrap;
-    }
-    .safety-title-main { 
-      font-size: 16px; line-height: 1.1; font-weight: 900; color: var(--eco-green);
-      white-space: nowrap; border-right: 1.5px solid var(--eco-border); padding-right: 12px;
-    }
-    .safety-item { 
-      display: flex; align-items: center; gap: 6px; text-align: left; 
-      font-size: 9.5px; line-height: 1.2; font-weight: 700; 
-      background: var(--eco-green-soft); padding: 5px 8px; border-radius: 8px;
-      border: 1px solid var(--eco-border); flex: 1; justify-content: center; color: var(--eco-text);
-    }
-    .safety-icon {
-      width: 24px; height: 24px; border-radius: 50%; background: var(--eco-green-light);
-      color: var(--eco-green); display: grid; place-items: center; font-size: 12px; flex-shrink: 0;
-    }
+.summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin: 18px 0;
+}
 
-    #report * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.summary-card {
+  min-height: 82px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+  transition: .2s ease;
+}
 
-    /* ===================== RESPONSIVE MEDIA QUERIES ===================== */
-    @media (max-width: 768px) {
-      #report { padding: 14px; }
-      .header { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 12px; padding: 16px; }
-      .header-top-row { justify-content: center; }
-      .title h1 { font-size: 22px; }
-      .eco-summary { grid-template-columns: repeat(2, 1fr); gap: 8px;}
-      #jobList { grid-template-columns: 1fr; }
-      .safety-grid { flex-direction: column; align-items: stretch; gap: 6px; }
-      .safety-title-main { border-right: none; border-bottom: 1px solid var(--eco-border); padding-bottom: 4px; text-align: center; }
-      .safety-item { justify-content: flex-start; padding: 6px 10px; }
-    }
+.summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
 
-    /* ===================== PRINT ===================== */
-    @media print {
-      @page { size: A4 landscape; margin: 10mm; }
-      body { background: white; }
-      .controls-container, .form-overlay, .loader-overlay { display: none !important; }
-      .report-viewport { padding: 0; }
-      #report { box-shadow: none; margin: 0 auto; border-radius: 0; width: 100% !important; max-width: none !important; min-height: 594px;}
-      
-      .job-actions, .operator-add-btn, .op-del { display: none !important; }
-      [contenteditable="true"] { outline: none !important; }
-    }
-  </style>
+.summary-icon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--primary-soft);
+  font-size: 20px;
+}
+
+.summary-label {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.summary-value {
+  margin-top: 3px;
+  color: var(--primary-dark);
+  font-size: 21px;
+  font-weight: 800;
+}
+
+.job-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.empty {
+  grid-column: 1 / -1;
+  padding: 34px 20px;
+  border: 2px dashed var(--border);
+  border-radius: 18px;
+  color: var(--text-muted);
+  background: #fff;
+  text-align: center;
+  font-weight: 700;
+}
+
+.job-card {
+  min-height: 240px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-left: 5px solid var(--primary);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+  transition: .2s ease;
+}
+
+.job-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.job-card::before {
+  content: "AM";
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 4px 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--primary);
+  background: var(--primary-soft);
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.job-head {
+  padding-right: 44px;
+}
+
+.job-title {
+  margin: 0 0 4px;
+  color: var(--primary-dark);
+  font-size: 15px;
+}
+
+.job-date {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.job-actions {
+  display: flex;
+  gap: 5px;
+  margin: 10px 0;
+}
+
+.job-actions button {
+  padding: 5px 9px;
+  border-radius: 7px;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.edit { background: #ed9900; }
+.delete { background: var(--danger); }
+
+.job-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 9px;
+}
+
+.job-text {
+  color: #374151;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.job-text b {
+  display: inline-block;
+  min-width: 70px;
+  color: var(--text-muted);
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.progress {
+  height: 9px;
+  flex: 1;
+  overflow: hidden;
+  border-radius: 20px;
+  background: #e8f1ea;
+}
+
+.progress div {
+  height: 100%;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #16803c, #52b86d);
+  transition: width .4s ease;
+}
+
+.status {
+  min-width: 70px;
+  padding: 5px 8px;
+  border-radius: 999px;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.status.todo {
+  color: var(--danger);
+  background: #fff0f0;
+}
+
+.status.progress {
+  color: var(--warning);
+  background: #fff7df;
+}
+
+.status.done {
+  color: var(--success);
+  background: var(--primary-soft);
+}
+
+.photos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 10px;
+}
+
+.photos.single {
+  display: flex;
+  justify-content: center;
+}
+
+.photos.single .photo {
+  width: 70%;
+  max-width: 220px;
+}
+
+.photo {
+  aspect-ratio: 4 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--primary-soft);
+}
+
+.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.section {
+  margin-top: 16px;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: var(--shadow-sm);
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--primary-soft);
+  color: var(--primary-dark);
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.add-person {
+  padding: 6px 11px;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--primary);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.operator-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.operator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 11px;
+  border-radius: 10px;
+  color: var(--text-main);
+  background: var(--surface-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.operator button {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  color: var(--danger);
+  background: #ffe8e8;
+  font-size: 10px;
+}
+
+.safety {
+  background: linear-gradient(110deg, #f0faf2, #fff);
+}
+
+.safety-grid {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.safety-title {
+  padding-right: 12px;
+  color: var(--primary-dark);
+  font-size: 17px;
+  font-weight: 900;
+}
+
+.safety-item {
+  flex: 1;
+  min-width: 130px;
+  padding: 9px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* Modal */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(15,23,42,.6);
+}
+
+.overlay.show {
+  display: flex;
+}
+
+.modal {
+  width: 100%;
+  max-width: 520px;
+  max-height: 92vh;
+  overflow-y: auto;
+  padding: 24px;
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 24px 70px rgba(0,0,0,.22);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: var(--primary-dark);
+  font-size: 19px;
+}
+
+.close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  color: var(--primary);
+  background: var(--primary-soft);
+  font-size: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 9px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+input,
+textarea {
+  width: 100%;
+  margin-top: 5px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+  background: #fbfdfb;
+  color: var(--text-main);
+}
+
+input:focus,
+textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 130px;
+  gap: 8px;
+}
+
+.photo-title {
+  margin-top: 15px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.photo-form {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.photo-input {
+  padding: 8px;
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+  background: var(--primary-soft);
+  text-align: center;
+  font-size: 10px;
+}
+
+.photo-input img {
+  width: 100%;
+  height: 65px;
+  display: none;
+  margin-bottom: 5px;
+  border-radius: 7px;
+  object-fit: cover;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 17px;
+}
+
+.modal-buttons .btn {
+  flex: 1;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .controls {
+    width: calc(100% - 20px);
+    position: static;
+  }
+
+  .toolbar {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .btn {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .viewport {
+    padding: 0 10px 25px;
+  }
+
+  #report {
+    padding: 14px;
+    border-radius: 18px;
+  }
+
+  .header {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 18px;
+    text-align: center;
+  }
+
+  .logo {
+    width: 140px;
+    margin: auto;
+  }
+
+  .summary {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .summary-card {
+    min-height: 74px;
+    padding: 12px;
+  }
+
+  .summary-value {
+    font-size: 17px;
+  }
+
+  .job-list {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .safety-grid {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .safety-title {
+    padding: 0 0 8px;
+    border-bottom: 1px solid var(--border);
+    text-align: center;
+  }
+}
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 8mm;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .controls,
+  .overlay {
+    display: none !important;
+  }
+
+  .viewport {
+    padding: 0;
+  }
+
+  #report {
+    max-width: none;
+    padding: 16px;
+    box-shadow: none;
+  }
+
+  .job-card {
+    break-inside: avoid;
+  }
+
+  .job-actions,
+  .add-person,
+  .operator button {
+    display: none !important;
+  }
+}
+</style>
 </head>
+
 <body>
 
-  <!-- ========== LOADING OVERLAY ========== -->
-  <div class="loader-overlay" id="loaderOverlay">
-    <div class="spinner"></div>
-    <div id="loaderText">กำลังประมวลผล...</div>
+<div class="controls">
+  <div class="search">
+    <input type="date" id="searchDate" onchange="filterJobs()">
   </div>
 
-  <!-- ========== CONTROLS (SEARCH & TOOLBAR) ========== -->
-  <div class="controls-container">
-    <div class="search-box">
-      <input type="date" id="searchInput" onchange="filterJobs()" title="เลือกวันที่เพื่อค้นหางาน">
+  <div class="toolbar">
+    <button class="btn btn-green" onclick="openJobForm()">＋ เพิ่มงาน</button>
+    <button class="btn btn-red" onclick="resetData()">↻ เริ่มวันใหม่</button>
+    <button class="btn btn-orange" onclick="downloadImage()">⇩ ดาวน์โหลดภาพ</button>
+    <button class="btn btn-blue" onclick="printReport()">PDF A4 แนวนอน</button>
+    <button class="btn btn-green" onclick="saveToSheet()">☁ บันทึกข้อมูล</button>
+  </div>
+</div>
+
+<div class="viewport">
+<main id="report">
+
+  <section class="header">
+    <div class="logo">
+      <img src="images/scg-logo.png" alt="SCG Logo"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+      <div class="logo-placeholder" style="display:none">SCG LOGO</div>
     </div>
-    <div class="toolbar">
-      <button class="btn-green" onclick="openCreateForm()">+ เพิ่มงาน</button>
-      <button class="btn-red" onclick="resetAllData()">เริ่มวันใหม่</button>
-      <button class="btn-orange" onclick="downloadReportImage()">ดาวน์โหลดภาพ</button>
-      <button class="btn-blue" onclick="downloadReportPDF()">PDF (A4 แนวนอน)</button>
-      <button class="btn-green" style="background-color:#059669;" onclick="saveToGoogleSheet()">☁️ บันทึกลง Sheet</button>
+
+    <div class="title">
+      <h1 contenteditable="true">สรุปงาน AM บดซีเมนต์</h1>
+      <p contenteditable="true">CEMENT MILL AM DAILY REPORT</p>
+      <div class="date">
+        📅 <span id="reportDate" contenteditable="true"></span>
+      </div>
     </div>
-  </div>
 
-  <!-- ========== FORM OVERLAY (JOB) ========== -->
-  <div class="form-overlay" id="formOverlay" onclick="closeFormByBackdrop(event)">
-    <section class="form-panel" onclick="event.stopPropagation()">
-      <div class="form-header">
-        <h3 id="formTitle">เพิ่มรายการงาน</h3>
-        <button class="close-btn" onclick="closeForm()">×</button>
-      </div>
-      <input type="hidden" id="editId">
-      <div class="form-row">
-        <input id="newCode" placeholder="รหัสงาน เช่น 3152">
-        <input id="newStatus" placeholder="สถานะ (0-100%)" value="100%">
-      </div>
-      <input id="newMachine" placeholder="เครื่อง/ตำแหน่ง">
-      <textarea id="newDetail" rows="3" placeholder="สรุปรายละเอียดงาน"></textarea>
-      <input id="newPurpose" placeholder="วัตถุประสงค์">
-      
-      <div class="photo-form-title">แนบรูปภาพงาน (สูงสุด 4 รูป)</div>
-      <div class="photo-form-grid">
-        <div class="photo-form-box"><img id="preview1"><div>+ รูปที่ 1</div><input type="file" accept="image/*" onchange="handleFormPhoto(this, 0)"></div>
-        <div class="photo-form-box"><img id="preview2"><div>+ รูปที่ 2</div><input type="file" accept="image/*" onchange="handleFormPhoto(this, 1)"></div>
-        <div class="photo-form-box"><img id="preview3"><div>+ รูปที่ 3</div><input type="file" accept="image/*" onchange="handleFormPhoto(this, 2)"></div>
-        <div class="photo-form-box"><img id="preview4"><div>+ รูปที่ 4</div><input type="file" accept="image/*" onchange="handleFormPhoto(this, 3)"></div>
-      </div>
-      <div class="form-buttons">
-        <button class="btn-green" onclick="saveJob()">บันทึกข้อมูล</button>
-        <button class="btn-gray" onclick="clearForm()">ล้างค่า</button>
-      </div>
-    </section>
-  </div>
+    <div class="logo">
+      <img src="images/scg_green.png" alt="SCG Green"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+      <div class="logo-placeholder" style="display:none">SCG GREEN</div>
+    </div>
+  </section>
 
-  <!-- ========== FORM OVERLAY (OPERATOR) ========== -->
-  <div class="form-overlay" id="opFormOverlay" onclick="closeOpFormByBackdrop(event)">
-    <section class="form-panel" onclick="event.stopPropagation()">
-      <div class="form-header">
-        <h3>เพิ่มผู้ปฏิบัติงาน</h3>
-        <button class="close-btn" onclick="closeOpForm()">×</button>
+  <section class="summary">
+    <div class="summary-card">
+      <div class="summary-icon">📋</div>
+      <div>
+        <div class="summary-label">งานทั้งหมด</div>
+        <div class="summary-value" id="totalJobs">0 งาน</div>
       </div>
-      <input id="opName" placeholder="ชื่อผู้ปฏิบัติงาน">
-      <div class="form-buttons">
-        <button class="btn-green" onclick="addOperator()">เพิ่มรายชื่อ</button>
+    </div>
+
+    <div class="summary-card">
+      <div class="summary-icon">⏱</div>
+      <div>
+        <div class="summary-label">งานที่ทำ</div>
+        <div class="summary-value" id="doneJobs">0 งาน</div>
       </div>
-    </section>
-  </div>
+    </div>
 
-  <!-- ========== REPORT (ECO THEME) ========== -->
-  <div class="report-viewport">
-    <main id="report">
+    <div class="summary-card">
+      <div class="summary-icon" style="background:#fff0f0">⚠️</div>
+      <div>
+        <div class="summary-label">ยังไม่สำเร็จ</div>
+        <div class="summary-value" style="color:var(--danger)" id="notDoneJobs">0 งาน</div>
+      </div>
+    </div>
 
-      <!-- ===== HEADER ===== -->
-      <section class="header">
-        <div class="logo-box">
-          <img id="headerLogo" src="images/scg-logo.png" alt="SCG Logo" crossorigin="anonymous" onerror="this.style.display='none';">
-        </div>
-        
-        <div class="title">
-          <div class="header-top-row">
-            <h1 contenteditable="true">สรุปงาน AM บดซีเมนต์</h1>
-          </div>
-          <p contenteditable="true">CEMENT MILL AM DAILY REPORT</p>
-          
-          <div class="date">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-            <span contenteditable="true" id="reportDate"></span>
-          </div>
-        </div>
+    <div class="summary-card">
+      <div class="summary-icon">🌱</div>
+      <div>
+        <div class="summary-label">เสร็จ 100%</div>
+        <div class="summary-value" id="fullJobs">0 งาน</div>
+      </div>
+    </div>
+  </section>
 
-        <div class="logo-box" contenteditable="true">
-          <img src="images/scg_green.png" alt="SCG GREEN" crossorigin="anonymous" onerror="this.style.display='none';">
-        </div>
-      </section>
+  <section class="job-list" id="jobList"></section>
 
-      <!-- ===== ECO SUMMARY ===== -->
-      <div class="eco-summary" id="ecoSummary">
-        <div class="eco-summary-card">
-          <div class="eco-summary-icon">📋</div>
-          <div>
-            <div class="eco-summary-label">งานทั้งหมด</div>
-            <div class="eco-summary-value" id="totalJobs">0 งาน</div>
-          </div>
-        </div>
-        <div class="eco-summary-card">
-          <div class="eco-summary-icon">⏱</div>
-          <div>
-            <div class="eco-summary-label">งานที่ทำ</div>
-            <div class="eco-summary-value" id="doneJobs">0 งาน</div>
-          </div>
-        </div>
-        <div class="eco-summary-card">
-          <div class="eco-summary-icon" style="background:var(--eco-danger); color:#d32f2f;">⚠️</div>
-          <div>
-            <div class="eco-summary-label">ไม่สำเร็จ</div>
-            <div class="eco-summary-value" style="color:#d32f2f;" id="notDoneJobs">0 งาน</div>
-          </div>
-        </div>
-        <div class="eco-summary-card">
-          <div class="eco-summary-icon">🌱</div>
-          <div>
-            <div class="eco-summary-label">เสร็จ 100%</div>
-            <div class="eco-summary-value" id="fullJobs">0 งาน</div>
-          </div>
-        </div>
+  <section class="section">
+    <div class="section-title">
+      <span>👷 ทีมผู้ปฏิบัติงาน</span>
+      <button class="add-person" onclick="openOperatorForm()">＋ เพิ่มคน</button>
+    </div>
+    <div class="operator-list" id="operatorList"></div>
+  </section>
+
+  <section class="section safety">
+    <div class="safety-grid">
+      <div class="safety-title" contenteditable="true">Safety Focus</div>
+      <div class="safety-item" contenteditable="true">⛑ สวม PPE ทุกครั้ง</div>
+      <div class="safety-item" contenteditable="true">🔒 Lockout / Tagout</div>
+      <div class="safety-item" contenteditable="true">🔎 ตรวจสอบพื้นที่ก่อนทำ</div>
+      <div class="safety-item" contenteditable="true">👥 ทำงานเป็นทีม</div>
+      <div class="safety-item" contenteditable="true">⓪ Zero Accident</div>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<!-- Job Modal -->
+<div class="overlay" id="jobOverlay" onclick="closeJobBackdrop(event)">
+  <section class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2 id="jobModalTitle">เพิ่มรายการงาน</h2>
+      <button class="close" onclick="closeJobForm()">×</button>
+    </div>
+
+    <input type="hidden" id="editId">
+
+    <div class="form-row">
+      <div>
+        <label for="jobCode">รหัสงาน</label>
+        <input id="jobCode" placeholder="เช่น 3152">
       </div>
 
-      <!-- ===== CONTENT ===== -->
-      <section class="content">
+      <div>
+        <label for="jobStatus">สถานะ</label>
+        <input id="jobStatus" placeholder="0-100%" value="100%">
+      </div>
+    </div>
 
-        <!-- JOB LIST -->
-        <div id="jobList">
-          <div class="empty-job">ยังไม่มีรายการงาน<br>กดปุ่ม "+ เพิ่มงาน" ด้านบนเพื่อเริ่ม</div>
-        </div>
+    <label for="jobMachine">เครื่อง / ตำแหน่ง</label>
+    <input id="jobMachine" placeholder="เช่น Cement Mill 1">
 
-        <!-- OPERATOR -->
-        <div class="section operator-section">
-          <div class="section-title">
-            <span>👷 ทีมผู้ปฏิบัติงาน</span>
-            <button class="operator-add-btn" onclick="openOpForm()">+ เพิ่มคน</button>
+    <label for="jobDetail">สรุปรายละเอียดงาน</label>
+    <textarea id="jobDetail" rows="3" placeholder="ระบุรายละเอียดงาน"></textarea>
+
+    <label for="jobPurpose">วัตถุประสงค์</label>
+    <input id="jobPurpose" placeholder="ระบุวัตถุประสงค์">
+
+    <div class="photo-title">แนบรูปภาพงาน สูงสุด 4 รูป</div>
+
+    <div class="photo-form">
+      <div class="photo-input">
+        <img id="preview0">
+        รูปที่ 1
+        <input type="file" accept="image/*" onchange="readPhoto(this,0)">
+      </div>
+
+      <div class="photo-input">
+        <img id="preview1">
+        รูปที่ 2
+        <input type="file" accept="image/*" onchange="readPhoto(this,1)">
+      </div>
+
+      <div class="photo-input">
+        <img id="preview2">
+        รูปที่ 3
+        <input type="file" accept="image/*" onchange="readPhoto(this,2)">
+      </div>
+
+      <div class="photo-input">
+        <img id="preview3">
+        รูปที่ 4
+        <input type="file" accept="image/*" onchange="readPhoto(this,3)">
+      </div>
+    </div>
+
+    <div class="modal-buttons">
+      <button class="btn btn-green" onclick="saveJob()">บันทึกข้อมูล</button>
+      <button class="btn btn-gray" onclick="clearJobForm()">ล้างค่า</button>
+    </div>
+  </section>
+</div>
+
+<!-- Operator Modal -->
+<div class="overlay" id="operatorOverlay" onclick="closeOperatorBackdrop(event)">
+  <section class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <h2>เพิ่มผู้ปฏิบัติงาน</h2>
+      <button class="close" onclick="closeOperatorForm()">×</button>
+    </div>
+
+    <label for="operatorName">ชื่อผู้ปฏิบัติงาน</label>
+    <input id="operatorName" placeholder="ระบุชื่อ">
+
+    <div class="modal-buttons">
+      <button class="btn btn-green" onclick="addOperator()">เพิ่มรายชื่อ</button>
+    </div>
+  </section>
+</div>
+
+<script>
+let jobs = [];
+let operators = [];
+let photos = ["", "", "", ""];
+
+const JOB_KEY = "am_daily_jobs_v2";
+const OPERATOR_KEY = "am_daily_operators_v2";
+
+function createId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2);
+}
+
+function todayText() {
+  const date = new Date();
+  const dd = String(date.getDate()).padStart(2, "0");
+  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const yyyy = date.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+}
+
+function toDateInput(text) {
+  if (!text || !text.includes("/")) return "";
+  const [d, m, y] = text.split("/");
+  return `${y}-${m}-${d}`;
+}
+
+function escapeHTML(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function nl2br(value) {
+  return escapeHTML(value).replace(/\n/g, "<br>");
+}
+
+function getPercent(status) {
+  const text = String(status || "").trim().toLowerCase();
+
+  if (
+    text.includes("เสร็จ") ||
+    text.includes("complete") ||
+    text.includes("done")
+  ) {
+    return 100;
+  }
+
+  const number = parseInt(text.replace(/[^\d]/g, ""), 10);
+
+  return Number.isNaN(number)
+    ? 0
+    : Math.max(0, Math.min(100, number));
+}
+
+function loadData() {
+  try {
+    jobs = JSON.parse(localStorage.getItem(JOB_KEY) || "[]");
+    operators = JSON.parse(localStorage.getItem(OPERATOR_KEY) || "[]");
+  } catch {
+    jobs = [];
+    operators = [];
+  }
+
+  if (!operators.length) {
+    operators = [
+      { id: "fixed-1", name: "ธีระศักดิ์ บ.", fixed: true },
+      { id: "fixed-2", name: "ช่างฟิตมิตรสกุณา", fixed: true },
+      { id: "fixed-3", name: "ช่างฟิตบ้านแพรก", fixed: true }
+    ];
+  }
+}
+
+function saveData() {
+  localStorage.setItem(JOB_KEY, JSON.stringify(jobs));
+  localStorage.setItem(OPERATOR_KEY, JSON.stringify(operators));
+}
+
+function renderOperators() {
+  const list = document.getElementById("operatorList");
+
+  list.innerHTML = operators.map(operator => `
+    <div class="operator">
+      <span>👤</span>
+      <span>${escapeHTML(operator.name)}</span>
+      ${
+        operator.fixed
+          ? ""
+          : `<button onclick="removeOperator('${operator.id}')">×</button>`
+      }
+    </div>
+  `).join("");
+}
+
+function renderJobs(list = jobs) {
+  const container = document.getElementById("jobList");
+
+  if (!list.length) {
+    container.innerHTML = `
+      <div class="empty">
+        ยังไม่มีรายการงาน<br>
+        กดปุ่ม “＋ เพิ่มงาน” เพื่อเริ่มต้น
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = list.map(job => {
+    const percent = getPercent(job.status);
+
+    let statusClass = "todo";
+    let statusText = "ยังไม่เริ่ม";
+
+    if (percent >= 100) {
+      statusClass = "done";
+      statusText = "เสร็จแล้ว";
+    } else if (percent > 0) {
+      statusClass = "progress";
+      statusText = `กำลังทำ ${percent}%`;
+    }
+
+    const validPhotos = (job.photos || []).filter(Boolean);
+
+    let photoHTML = "";
+
+    if (validPhotos.length === 1) {
+      photoHTML = `
+        <div class="photos single">
+          <div class="photo">
+            <img src="${validPhotos[0]}" alt="รูปงาน">
           </div>
-          <div class="operator-list" id="operatorList"></div>
         </div>
-
-        <!-- SAFETY -->
-        <section class="section safety-section">
-          <div class="safety-grid">
-            <div class="safety-title-main" contenteditable="true">Safety Focus</div>
-            <div class="safety-item"><div class="safety-icon">⛑</div><div contenteditable="true">สวม PPE ทุกครั้ง</div></div>
-            <div class="safety-item"><div class="safety-icon">🔒</div><div contenteditable="true">Lockout / Tagout</div></div>
-            <div class="safety-item"><div class="safety-icon">🔎</div><div contenteditable="true">ตรวจสอบพื้นที่ก่อนทำ</div></div>
-            <div class="safety-item"><div class="safety-icon">👥</div><div contenteditable="true">ทำงานเป็นทีม</div></div>
-            <div class="safety-item"><div class="safety-icon">0</div><div contenteditable="true">Zero Accident</div></div>
-          </div>
-        </section>
-
-      </section>
-
-    </main>
-  </div>
-
-  <!-- ========== Libraries ========== -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-  <!-- ========== JAVASCRIPT ========== -->
-  <script>
-    let jobs = [];
-    let formPhotos = ["", "", "", ""];
-    let operators = [];
-
-    /* ========== CHUNK FUNCTION ========== */
-    function chunkJobs(list, size) {
-      const chunks = [];
-      for (let i = 0; i < list.length; i += size) {
-        chunks.push(list.slice(i, i + size));
-      }
-      return chunks;
-    }
-
-    /* ========== LOCAL STORAGE SYSTEM ========== */
-    function loadData() {
-      const savedJobs = localStorage.getItem("am_daily_jobs");
-      if (savedJobs) jobs = JSON.parse(savedJobs);
-
-      const savedOps = localStorage.getItem("am_daily_operators");
-      if (savedOps) {
-        operators = JSON.parse(savedOps);
-      } else {
-        operators = [
-          { id: "op1", name: "ธีระศักดิ์ บ.", fixed: true },
-          { id: "op2", name: "ช่างฟิตมิตรสกุณา", fixed: true },
-          { id: "op3", name: "ช่างฟิตบ้านแพรก", fixed: true }
-        ];
-      }
-    }
-    
-    function saveData() {
-      try {
-        localStorage.setItem("am_daily_jobs", JSON.stringify(jobs));
-        localStorage.setItem("am_daily_operators", JSON.stringify(operators));
-      } catch (e) {
-        alert("❌ ไม่สามารถบันทึกได้! พื้นที่ความจำเต็ม\n\nสาเหตุ: รูปภาพมีขนาดใหญ่เกินไป หรือจำนวนงานมากเกินไป\nวิธีแก้: ลบงานเก่าก่อน หรือกดเริ่มวันใหม่");
-        console.error("Storage Quota Exceeded:", e);
-        throw e;
-      }
-    }
-    
-    function resetAllData() {
-      if (!confirm("ต้องการลบข้อมูลงานทั้งหมดเพื่อเริ่มต้นวันใหม่ใช่หรือไม่? (ข้อมูลจะหายไปถาวร)")) return;
-      localStorage.removeItem("am_daily_jobs");
-      jobs = [];
-      document.getElementById('searchInput').value = "";
-      renderJobs();
-      applyFilterVisually();
-    }
-    
-    function createId() { return Date.now().toString() + Math.floor(Math.random() * 1000).toString(); }
-
-    /* ========== AUTO DATE ========== */
-    function setTodayDate() {
-      const now = new Date();
-      const dd = String(now.getDate()).padStart(2, "0");
-      const mm = String(now.getMonth() + 1).padStart(2, "0");
-      const yyyy = now.getFullYear();
-      document.getElementById("reportDate").innerText = dd + "/" + mm + "/" + yyyy;
-    }
-
-    /* ========== DATE FILTER ========== */
-    function filterJobs() {
-      applyFilterVisually();
-    }
-
-    function applyFilterVisually() {
-      const dateVal = document.getElementById("searchInput").value;
-      let searchDate = "";
-      if (dateVal) {
-        const [y, m, d] = dateVal.split("-");
-        searchDate = `${d}/${m}/${y}`;
-      }
-
-      const cards = document.querySelectorAll(".job-card");
-      let visibleJobs = [];
-
-      cards.forEach((card, index) => {
-        const jobDate = card.getAttribute("data-date");
-        if (!searchDate || searchDate === jobDate) {
-          card.style.display = "flex";
-          if (jobs[index]) visibleJobs.push(jobs[index]);
-        } else {
-          card.style.display = "none";
-        }
-      });
-
-      updateSummary(visibleJobs);
-    }
-
-    /* ========== OPERATOR CRUD ========== */
-    function renderOperators() {
-      const list = document.getElementById("operatorList");
-      let html = "";
-      operators.forEach((op) => {
-        const delBtn = op.fixed ? "" : `<button class="op-del" onclick="removeOperator('${op.id}')" title="ลบ">✕</button>`;
-        html += `
-          <div class="operator-item">
-            <span class="op-icon">👤</span>
-            <span class="op-name">${escapeHTML(op.name)}</span>
-            ${delBtn}
-          </div>`;
-      });
-      list.innerHTML = html;
-    }
-    
-    function openOpForm() {
-      document.getElementById("opName").value = "";
-      document.getElementById("opFormOverlay").classList.add("show");
-      setTimeout(() => document.getElementById("opName").focus(), 100);
-    }
-    
-    function closeOpForm() { document.getElementById("opFormOverlay").classList.remove("show"); }
-    function closeOpFormByBackdrop(event) { if (event.target.id === "opFormOverlay") closeOpForm(); }
-    
-    function addOperator() {
-      const name = document.getElementById("opName").value.trim();
-      if (!name) { alert("กรุณาระบุชื่อ"); return; }
-      operators.push({ id: createId(), name, fixed: false });
-      
-      try {
-        saveData(); 
-        renderOperators(); 
-        closeOpForm();
-      } catch (e) {}
-    }
-    
-    function removeOperator(id) {
-      if (!confirm("ต้องการลบผู้ปฏิบัติงานนี้ใช่หรือไม่?")) return;
-      operators = operators.filter(op => op.id !== id);
-      try {
-        saveData(); 
-        renderOperators(); 
-      } catch (e) {}
-    }
-
-    /* ========== JOB FORM ========== */
-    function openCreateForm() {
-      clearForm();
-      document.getElementById("formTitle").innerText = "เพิ่มรายการงาน";
-      document.getElementById("editId").value = "";
-      document.getElementById("formOverlay").classList.add("show");
-      setTimeout(() => document.getElementById("newCode").focus(), 100);
-    }
-    
-    function openEditForm(id) {
-      const job = jobs.find(item => item.id === id);
-      if (!job) return;
-      document.getElementById("formTitle").innerText = "แก้ไขรายการงาน";
-      document.getElementById("editId").value = job.id;
-      document.getElementById("newCode").value = job.code;
-      document.getElementById("newStatus").value = job.status;
-      document.getElementById("newMachine").value = job.machine;
-      document.getElementById("newDetail").value = job.detail;
-      document.getElementById("newPurpose").value = job.purpose;
-      
-      formPhotos = [...job.photos.slice(0, 4)];
-      while (formPhotos.length < 4) formPhotos.push("");
-      updateFormPhotoPreviews();
-      document.getElementById("formOverlay").classList.add("show");
-      setTimeout(() => document.getElementById("newCode").focus(), 100);
-    }
-    
-    function closeForm() { document.getElementById("formOverlay").classList.remove("show"); }
-    function closeFormByBackdrop(event) { if (event.target.id === "formOverlay") closeForm(); }
-    
-    function clearForm() {
-      document.getElementById("editId").value = "";
-      document.getElementById("newCode").value = "";
-      document.getElementById("newMachine").value = "";
-      document.getElementById("newDetail").value = "";
-      document.getElementById("newPurpose").value = "";
-      document.getElementById("newStatus").value = "100%";
-      formPhotos = ["", "", "", ""];
-      document.querySelectorAll(".photo-form-box input").forEach(input => input.value = "");
-      updateFormPhotoPreviews();
-    }
-    
-    function handleFormPhoto(input, index) {
-      const file = input.files && input.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(event) {
-        const img = new Image();
-        img.onload = function() {
-          const canvas = document.createElement('canvas');
-          const ctx = canvas.getContext('2d');
-          
-          const MAX_WIDTH = 800; 
-          const MAX_HEIGHT = 800;
-          let width = img.width;
-          let height = img.height;
-
-          if (width > height) {
-            if (width > MAX_WIDTH) {
-              height *= MAX_WIDTH / width;
-              width = MAX_WIDTH;
-            }
-          } else {
-            if (height > MAX_HEIGHT) {
-              width *= MAX_HEIGHT / height;
-              height = MAX_HEIGHT;
-            }
-          }
-          canvas.width = width;
-          canvas.height = height;
-          ctx.drawImage(img, 0, 0, width, height);
-
-          formPhotos[index] = canvas.toDataURL('image/jpeg', 0.7);
-          updateFormPhotoPreviews();
-        };
-        img.src = event.target.result;
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function updateFormPhotoPreviews() {
-      for (let i = 0; i < 4; i++) {
-        const img = document.getElementById("preview" + (i + 1));
-        if (formPhotos[i]) {
-          img.src = formPhotos[i]; img.style.display = "block";
-        } else {
-          img.removeAttribute("src"); img.style.display = "none";
-        }
-      }
-    }
-
-    /* ========== JOB CRUD ========== */
-    function saveJob() {
-      const editId = document.getElementById("editId").value;
-      const code    = document.getElementById("newCode").value.trim() || "-";
-      const status  = document.getElementById("newStatus").value.trim() || "0%";
-      const machine = document.getElementById("newMachine").value.trim() || "-";
-      const detail  = document.getElementById("newDetail").value.trim() || "-";
-      const purpose = document.getElementById("newPurpose").value.trim() || "-";
-      
-      const existingJob = jobs.find(item => item.id === editId);
-      const jobDate = existingJob ? (existingJob.date || document.getElementById("reportDate").innerText) : document.getElementById("reportDate").innerText;
-
-      const jobData = {
-        id: editId || createId(),
-        date: jobDate,
-        code, status, machine, detail, purpose, photos: [...formPhotos]
-      };
-      
-      const backupJobs = [...jobs];
-
-      if (editId) { jobs = jobs.map(item => item.id === editId ? jobData : item); } 
-      else { jobs.push(jobData); }
-      
-      try {
-        saveData();
-        renderJobs();
-        applyFilterVisually();
-        closeForm();
-        clearForm();
-      } catch (e) {
-        jobs = backupJobs;
-      }
-    }
-    
-    function deleteJob(id) {
-      if (!confirm("ต้องการลบงานนี้ใช่หรือไม่?")) return;
-      jobs = jobs.filter(item => item.id !== id);
-      try {
-        saveData(); 
-        renderJobs(); 
-        applyFilterVisually(); 
-      } catch (e) {}
-    }
-
-    /* ========== HELPERS ========== */
-    function escapeHTML(text) {
-      return String(text).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
-    }
-    function nl2br(text) { return escapeHTML(text).replace(/\n/g, "<br>"); }
-    function getPercent(status) {
-      const value = parseInt(String(status).replace("%", "")) || 0;
-      return Math.max(0, Math.min(100, value));
-    }
-
-    /* ========== RENDER JOBS (จัดรูปภาพกึ่งกลางเมื่อมี 1 รูป) ========== */
-    function renderJobs() {
-      const jobList = document.getElementById("jobList");
-
-      if (jobs.length === 0) {
-        jobList.innerHTML = `<div class="empty-job">ยังไม่มีรายการงาน<br>กดปุ่ม "+ เพิ่มงาน" ด้านบนเพื่อเริ่ม</div>`;
-        return;
-      }
-
-      let html = "";
-      jobs.forEach((job) => {
-        const percent = getPercent(job.status);
-        
-        let badgeClass = "todo";
-        if (percent >= 100) badgeClass = "done";
-        else if (percent > 0) badgeClass = "progress";
-
-        // กรองเฉพาะรูปที่มีอยู่จริง
-        const validPhotos = (job.photos || []).filter(photo => photo && photo.trim() !== "");
-        let photosContainerHTML = "";
-
-        if (validPhotos.length === 1) {
-          photosContainerHTML = `
-            <div class="photos single-photo">
-              <div class="photo-box"><img src="${validPhotos[0]}"></div>
-            </div>`;
-        } else if (validPhotos.length > 1) {
-          const photoItems = validPhotos.slice(0, 4).map(photo => `<div class="photo-box"><img src="${photo}"></div>`).join("");
-          photosContainerHTML = `<div class="photos">${photoItems}</div>`;
-        }
-
-        const jobDate = job.date || document.getElementById("reportDate").innerText;
-
-        html += `
-          <article class="job-card" data-status="${percent}" data-date="${jobDate}">
-            <div class="job-code">
-              <h4 class="job-title">${escapeHTML(job.code)} 
-                <span style="font-size:10px; color:var(--eco-muted); font-weight:normal; margin-left:4px; display:inline-flex; align-items:center; gap:3px;">
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                  ${jobDate}
-                </span>
-              </h4>
-              <div class="job-actions">
-                <button class="edit-job" onclick="openEditForm('${job.id}')">แก้ไข</button>
-                <button class="delete-job" onclick="deleteJob('${job.id}')">ลบ</button>
-              </div>
+      `;
+    } else if (validPhotos.length > 1) {
+      photoHTML = `
+        <div class="photos">
+          ${validPhotos.slice(0, 4).map(photo => `
+            <div class="photo">
+              <img src="${photo}" alt="รูปงาน">
             </div>
-            <div class="job-body">
-              <div class="job-text">
-                <div><b>ตำแหน่ง:</b> ${escapeHTML(job.machine)}</div>
-                <div><b>สรุปงาน:</b> ${nl2br(job.detail)}</div>
-                <div><b>เป้าหมาย:</b> ${escapeHTML(job.purpose)}</div>
-                <div class="status-row">
-                  <div class="progress"><div style="width:${percent}%"></div></div>
-                  <span class="status-badge ${badgeClass}">${escapeHTML(job.status)}</span>
-                </div>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    return `
+      <article class="job-card" data-id="${escapeHTML(job.id)}">
+        <div class="job-head">
+          <h3 class="job-title">${escapeHTML(job.code)}</h3>
+          <div class="job-date">📅 ${escapeHTML(job.date)}</div>
+        </div>
+
+        <div class="job-actions">
+          <button class="edit" onclick="editJob('${job.id}')">แก้ไข</button>
+          <button class="delete" onclick="deleteJob('${job.id}')">ลบ</button>
+        </div>
+
+        <div class="job-body">
+          <div class="job-text">
+            <div><b>ตำแหน่ง:</b> ${escapeHTML(job.machine)}</div>
+            <div><b>สรุปงาน:</b> ${nl2br(job.detail)}</div>
+            <div><b>เป้าหมาย:</b> ${escapeHTML(job.purpose)}</div>
+
+            <div class="status-row">
+              <div class="progress">
+                <div style="width:${percent}%"></div>
               </div>
-              ${photosContainerHTML}
+              <span class="status ${statusClass}">
+                ${escapeHTML(statusText)}
+              </span>
             </div>
-          </article>`;
-      });
-      jobList.innerHTML = html;
+          </div>
+
+          ${photoHTML}
+        </div>
+      </article>
+    `;
+  }).join("");
+}
+
+function updateSummary(list = jobs) {
+  let done = 0;
+  let full = 0;
+
+  list.forEach(job => {
+    const percent = getPercent(job.status);
+    if (percent > 0) done++;
+    if (percent >= 100) full++;
+  });
+
+  document.getElementById("totalJobs").textContent = `${list.length} งาน`;
+  document.getElementById("doneJobs").textContent = `${done} งาน`;
+  document.getElementById("notDoneJobs").textContent =
+    `${list.length - done} งาน`;
+  document.getElementById("fullJobs").textContent = `${full} งาน`;
+}
+
+function filterJobs() {
+  const value = document.getElementById("searchDate").value;
+
+  if (!value) {
+    renderJobs(jobs);
+    updateSummary(jobs);
+    return;
+  }
+
+  const filtered = jobs.filter(job => toDateInput(job.date) === value);
+
+  renderJobs(filtered);
+  updateSummary(filtered);
+}
+
+function openJobForm() {
+  clearJobForm();
+  document.getElementById("jobModalTitle").textContent = "เพิ่มรายการงาน";
+  document.getElementById("jobOverlay").classList.add("show");
+  document.getElementById("jobCode").focus();
+}
+
+function closeJobForm() {
+  document.getElementById("jobOverlay").classList.remove("show");
+}
+
+function closeJobBackdrop(event) {
+  if (event.target.id === "jobOverlay") closeJobForm();
+}
+
+function clearJobForm() {
+  document.getElementById("editId").value = "";
+  document.getElementById("jobCode").value = "";
+  document.getElementById("jobStatus").value = "100%";
+  document.getElementById("jobMachine").value = "";
+  document.getElementById("jobDetail").value = "";
+  document.getElementById("jobPurpose").value = "";
+
+  photos = ["", "", "", ""];
+
+  document.querySelectorAll(".photo-input input").forEach(input => {
+    input.value = "";
+  });
+
+  updatePhotoPreview();
+}
+
+function editJob(id) {
+  const job = jobs.find(item => item.id === id);
+  if (!job) return;
+
+  document.getElementById("jobModalTitle").textContent = "แก้ไขรายการงาน";
+  document.getElementById("editId").value = job.id;
+  document.getElementById("jobCode").value = job.code;
+  document.getElementById("jobStatus").value = job.status;
+  document.getElementById("jobMachine").value = job.machine;
+  document.getElementById("jobDetail").value = job.detail;
+  document.getElementById("jobPurpose").value = job.purpose;
+
+  photos = [...(job.photos || [])];
+
+  while (photos.length < 4) photos.push("");
+  photos = photos.slice(0, 4);
+
+  updatePhotoPreview();
+  document.getElementById("jobOverlay").classList.add("show");
+}
+
+function saveJob() {
+  const code = document.getElementById("jobCode").value.trim() || "-";
+  const status = document.getElementById("jobStatus").value.trim() || "0%";
+  const machine = document.getElementById("jobMachine").value.trim() || "-";
+  const detail = document.getElementById("jobDetail").value.trim() || "-";
+  const purpose = document.getElementById("jobPurpose").value.trim() || "-";
+  const editId = document.getElementById("editId").value;
+
+  const oldJob = jobs.find(item => item.id === editId);
+
+  const job = {
+    id: editId || createId(),
+    date: oldJob?.date || document.getElementById("reportDate").textContent,
+    code,
+    status,
+    machine,
+    detail,
+    purpose,
+    photos: [...photos]
+  };
+
+  if (editId) {
+    jobs = jobs.map(item => item.id === editId ? job : item);
+  } else {
+    jobs.push(job);
+  }
+
+  saveData();
+  renderJobs();
+  updateSummary();
+  closeJobForm();
+}
+
+function deleteJob(id) {
+  const job = jobs.find(item => item.id === id);
+
+  if (!job) return;
+
+  if (!confirm(`ต้องการลบงาน ${job.code} ใช่หรือไม่?`)) return;
+
+  jobs = jobs.filter(item => item.id !== id);
+
+  saveData();
+  filterJobs();
+}
+
+function resetData() {
+  if (!confirm("ต้องการลบข้อมูลงานทั้งหมดใช่หรือไม่?")) return;
+
+  jobs = [];
+  localStorage.removeItem(JOB_KEY);
+  document.getElementById("searchDate").value = "";
+
+  renderJobs();
+  updateSummary();
+}
+
+function validateImage(file) {
+  if (!file) return false;
+
+  if (!file.type.startsWith("image/")) {
+    alert("กรุณาเลือกไฟล์รูปภาพเท่านั้น");
+    return false;
+  }
+
+  if (file.size > 2 * 1024 * 1024) {
+    alert("รูปภาพต้องมีขนาดไม่เกิน 2 MB");
+    return false;
+  }
+
+  return true;
+}
+
+function readPhoto(input, index) {
+  const file = input.files?.[0];
+
+  if (!validateImage(file)) {
+    input.value = "";
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = event => {
+    const image = new Image();
+
+    image.onload = () => {
+      const max = 900;
+      let width = image.width;
+      let height = image.height;
+
+      if (width > height && width > max) {
+        height *= max / width;
+        width = max;
+      }
+
+      if (height >= width && height > max) {
+        width *= max / height;
+        height = max;
+      }
+
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+
+      const context = canvas.getContext("2d");
+      context.drawImage(image, 0, 0, width, height);
+
+      photos[index] = canvas.toDataURL("image/jpeg", .75);
+      updatePhotoPreview();
+    };
+
+    image.src = event.target.result;
+  };
+
+  reader.readAsDataURL(file);
+}
+
+function updatePhotoPreview() {
+  photos.forEach((photo, index) => {
+    const image = document.getElementById(`preview${index}`);
+
+    if (photo) {
+      image.src = photo;
+      image.style.display = "block";
+    } else {
+      image.removeAttribute("src");
+      image.style.display = "none";
     }
+  });
+}
 
-    function updateSummary(listToUse = jobs) {
-      const total = listToUse.length;
-      let done = 0, full = 0;
-      listToUse.forEach(job => {
-        const p = getPercent(job.status);
-        if (p > 0) done++;
-        if (p >= 100) full++;
-      });
-      document.getElementById("totalJobs").innerText = total + " งาน";
-      document.getElementById("doneJobs").innerText = done + " งาน";
-      document.getElementById("notDoneJobs").innerText = (total - done) + " งาน";
-      document.getElementById("fullJobs").innerText = full + " งาน";
-    }
+function openOperatorForm() {
+  document.getElementById("operatorName").value = "";
+  document.getElementById("operatorOverlay").classList.add("show");
+  document.getElementById("operatorName").focus();
+}
 
-    /* ===================== DOWNLOAD IMAGE ===================== */
-    async function downloadReportImage() {
-      const loader = document.getElementById("loaderOverlay");
-      document.getElementById("loaderText").innerText = "กำลังสร้างรูปภาพ...";
-      loader.style.display = "flex";
+function closeOperatorForm() {
+  document.getElementById("operatorOverlay").classList.remove("show");
+}
 
-      await new Promise(resolve => setTimeout(resolve, 200));
+function closeOperatorBackdrop(event) {
+  if (event.target.id === "operatorOverlay") {
+    closeOperatorForm();
+  }
+}
 
-      const report = document.getElementById("report");
-      report.classList.add("export-mode");
+function addOperator() {
+  const name = document.getElementById("operatorName").value.trim();
 
-      const originalSearch = document.getElementById("searchInput").value;
+  if (!name) {
+    alert("กรุณาระบุชื่อผู้ปฏิบัติงาน");
+    return;
+  }
 
-      let jobsToExport = jobs;
-      if (originalSearch) {
-        const [y, m, d] = originalSearch.split("-");
-        const searchDate = `${d}/${m}/${y}`;
-        jobsToExport = jobs.filter(j => (j.date || document.getElementById("reportDate").innerText) === searchDate);
-      }
-      
-      const originalJobs = [...jobs];
-      document.getElementById("searchInput").value = ""; 
+  operators.push({
+    id: createId(),
+    name,
+    fixed: false
+  });
 
-      const editables = report.querySelectorAll("[contenteditable='true']");
-      editables.forEach(el => {
-        el.setAttribute("data-editable", "true");
-        el.removeAttribute("contenteditable");
-        el.style.outline = "none";
-      });
+  saveData();
+  renderOperators();
+  closeOperatorForm();
+}
 
-      try {
-        const jobsPerImage = 4;
-        const jobPages = jobsToExport.length > 0 ? chunkJobs(jobsToExport, jobsPerImage) : [[]];
+function removeOperator(id) {
+  if (!confirm("ต้องการลบผู้ปฏิบัติงานนี้ใช่หรือไม่?")) return;
 
-        const now = new Date();
-        const dateStr = now.getFullYear() + "-"
-          + String(now.getMonth() + 1).padStart(2, "0") + "-"
-          + String(now.getDate()).padStart(2, "0");
+  operators = operators.filter(operator => operator.id !== id);
 
-        for (let i = 0; i < jobPages.length; i++) {
-          document.getElementById("loaderText").innerText =
-            "กำลังสร้างรูปภาพหน้า " + (i + 1) + " จาก " + jobPages.length + "...";
+  saveData();
+  renderOperators();
+}
 
-          jobs = jobPages[i];
-          renderJobs();
-          updateSummary(jobsToExport); 
+function printReport() {
+  window.print();
+}
 
-          await new Promise(resolve => setTimeout(resolve, 300));
+async function downloadImage() {
+  const report = document.getElementById("report");
 
-          const canvas = await html2canvas(report, {
-            scale: 3,
-            useCORS: true,
-            allowTaint: false,
-            backgroundColor: "#f7fff8", 
-            logging: false,
-            width: 840,
-            windowWidth: 840
-          });
+  try {
+    const clone = report.cloneNode(true);
 
-          const link = document.createElement("a");
-          if (jobPages.length === 1) {
-            link.download = "AM-Daily-Report-Eco-" + dateStr + ".png";
-          } else {
-            link.download = "AM-Daily-Report-Eco-" + dateStr + "-page-" + String(i + 1).padStart(2, "0") + ".png";
-          }
+    clone.querySelectorAll(".job-actions,.add-person").forEach(element => {
+      element.remove();
+    });
 
-          link.href = canvas.toDataURL("image/png");
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
+    clone.style.position = "fixed";
+    clone.style.left = "-100000px";
+    clone.style.top = "0";
+    clone.style.width = `${report.offsetWidth}px`;
+    clone.style.maxWidth = "none";
+    clone.style.zIndex = "-1";
 
-          await new Promise(resolve => setTimeout(resolve, 500));
-        }
+    document.body.appendChild(clone);
 
-      } catch (err) {
-        alert("ไม่สามารถสร้างภาพได้ กรุณาลองใหม่อีกครั้ง");
-      } finally {
-        jobs = originalJobs;
-        document.getElementById("searchInput").value = originalSearch;
-        renderJobs();
-        applyFilterVisually(); 
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg"
+           width="${clone.offsetWidth}"
+           height="${clone.offsetHeight}">
+        <foreignObject width="100%" height="100%">
+          ${new XMLSerializer().serializeToString(clone)}
+        </foreignObject>
+      </svg>
+    `;
 
-        const restoreEditables = report.querySelectorAll("[data-editable='true']");
-        restoreEditables.forEach(el => {
-          el.setAttribute("contenteditable", "true");
-          el.removeAttribute("data-editable");
-          el.style.outline = "";
-        });
+    const blob = new Blob([svg], {
+      type: "image/svg+xml;charset=utf-8"
+    });
 
-        report.classList.remove("export-mode");
-        loader.style.display = "none";
-      }
-    }
+    const url = URL.createObjectURL(blob);
+    const image = new Image();
 
-    /* ===================== DOWNLOAD PDF ===================== */
-    async function downloadReportPDF() {
-      const loader = document.getElementById("loaderOverlay");
-      document.getElementById("loaderText").innerText = "กำลังสร้างไฟล์ PDF...";
-      loader.style.display = "flex";
-      
-      await new Promise(resolve => setTimeout(resolve, 200)); 
+    image.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = image.width * 2;
+      canvas.height = image.height * 2;
 
-      const report = document.getElementById("report");
-      report.classList.add("export-mode");
+      const context = canvas.getContext("2d");
+      context.scale(2, 2);
+      context.fillStyle = "#f7fff8";
+      context.fillRect(0, 0, image.width, image.height);
+      context.drawImage(image, 0, 0);
 
-      const originalSearch = document.getElementById("searchInput").value;
+      const link = document.createElement("a");
+      link.download = `AM-Daily-Report-${Date.now()}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
 
-      let jobsToExport = jobs;
-      if (originalSearch) {
-        const [y, m, d] = originalSearch.split("-");
-        const searchDate = `${d}/${m}/${y}`;
-        jobsToExport = jobs.filter(j => (j.date || document.getElementById("reportDate").innerText) === searchDate);
-      }
-      
-      const originalJobs = [...jobs];
-      document.getElementById("searchInput").value = ""; 
-      
-      jobs = jobsToExport;
-      renderJobs();
-      updateSummary(jobsToExport);
+      URL.revokeObjectURL(url);
+      clone.remove();
+    };
 
-      const editables = report.querySelectorAll("[contenteditable='true']");
-      editables.forEach(el => {
-        el.setAttribute("data-editable", "true");
-        el.removeAttribute("contenteditable");
-        el.style.outline = "none";
-      });
+    image.onerror = () => {
+      clone.remove();
+      URL.revokeObjectURL(url);
+      alert("ไม่สามารถสร้างภาพรายงานได้ กรุณาใช้คำสั่งพิมพ์แทน");
+    };
 
-      try {
-        const canvas = await html2canvas(report, {
-          scale: 2,
-          useCORS: true,
-          allowTaint: false,
-          backgroundColor: "#f7fff8", 
-          logging: false,
-          width: 840,
-          windowWidth: 840
-        });
+    image.src = url;
+  } catch {
+    alert("ไม่สามารถสร้างภาพรายงานได้ กรุณาลองใหม่อีกครั้ง");
+  }
+}
 
-        const imgData = canvas.toDataURL("image/jpeg", 0.85);
+function saveToSheet() {
+  alert(
+    "ฟังก์ชันนี้พร้อมสำหรับเชื่อมต่อระบบจัดเก็บข้อมูลขององค์กร " +
+    "กรุณาเชื่อมต่อผ่าน Backend ที่ได้รับอนุญาต"
+  );
+}
 
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({
-          orientation: 'landscape',
-          unit: 'mm',
-          format: 'a4'
-        });
+function init() {
+  loadData();
 
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = pdf.internal.pageSize.getHeight();
-        
-        const imgHeight = (canvas.height * pdfWidth) / canvas.width;
-        let heightLeft = imgHeight;
-        let position = 0;
+  document.getElementById("reportDate").textContent = todayText();
 
-        pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
-        heightLeft -= pdfHeight;
+  renderJobs();
+  updateSummary();
+  renderOperators();
+}
 
-        while (heightLeft > 0) {
-          position = heightLeft - imgHeight;
-          pdf.addPage();
-          pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
-          heightLeft -= pdfHeight;
-        }
-
-        const now = new Date();
-        const dateStr = now.getFullYear() + "-"
-          + String(now.getMonth() + 1).padStart(2, "0") + "-"
-          + String(now.getDate()).padStart(2, "0");
-
-        pdf.save("AM-Daily-Report-Eco-" + dateStr + ".pdf");
-
-      } catch (err) {
-        console.error(err);
-        alert("ไม่สามารถสร้าง PDF ได้ กรุณาลองใหม่อีกครั้ง");
-      } finally {
-        jobs = originalJobs;
-        document.getElementById("searchInput").value = originalSearch;
-        renderJobs();
-        applyFilterVisually();
-
-        const restoreEditables = report.querySelectorAll("[data-editable='true']");
-        restoreEditables.forEach(el => {
-          el.setAttribute("contenteditable", "true");
-          el.removeAttribute("data-editable");
-          el.style.outline = "";
-        });
-
-        report.classList.remove("export-mode");
-        loader.style.display = "none"; 
-      }
-    }
-
-    /* ===================== SAVE TO GOOGLE SHEET ===================== */
-    async function saveToGoogleSheet() {
-      const loader = document.getElementById("loaderOverlay");
-      document.getElementById("loaderText").innerText = "กำลังอัปโหลดข้อมูลและรูปภาพลง Cloud...";
-      loader.style.display = "flex";
-
-      await new Promise(resolve => setTimeout(resolve, 200));
-
-      const report = document.getElementById("report");
-      report.classList.add("export-mode");
-
-      const originalSearch = document.getElementById("searchInput").value;
-
-      let jobsToExport = jobs;
-      if (originalSearch) {
-        const [y, m, d] = originalSearch.split("-");
-        const searchDate = `${d}/${m}/${y}`;
-        jobsToExport = jobs.filter(j => (j.date || document.getElementById("reportDate").innerText) === searchDate);
-      }
-      
-      const originalJobs = [...jobs];
-      document.getElementById("searchInput").value = ""; 
-      
-      jobs = jobsToExport;
-      renderJobs();
-      updateSummary(jobsToExport);
-
-      const editables = report.querySelectorAll("[contenteditable='true']");
-      editables.forEach(el => {
-        el.setAttribute("data-editable", "true");
-        el.removeAttribute("contenteditable");
-        el.style.outline = "none";
-      });
-
-      try {
-        const canvas = await html2canvas(report, {
-          scale: 2, 
-          useCORS: true,
-          allowTaint: false,
-          backgroundColor: "#f7fff8",
-          logging: false,
-          width: 840,
-          windowWidth: 840
-        });
-        
-        const base64Image = canvas.toDataURL("image/jpeg", 0.85);
-
-        const dateStr = originalSearch ? `${originalSearch.split('-')[2]}/${originalSearch.split('-')[1]}/${originalSearch.split('-')[0]}` : document.getElementById("reportDate").innerText;
-        const opNames = operators.map(op => op.name).join(", ") || "-";
-        
-        let doneCount = 0;
-        jobsToExport.forEach(job => { if (getPercent(job.status) > 0) doneCount++; });
-        
-        const jobsSummary = jobsToExport.map((j, i) => `${i+1}. [${j.code}] ${j.machine} - ${j.status}`).join("\n") || "ไม่มีรายการงาน";
-
-        const payload = {
-          date: dateStr,
-          totalJobs: jobsToExport.length,
-          doneJobs: doneCount,
-          operators: opNames,
-          jobsSummary: jobsSummary,
-          imageBase64: base64Image
-        };
-
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzGfPiHWfQJnmpq9z7pr_ZhF5zz33ScZZ8vZvpY_Nli4_GCMScjyfCgBZesjZbMKzXQ/exec";
-        
-        const response = await fetch(WEB_APP_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payload)
-        });
-
-        const result = await response.json();
-        
-        if (result.status === "success") {
-          alert("✅ บันทึกข้อมูลและรูปภาพลง Google Sheet สำเร็จ!");
-        } else {
-          alert("❌ เกิดข้อผิดพลาดจากเซิร์ฟเวอร์:\n" + result.message);
-        }
-
-      } catch (err) {
-        console.error(err);
-        alert("❌ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้\nกรุณาตรวจสอบอินเทอร์เน็ตหรือ Web App URL");
-      } finally {
-        jobs = originalJobs;
-        document.getElementById("searchInput").value = originalSearch;
-        renderJobs();
-        applyFilterVisually();
-
-        const restoreEditables = report.querySelectorAll("[data-editable='true']");
-        restoreEditables.forEach(el => {
-          el.setAttribute("contenteditable", "true");
-          el.removeAttribute("data-editable");
-          el.style.outline = "";
-        });
-
-        report.classList.remove("export-mode");
-        loader.style.display = "none"; 
-      }
-    }
-
-    /* ========== INIT ========== */
-    loadData();
-    setTodayDate();
-    renderJobs();
-    applyFilterVisually();
-    renderOperators();
-  </script>
+init();
+</script>
 
 </body>
 </html>
