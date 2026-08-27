@@ -9,6 +9,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+  
+  <!-- SweetAlert2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css" rel="stylesheet">
+  
   <style>
     /* ===============================
        ECO FRIENDLY INFOGRAPHIC THEME
@@ -33,17 +37,7 @@
       background: #eef9f0;
       color: var(--eco-text);
     }
-    /* ===================== LOADING OVERLAY ===================== */
-    .loader-overlay {
-      position: fixed; inset: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(4px);
-      z-index: 10000; display: none; align-items: center; justify-content: center; flex-direction: column;
-      color: var(--eco-green); font-weight: 700; font-size: 16px;
-    }
-    .spinner {
-      width: 48px; height: 48px; border: 5px solid var(--eco-green-light); border-top: 5px solid var(--eco-green);
-      border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px;
-    }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    
     /* ===================== TOOLBAR & SEARCH ===================== */
     .controls-container { width: calc(100% - 24px); max-width: 840px; margin: 16px auto; }
     .search-box { margin-bottom: 12px; }
@@ -71,6 +65,7 @@
     .btn-orange { background: #f59e0b; }
     .btn-red    { background: #ef4444; }
     .btn-gray   { background: #64748b; }
+    
     /* ===================== FORM OVERLAY ===================== */
     .form-overlay {
       position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(2px);
@@ -110,6 +105,7 @@
       width: 100%; height: 50px; object-fit: cover; display: none;
       border-radius: 8px; margin-bottom: 6px; background: #e2e8f0;
     }
+    
     /* ===================== REPORT VIEWPORT (ECO THEME) ===================== */
     .report-viewport { width: 100%; display: flex; justify-content: center; padding: 0 8px 32px; overflow-x: auto; }
 
@@ -141,12 +137,14 @@
     }
     [contenteditable="true"] { outline: 1px dashed transparent; border-radius: 4px; transition: 0.2s; }
     [contenteditable="true"]:focus { outline-color: var(--eco-green); background: rgba(255,255,255,0.8); }
+    
     /* ===================== EXPORT MODE ===================== */
     .export-mode .job-actions,
     .export-mode .operator-add-btn,
     .export-mode .op-del {
       display: none !important;
     }
+    
     /* ===================== HEADER ===================== */
     .header {
       background: linear-gradient(90deg, #ffffff 0%, var(--eco-green-light) 100%);
@@ -219,6 +217,7 @@
       vertical-align: middle;
       min-width: 75px;
     }
+    
     /* ===================== ECO SUMMARY ===================== */
     .eco-summary {
       display: grid;
@@ -244,6 +243,7 @@
     }
     .eco-summary-label { font-size: 10px; color: var(--eco-muted); line-height: 1.2; font-weight: 600;}
     .eco-summary-value { font-size: 16px; font-weight: 800; color: var(--eco-green); line-height: 1.2; margin-top: 2px;}
+    
     /* ===================== CONTENT / SECTIONS ===================== */
     .content { position: relative; z-index: 2; }
     .section {
@@ -262,6 +262,7 @@
       margin: 0 0 10px 0;
       display: flex; justify-content: space-between; align-items: center;
     }
+    
     /* ===================== JOB CARDS ===================== */
     #jobList {
       display: grid;
@@ -319,6 +320,7 @@
       background: var(--eco-green-light); color: var(--eco-green); border: 1px solid var(--eco-border);
     }
     .status-badge.todo { background-color: var(--eco-danger); color: #d32f2f; border-color: #ffcdd2;}
+    
     /* ระบบจัดการรูปภาพ (ปกติ vs รูปเดียวตรงกลาง) */
     .photos {
       display: grid;
@@ -353,6 +355,7 @@
       font-weight: 600;
     }
     .photo-box img { max-width: 100%; max-height: 100%; width: auto; height: auto; display: block; object-fit: contain; }
+    
     /* ===================== OPERATOR ===================== */
     .operator-add-btn {
       background: var(--eco-green); color: #fff; border: none; border-radius: 999px;
@@ -373,6 +376,7 @@
       cursor: pointer; transition: 0.2s; margin-left: 4px;
     }
     .operator-item .op-del:hover { background: #d32f2f; color: white; }
+    
     /* ===================== SAFETY ===================== */
     .safety-grid {
       display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: nowrap;
@@ -392,6 +396,7 @@
       color: var(--eco-green); display: grid; place-items: center; font-size: 12px; flex-shrink: 0;
     }
     #report * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    
     /* ===================== RESPONSIVE MEDIA QUERIES ===================== */
     @media (max-width: 768px) {
       #report { padding: 14px; }
@@ -404,25 +409,24 @@
       .safety-title-main { border-right: none; border-bottom: 1px solid var(--eco-border); padding-bottom: 4px; text-align: center; }
       .safety-item { justify-content: flex-start; padding: 6px 10px; }
     }
+    
     /* ===================== PRINT ===================== */
     @media print {
       @page { size: A4 landscape; margin: 10mm; }
       body { background: white; }
-      .controls-container, .form-overlay, .loader-overlay { display: none !important; }
+      .controls-container, .form-overlay { display: none !important; }
       .report-viewport { padding: 0; }
       #report { box-shadow: none; margin: 0 auto; border-radius: 0; width: 100% !important; max-width: none !important; min-height: 594px;}
-
       .job-actions, .operator-add-btn, .op-del { display: none !important; }
       [contenteditable="true"] { outline: none !important; }
     }
+    
+    /* ปรับแต่ง SweetAlert ให้อักษรเข้ากับเว็บ */
+    .swal2-popup { font-family: 'Noto Sans Thai', sans-serif !important; }
   </style>
 </head>
 <body>
-  <!-- ========== LOADING OVERLAY ========== -->
-  <div class="loader-overlay" id="loaderOverlay">
-    <div class="spinner"></div>
-    <div id="loaderText">กำลังประมวลผล...</div>
-  </div>
+
   <!-- ========== CONTROLS (SEARCH & TOOLBAR) ========== -->
   <div class="controls-container">
     <div class="search-box">
@@ -436,6 +440,7 @@
       <button class="btn-green" style="background-color:#059669;" onclick="saveToGoogleSheet()">☁️ บันทึกลง Sheet</button>
     </div>
   </div>
+
   <!-- ========== FORM OVERLAY (JOB) ========== -->
   <div class="form-overlay" id="formOverlay" onclick="closeFormByBackdrop(event)">
     <section class="form-panel" onclick="event.stopPropagation()">
@@ -465,6 +470,7 @@
       </div>
     </section>
   </div>
+
   <!-- ========== FORM OVERLAY (OPERATOR) ========== -->
   <div class="form-overlay" id="opFormOverlay" onclick="closeOpFormByBackdrop(event)">
     <section class="form-panel" onclick="event.stopPropagation()">
@@ -478,6 +484,7 @@
       </div>
     </section>
   </div>
+
   <!-- ========== REPORT (ECO THEME) ========== -->
   <div class="report-viewport">
     <main id="report">
@@ -502,6 +509,7 @@
           <img src="images/scg_green.png" alt="SCG GREEN" crossorigin="anonymous" onerror="this.style.display='none';">
         </div>
       </section>
+
       <!-- ===== ECO SUMMARY ===== -->
       <div class="eco-summary" id="ecoSummary">
         <div class="eco-summary-card">
@@ -533,12 +541,14 @@
           </div>
         </div>
       </div>
+
       <!-- ===== CONTENT ===== -->
       <section class="content">
         <!-- JOB LIST -->
         <div id="jobList">
           <div class="empty-job">ยังไม่มีรายการงาน<br>กดปุ่ม "+ เพิ่มงาน" ด้านบนเพื่อเริ่ม</div>
         </div>
+
         <!-- OPERATOR -->
         <div class="section operator-section">
           <div class="section-title">
@@ -547,6 +557,7 @@
           </div>
           <div class="operator-list" id="operatorList"></div>
         </div>
+
         <!-- SAFETY -->
         <section class="section safety-section">
           <div class="safety-grid">
@@ -561,14 +572,33 @@
       </section>
     </main>
   </div>
+
   <!-- ========== Libraries ========== -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+  
   <!-- ========== JAVASCRIPT ========== -->
   <script>
     let jobs = [];
     let formPhotos = ["", "", "", ""];
     let operators = [];
+    
+    /* ========== SWEETALERT HELPER ========== */
+    function showSwalLoading(text) {
+      Swal.fire({
+        title: text,
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+    }
+
+    function closeSwalLoading() {
+      Swal.close();
+    }
+
     /* ========== CHUNK FUNCTION ========== */
     function chunkJobs(list, size) {
       const chunks = [];
@@ -577,6 +607,7 @@
       }
       return chunks;
     }
+
     /* ========== LOCAL STORAGE SYSTEM ========== */
     function loadData() {
       const savedJobs = localStorage.getItem("am_daily_jobs");
@@ -598,22 +629,48 @@
         localStorage.setItem("am_daily_jobs", JSON.stringify(jobs));
         localStorage.setItem("am_daily_operators", JSON.stringify(operators));
       } catch (e) {
-        alert("❌ ไม่สามารถบันทึกได้! พื้นที่ความจำเต็ม\n\nสาเหตุ: รูปภาพมีขนาดใหญ่เกินไป หรือจำนวนงานมากเกินไป\nวิธีแก้: ลบงานเก่าก่อน หรือกดเริ่มวันใหม่");
+        Swal.fire({
+          icon: 'error',
+          title: 'พื้นที่ความจำเต็ม!',
+          text: 'รูปภาพมีขนาดใหญ่เกินไป หรือจำนวนงานมากเกินไป วิธีแก้: ลบงานเก่าก่อน หรือกดเริ่มวันใหม่',
+          confirmButtonText: 'ตกลง'
+        });
         console.error("Storage Quota Exceeded:", e);
         throw e;
       }
     }
 
     function resetAllData() {
-      if (!confirm("ต้องการลบข้อมูลงานทั้งหมดเพื่อเริ่มต้นวันใหม่ใช่หรือไม่? (ข้อมูลจะหายไปถาวร)")) return;
-      localStorage.removeItem("am_daily_jobs");
-      jobs = [];
-      document.getElementById('searchInput').value = "";
-      renderJobs();
-      applyFilterVisually();
+      Swal.fire({
+        title: 'ยืนยันการลบข้อมูล?',
+        text: "ต้องการลบข้อมูลงานทั้งหมดเพื่อเริ่มต้นวันใหม่ใช่หรือไม่? (ข้อมูลจะหายไปถาวร)",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'ใช่, ลบเลย!',
+        cancelButtonText: 'ยกเลิก'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          localStorage.removeItem("am_daily_jobs");
+          jobs = [];
+          document.getElementById('searchInput').value = "";
+          renderJobs();
+          applyFilterVisually();
+          Swal.fire({
+            toast: true,
+            position: 'top-end',
+            icon: 'success',
+            title: 'เริ่มต้นวันใหม่เรียบร้อยแล้ว',
+            showConfirmButton: false,
+            timer: 2000
+          });
+        }
+      });
     }
 
     function createId() { return Date.now().toString() + Math.floor(Math.random() * 1000).toString(); }
+    
     /* ========== AUTO DATE ========== */
     function setTodayDate() {
       const now = new Date();
@@ -622,6 +679,7 @@
       const yyyy = now.getFullYear();
       document.getElementById("reportDate").innerText = dd + "/" + mm + "/" + yyyy;
     }
+    
     /* ========== DATE FILTER ========== */
     function filterJobs() {
       applyFilterVisually();
@@ -646,6 +704,7 @@
       });
       updateSummary(visibleJobs);
     }
+    
     /* ========== OPERATOR CRUD ========== */
     function renderOperators() {
       const list = document.getElementById("operatorList");
@@ -673,24 +732,47 @@
 
     function addOperator() {
       const name = document.getElementById("opName").value.trim();
-      if (!name) { alert("กรุณาระบุชื่อ"); return; }
+      if (!name) { 
+        Swal.fire({
+          icon: 'warning',
+          title: 'ข้อผิดพลาด',
+          text: 'กรุณาระบุชื่อผู้ปฏิบัติงาน',
+          confirmButtonText: 'ตกลง'
+        });
+        return; 
+      }
       operators.push({ id: createId(), name, fixed: false });
 
       try {
         saveData();
         renderOperators();
         closeOpForm();
+        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'เพิ่มรายชื่อสำเร็จ', showConfirmButton: false, timer: 1500 });
       } catch (e) {}
     }
 
     function removeOperator(id) {
-      if (!confirm("ต้องการลบผู้ปฏิบัติงานนี้ใช่หรือไม่?")) return;
-      operators = operators.filter(op => op.id !== id);
-      try {
-        saveData();
-        renderOperators();
-      } catch (e) {}
+      Swal.fire({
+        title: 'ยืนยันการลบ?',
+        text: "ต้องการลบผู้ปฏิบัติงานนี้ใช่หรือไม่?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'ใช่, ลบเลย!',
+        cancelButtonText: 'ยกเลิก'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          operators = operators.filter(op => op.id !== id);
+          try {
+            saveData();
+            renderOperators();
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'ลบรายชื่อสำเร็จ', showConfirmButton: false, timer: 1500 });
+          } catch (e) {}
+        }
+      });
     }
+    
     /* ========== JOB FORM ========== */
     function openCreateForm() {
       clearForm();
@@ -748,18 +830,11 @@
           let width = img.width;
           let height = img.height;
           if (width > height) {
-            if (width > MAX_WIDTH) {
-              height *= MAX_WIDTH / width;
-              width = MAX_WIDTH;
-            }
+            if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
           } else {
-            if (height > MAX_HEIGHT) {
-              width *= MAX_HEIGHT / height;
-              height = MAX_HEIGHT;
-            }
+            if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
           }
-          canvas.width = width;
-          canvas.height = height;
+          canvas.width = width; canvas.height = height;
           ctx.drawImage(img, 0, 0, width, height);
           formPhotos[index] = canvas.toDataURL('image/jpeg', 0.7);
           updateFormPhotoPreviews();
@@ -778,6 +853,7 @@
         }
       }
     }
+    
     /* ========== JOB CRUD ========== */
     function saveJob() {
       const editId = document.getElementById("editId").value;
@@ -805,20 +881,35 @@
         applyFilterVisually();
         closeForm();
         clearForm();
+        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'บันทึกงานสำเร็จ', showConfirmButton: false, timer: 1500 });
       } catch (e) {
         jobs = backupJobs;
       }
     }
 
     function deleteJob(id) {
-      if (!confirm("ต้องการลบงานนี้ใช่หรือไม่?")) return;
-      jobs = jobs.filter(item => item.id !== id);
-      try {
-        saveData();
-        renderJobs();
-        applyFilterVisually();
-      } catch (e) {}
+      Swal.fire({
+        title: 'ยืนยันการลบงาน?',
+        text: "ต้องการลบงานนี้ใช่หรือไม่?",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#ef4444',
+        cancelButtonColor: '#64748b',
+        confirmButtonText: 'ใช่, ลบเลย!',
+        cancelButtonText: 'ยกเลิก'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          jobs = jobs.filter(item => item.id !== id);
+          try {
+            saveData();
+            renderJobs();
+            applyFilterVisually();
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'ลบงานสำเร็จ', showConfirmButton: false, timer: 1500 });
+          } catch (e) {}
+        }
+      });
     }
+    
     /* ========== HELPERS ========== */
     function escapeHTML(text) {
       return String(text).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
@@ -828,7 +919,8 @@
       const value = parseInt(String(status).replace("%", "")) || 0;
       return Math.max(0, Math.min(100, value));
     }
-    /* ========== RENDER JOBS (จัดรูปภาพกึ่งกลางเมื่อมี 1 รูป) ========== */
+    
+    /* ========== RENDER JOBS ========== */
     function renderJobs() {
       const jobList = document.getElementById("jobList");
       if (jobs.length === 0) {
@@ -838,11 +930,10 @@
       let html = "";
       jobs.forEach((job) => {
         const percent = getPercent(job.status);
-
         let badgeClass = "todo";
         if (percent >= 100) badgeClass = "done";
         else if (percent > 0) badgeClass = "progress";
-        // กรองเฉพาะรูปที่มีอยู่จริง
+        
         const validPhotos = (job.photos || []).filter(photo => photo && photo.trim() !== "");
         let photosContainerHTML = "";
         if (validPhotos.length === 1) {
@@ -898,14 +989,15 @@
       document.getElementById("notDoneJobs").innerText = (total - done) + " งาน";
       document.getElementById("fullJobs").innerText = full + " งาน";
     }
+    
     /* ===================== DOWNLOAD IMAGE ===================== */
     async function downloadReportImage() {
-      const loader = document.getElementById("loaderOverlay");
-      document.getElementById("loaderText").innerText = "กำลังสร้างรูปภาพ...";
-      loader.style.display = "flex";
+      showSwalLoading("กำลังเตรียมรูปภาพ...");
       await new Promise(resolve => setTimeout(resolve, 200));
+      
       const report = document.getElementById("report");
       report.classList.add("export-mode");
+      
       const originalSearch = document.getElementById("searchInput").value;
       let jobsToExport = jobs;
       if (originalSearch) {
@@ -916,12 +1008,14 @@
 
       const originalJobs = [...jobs];
       document.getElementById("searchInput").value = "";
+      
       const editables = report.querySelectorAll("[contenteditable='true']");
       editables.forEach(el => {
         el.setAttribute("data-editable", "true");
         el.removeAttribute("contenteditable");
         el.style.outline = "none";
       });
+      
       try {
         const jobsPerImage = 4;
         const jobPages = jobsToExport.length > 0 ? chunkJobs(jobsToExport, jobsPerImage) : [[]];
@@ -929,13 +1023,15 @@
         const dateStr = now.getFullYear() + "-"
           + String(now.getMonth() + 1).padStart(2, "0") + "-"
           + String(now.getDate()).padStart(2, "0");
+          
         for (let i = 0; i < jobPages.length; i++) {
-          document.getElementById("loaderText").innerText =
-            "กำลังสร้างรูปภาพหน้า " + (i + 1) + " จาก " + jobPages.length + "...";
+          Swal.update({ title: `กำลังสร้างรูปภาพหน้า ${i + 1} จาก ${jobPages.length}...` });
+          
           jobs = jobPages[i];
           renderJobs();
           updateSummary(jobsToExport);
           await new Promise(resolve => setTimeout(resolve, 300));
+          
           const canvas = await html2canvas(report, {
             scale: 3,
             useCORS: true,
@@ -945,6 +1041,7 @@
             width: 840,
             windowWidth: 840
           });
+          
           const link = document.createElement("a");
           if (jobPages.length === 1) {
             link.download = "AM-Daily-Report-Eco-" + dateStr + ".png";
@@ -957,13 +1054,17 @@
           document.body.removeChild(link);
           await new Promise(resolve => setTimeout(resolve, 500));
         }
+        closeSwalLoading();
+        Swal.fire({ icon: 'success', title: 'สำเร็จ!', text: 'ดาวน์โหลดรูปภาพเรียบร้อยแล้ว', confirmButtonText: 'ตกลง' });
       } catch (err) {
-        alert("ไม่สามารถสร้างภาพได้ กรุณาลองใหม่อีกครั้ง");
+        closeSwalLoading();
+        Swal.fire({ icon: 'error', title: 'ข้อผิดพลาด!', text: 'ไม่สามารถสร้างภาพได้ กรุณาลองใหม่อีกครั้ง', confirmButtonText: 'ตกลง' });
       } finally {
         jobs = originalJobs;
         document.getElementById("searchInput").value = originalSearch;
         renderJobs();
         applyFilterVisually();
+        
         const restoreEditables = report.querySelectorAll("[data-editable='true']");
         restoreEditables.forEach(el => {
           el.setAttribute("contenteditable", "true");
@@ -971,18 +1072,17 @@
           el.style.outline = "";
         });
         report.classList.remove("export-mode");
-        loader.style.display = "none";
       }
     }
+    
     /* ===================== DOWNLOAD PDF ===================== */
     async function downloadReportPDF() {
-      const loader = document.getElementById("loaderOverlay");
-      document.getElementById("loaderText").innerText = "กำลังสร้างไฟล์ PDF...";
-      loader.style.display = "flex";
-
+      showSwalLoading("กำลังสร้างไฟล์ PDF...");
       await new Promise(resolve => setTimeout(resolve, 200));
+      
       const report = document.getElementById("report");
       report.classList.add("export-mode");
+      
       const originalSearch = document.getElementById("searchInput").value;
       let jobsToExport = jobs;
       if (originalSearch) {
@@ -997,12 +1097,14 @@
       jobs = jobsToExport;
       renderJobs();
       updateSummary(jobsToExport);
+      
       const editables = report.querySelectorAll("[contenteditable='true']");
       editables.forEach(el => {
         el.setAttribute("data-editable", "true");
         el.removeAttribute("contenteditable");
         el.style.outline = "none";
       });
+      
       try {
         const canvas = await html2canvas(report, {
           scale: 2,
@@ -1013,6 +1115,7 @@
           width: 840,
           windowWidth: 840
         });
+        
         const imgData = canvas.toDataURL("image/jpeg", 0.85);
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF({
@@ -1034,19 +1137,25 @@
           pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
           heightLeft -= pdfHeight;
         }
+        
         const now = new Date();
         const dateStr = now.getFullYear() + "-"
           + String(now.getMonth() + 1).padStart(2, "0") + "-"
           + String(now.getDate()).padStart(2, "0");
         pdf.save("AM-Daily-Report-Eco-" + dateStr + ".pdf");
+        
+        closeSwalLoading();
+        Swal.fire({ icon: 'success', title: 'สำเร็จ!', text: 'ดาวน์โหลดไฟล์ PDF เรียบร้อยแล้ว', confirmButtonText: 'ตกลง' });
       } catch (err) {
         console.error(err);
-        alert("ไม่สามารถสร้าง PDF ได้ กรุณาลองใหม่อีกครั้ง");
+        closeSwalLoading();
+        Swal.fire({ icon: 'error', title: 'ข้อผิดพลาด!', text: 'ไม่สามารถสร้าง PDF ได้ กรุณาลองใหม่อีกครั้ง', confirmButtonText: 'ตกลง' });
       } finally {
         jobs = originalJobs;
         document.getElementById("searchInput").value = originalSearch;
         renderJobs();
         applyFilterVisually();
+        
         const restoreEditables = report.querySelectorAll("[data-editable='true']");
         restoreEditables.forEach(el => {
           el.setAttribute("contenteditable", "true");
@@ -1054,17 +1163,17 @@
           el.style.outline = "";
         });
         report.classList.remove("export-mode");
-        loader.style.display = "none";
       }
     }
+    
     /* ===================== SAVE TO GOOGLE SHEET ===================== */
     async function saveToGoogleSheet() {
-      const loader = document.getElementById("loaderOverlay");
-      document.getElementById("loaderText").innerText = "กำลังอัปโหลดข้อมูลและรูปภาพลง Cloud...";
-      loader.style.display = "flex";
+      showSwalLoading("กำลังอัปโหลดข้อมูลและรูปภาพลง Cloud...");
       await new Promise(resolve => setTimeout(resolve, 200));
+      
       const report = document.getElementById("report");
       report.classList.add("export-mode");
+      
       const originalSearch = document.getElementById("searchInput").value;
       let jobsToExport = jobs;
       if (originalSearch) {
@@ -1079,12 +1188,14 @@
       jobs = jobsToExport;
       renderJobs();
       updateSummary(jobsToExport);
+      
       const editables = report.querySelectorAll("[contenteditable='true']");
       editables.forEach(el => {
         el.setAttribute("data-editable", "true");
         el.removeAttribute("contenteditable");
         el.style.outline = "none";
       });
+      
       try {
         const canvas = await html2canvas(report, {
           scale: 2,
@@ -1112,6 +1223,7 @@
           jobsSummary: jobsSummary,
           imageBase64: base64Image
         };
+        
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzGfPiHWfQJnmpq9z7pr_ZhF5zz33ScZZ8vZvpY_Nli4_GCMScjyfCgBZesjZbMKzXQ/exec";
 
         const response = await fetch(WEB_APP_URL, {
@@ -1121,19 +1233,22 @@
         });
         const result = await response.json();
 
+        closeSwalLoading();
         if (result.status === "success") {
-          alert("✅ บันทึกข้อมูลและรูปภาพลง Google Sheet สำเร็จ!");
+          Swal.fire({ icon: 'success', title: 'สำเร็จ!', text: 'บันทึกข้อมูลและรูปภาพลง Google Sheet สำเร็จ!', confirmButtonText: 'ตกลง' });
         } else {
-          alert("❌ เกิดข้อผิดพลาดจากเซิร์ฟเวอร์:\n" + result.message);
+          Swal.fire({ icon: 'error', title: 'เซิร์ฟเวอร์มีปัญหา!', text: result.message, confirmButtonText: 'ตกลง' });
         }
       } catch (err) {
         console.error(err);
-        alert("❌ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้\nกรุณาตรวจสอบอินเทอร์เน็ตหรือ Web App URL");
+        closeSwalLoading();
+        Swal.fire({ icon: 'error', title: 'การเชื่อมต่อล้มเหลว!', text: 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาตรวจสอบอินเทอร์เน็ตหรือ Web App URL', confirmButtonText: 'ตกลง' });
       } finally {
         jobs = originalJobs;
         document.getElementById("searchInput").value = originalSearch;
         renderJobs();
         applyFilterVisually();
+        
         const restoreEditables = report.querySelectorAll("[data-editable='true']");
         restoreEditables.forEach(el => {
           el.setAttribute("contenteditable", "true");
@@ -1141,9 +1256,9 @@
           el.style.outline = "";
         });
         report.classList.remove("export-mode");
-        loader.style.display = "none";
       }
     }
+    
     /* ========== INIT ========== */
     loadData();
     setTodayDate();
