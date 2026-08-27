@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AM Daily Report</title>
 
+<!-- เพิ่ม SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <style>
 :root {
   --primary: #16803c;
@@ -1217,42 +1220,90 @@ function saveJob() {
   renderJobs();
   updateSummary();
   closeJobForm();
+
+  Swal.fire({
+    icon: 'success',
+    title: 'บันทึกข้อมูลสำเร็จ',
+    showConfirmButton: false,
+    timer: 1500
+  });
 }
 
 function deleteJob(id) {
   const job = jobs.find(item => item.id === id);
-
   if (!job) return;
 
-  if (!confirm(`ต้องการลบงาน ${job.code} ใช่หรือไม่?`)) return;
-
-  jobs = jobs.filter(item => item.id !== id);
-
-  saveData();
-  filterJobs();
+  Swal.fire({
+    title: 'ยืนยันการลบ?',
+    text: `ต้องการลบงาน ${job.code} ใช่หรือไม่?`,
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d64545',
+    cancelButtonColor: '#64748b',
+    confirmButtonText: 'ใช่, ลบเลย!',
+    cancelButtonText: 'ยกเลิก'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      jobs = jobs.filter(item => item.id !== id);
+      saveData();
+      filterJobs();
+      Swal.fire({
+        icon: 'success',
+        title: 'ลบสำเร็จ',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    }
+  });
 }
 
 function resetData() {
-  if (!confirm("ต้องการลบข้อมูลงานทั้งหมดใช่หรือไม่?")) return;
-
-  jobs = [];
-  localStorage.removeItem(JOB_KEY);
-  document.getElementById("searchDate").value = "";
-
-  renderJobs();
-  updateSummary();
+  Swal.fire({
+    title: 'ยืนยันการเริ่มวันใหม่?',
+    text: "ข้อมูลงานทั้งหมดจะถูกลบและไม่สามารถกู้คืนได้!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d64545',
+    cancelButtonColor: '#64748b',
+    confirmButtonText: 'ใช่, เริ่มวันใหม่',
+    cancelButtonText: 'ยกเลิก'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      jobs = [];
+      localStorage.removeItem(JOB_KEY);
+      document.getElementById("searchDate").value = "";
+      renderJobs();
+      updateSummary();
+      Swal.fire({
+        icon: 'success',
+        title: 'เริ่มวันใหม่เรียบร้อย',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    }
+  });
 }
 
 function validateImage(file) {
   if (!file) return false;
 
   if (!file.type.startsWith("image/")) {
-    alert("กรุณาเลือกไฟล์รูปภาพเท่านั้น");
+    Swal.fire({
+      icon: 'error',
+      title: 'เกิดข้อผิดพลาด',
+      text: 'กรุณาเลือกไฟล์รูปภาพเท่านั้น',
+      confirmButtonColor: '#16803c'
+    });
     return false;
   }
 
   if (file.size > 2 * 1024 * 1024) {
-    alert("รูปภาพต้องมีขนาดไม่เกิน 2 MB");
+    Swal.fire({
+      icon: 'warning',
+      title: 'ไฟล์ขนาดใหญ่เกินไป',
+      text: 'รูปภาพต้องมีขนาดไม่เกิน 2 MB',
+      confirmButtonColor: '#16803c'
+    });
     return false;
   }
 
@@ -1338,7 +1389,12 @@ function addOperator() {
   const name = document.getElementById("operatorName").value.trim();
 
   if (!name) {
-    alert("กรุณาระบุชื่อผู้ปฏิบัติงาน");
+    Swal.fire({
+      icon: 'warning',
+      title: 'แจ้งเตือน',
+      text: 'กรุณาระบุชื่อผู้ปฏิบัติงาน',
+      confirmButtonColor: '#16803c'
+    });
     return;
   }
 
@@ -1351,15 +1407,38 @@ function addOperator() {
   saveData();
   renderOperators();
   closeOperatorForm();
+  
+  Swal.fire({
+    icon: 'success',
+    title: 'เพิ่มรายชื่อสำเร็จ',
+    showConfirmButton: false,
+    timer: 1500
+  });
 }
 
 function removeOperator(id) {
-  if (!confirm("ต้องการลบผู้ปฏิบัติงานนี้ใช่หรือไม่?")) return;
-
-  operators = operators.filter(operator => operator.id !== id);
-
-  saveData();
-  renderOperators();
+  Swal.fire({
+    title: 'ยืนยันการลบ?',
+    text: "ต้องการลบผู้ปฏิบัติงานนี้ใช่หรือไม่?",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d64545',
+    cancelButtonColor: '#64748b',
+    confirmButtonText: 'ใช่, ลบเลย!',
+    cancelButtonText: 'ยกเลิก'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      operators = operators.filter(operator => operator.id !== id);
+      saveData();
+      renderOperators();
+      Swal.fire({
+        icon: 'success',
+        title: 'ลบรายชื่อสำเร็จ',
+        showConfirmButton: false,
+        timer: 1500
+      });
+    }
+  });
 }
 
 function printReport() {
@@ -1368,6 +1447,14 @@ function printReport() {
 
 async function downloadImage() {
   const report = document.getElementById("report");
+
+  Swal.fire({
+    title: 'กำลังสร้างภาพรายงาน...',
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    }
+  });
 
   try {
     const clone = report.cloneNode(true);
@@ -1420,25 +1507,44 @@ async function downloadImage() {
 
       URL.revokeObjectURL(url);
       clone.remove();
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'ดาวน์โหลดสำเร็จ',
+        showConfirmButton: false,
+        timer: 1500
+      });
     };
 
     image.onerror = () => {
       clone.remove();
       URL.revokeObjectURL(url);
-      alert("ไม่สามารถสร้างภาพรายงานได้ กรุณาใช้คำสั่งพิมพ์แทน");
+      Swal.fire({
+        icon: 'error',
+        title: 'เกิดข้อผิดพลาด',
+        text: 'ไม่สามารถสร้างภาพรายงานได้ กรุณาใช้คำสั่งพิมพ์แทน',
+        confirmButtonColor: '#16803c'
+      });
     };
 
     image.src = url;
   } catch {
-    alert("ไม่สามารถสร้างภาพรายงานได้ กรุณาลองใหม่อีกครั้ง");
+    Swal.fire({
+      icon: 'error',
+      title: 'เกิดข้อผิดพลาด',
+      text: 'ไม่สามารถสร้างภาพรายงานได้ กรุณาลองใหม่อีกครั้ง',
+      confirmButtonColor: '#16803c'
+    });
   }
 }
 
 function saveToSheet() {
-  alert(
-    "ฟังก์ชันนี้พร้อมสำหรับเชื่อมต่อระบบจัดเก็บข้อมูลขององค์กร " +
-    "กรุณาเชื่อมต่อผ่าน Backend ที่ได้รับอนุญาต"
-  );
+  Swal.fire({
+    icon: 'info',
+    title: 'ฟังก์ชันนี้ยังไม่เปิดใช้งาน',
+    text: 'พร้อมสำหรับเชื่อมต่อระบบจัดเก็บข้อมูลขององค์กร กรุณาเชื่อมต่อผ่าน Backend ที่ได้รับอนุญาต',
+    confirmButtonColor: '#16803c'
+  });
 }
 
 function init() {
