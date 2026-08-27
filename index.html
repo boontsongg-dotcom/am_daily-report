@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AM Daily Report - SweetAlert2</title>
-
-<!-- โหลด SweetAlert2 ตามวิธีที่องค์กรอนุญาตก่อนใช้งาน -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AM Daily Report</title>
 
 <style>
 :root {
@@ -25,7 +23,9 @@
   --shadow-md: 0 12px 30px rgba(20,75,38,.10);
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
@@ -36,24 +36,15 @@ body {
     linear-gradient(135deg, #f4faf5, #eef5f0);
 }
 
-button, input, textarea, select {
+button,
+input,
+textarea {
   font: inherit;
 }
 
 button {
   border: 0;
   cursor: pointer;
-}
-
-[contenteditable="true"] {
-  outline: 1px dashed transparent;
-  border-radius: 6px;
-  transition: .2s;
-}
-
-[contenteditable="true"]:focus {
-  outline-color: var(--primary);
-  background: rgba(255,255,255,.85);
 }
 
 .controls {
@@ -123,7 +114,8 @@ button {
   margin: auto;
   padding: 28px;
   border-radius: 24px;
-  background: linear-gradient(180deg, rgba(255,255,255,.98), rgba(246,251,247,.98));
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.98), rgba(246,251,247,.98));
   box-shadow: var(--shadow-md);
 }
 
@@ -214,6 +206,12 @@ button {
   border-radius: 16px;
   background: #fff;
   box-shadow: var(--shadow-sm);
+  transition: .2s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 .summary-icon {
@@ -268,6 +266,12 @@ button {
   border-radius: 18px;
   background: #fff;
   box-shadow: var(--shadow-sm);
+  transition: .2s ease;
+}
+
+.job-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
 }
 
 .job-card::before {
@@ -354,6 +358,7 @@ button {
   height: 100%;
   border-radius: 20px;
   background: linear-gradient(90deg, #16803c, #52b86d);
+  transition: width .4s ease;
 }
 
 .status {
@@ -407,7 +412,6 @@ button {
   border: 1px solid var(--border);
   border-radius: 9px;
   background: var(--primary-soft);
-  cursor: pointer;
 }
 
 .photo img {
@@ -521,7 +525,7 @@ button {
 
 .modal {
   width: 100%;
-  max-width: 560px;
+  max-width: 520px;
   max-height: 92vh;
   overflow-y: auto;
   padding: 24px;
@@ -560,7 +564,8 @@ label {
   font-weight: 700;
 }
 
-input, textarea, select {
+input,
+textarea {
   width: 100%;
   margin-top: 5px;
   padding: 10px 12px;
@@ -571,14 +576,15 @@ input, textarea, select {
   color: var(--text-main);
 }
 
-input:focus, textarea:focus, select:focus {
+input:focus,
+textarea:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 3px var(--primary-soft);
 }
 
 .form-row {
   display: grid;
-  grid-template-columns: 1fr 160px;
+  grid-template-columns: 1fr 130px;
   gap: 8px;
 }
 
@@ -614,16 +620,6 @@ input:focus, textarea:focus, select:focus {
   object-fit: cover;
 }
 
-.photo-remove {
-  margin-top: 6px;
-  padding: 5px 8px;
-  border-radius: 8px;
-  background: #ffe8e8;
-  color: var(--danger);
-  font-size: 10px;
-  font-weight: 700;
-}
-
 .modal-buttons {
   display: flex;
   gap: 8px;
@@ -634,33 +630,7 @@ input:focus, textarea:focus, select:focus {
   flex: 1;
 }
 
-/* SweetAlert2 Theme */
-.swal2-popup {
-  border-radius: 18px !important;
-  font-family: Tahoma, Arial, sans-serif !important;
-}
-
-.swal2-title {
-  font-size: 22px !important;
-}
-
-.swal2-confirm {
-  border-radius: 10px !important;
-  font-weight: 700 !important;
-}
-
-.swal2-cancel {
-  border-radius: 10px !important;
-  font-weight: 700 !important;
-}
-
-/* Export mode */
-.export-mode .job-actions,
-.export-mode .add-person,
-.export-mode .operator button {
-  display: none !important;
-}
-
+/* Mobile */
 @media (max-width: 768px) {
   .controls {
     width: calc(100% - 20px);
@@ -727,11 +697,6 @@ input:focus, textarea:focus, select:focus {
     border-bottom: 1px solid var(--border);
     text-align: center;
   }
-
-  .form-row,
-  .photo-form {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media print {
@@ -768,13 +733,10 @@ input:focus, textarea:focus, select:focus {
   .operator button {
     display: none !important;
   }
-
-  [contenteditable="true"] {
-    outline: none !important;
-  }
 }
 </style>
 </head>
+
 <body>
 
 <div class="controls">
@@ -792,82 +754,86 @@ input:focus, textarea:focus, select:focus {
 </div>
 
 <div class="viewport">
-  <main id="report">
-    <section class="header">
-      <div class="logo">
-        <img alt="SCG Logo"
-             onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
-        <div class="logo-placeholder" style="display:none">SCG LOGO</div>
-      </div>
+<main id="report">
 
-      <div class="title">
-        <h1 contenteditable="true">สรุปงาน AM บดซีเมนต์</h1>
-        <p contenteditable="true">CEMENT MILL AM DAILY REPORT</p>
-        <div class="date">📅 <span id="reportDate" contenteditable="true"></span></div>
-      </div>
+  <section class="header">
+    <div class="logo">
+      <img src="images/scg-logo.png" alt="SCG Logo"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+      <div class="logo-placeholder" style="display:none">SCG LOGO</div>
+    </div>
 
-      <div class="logo">
-        <img alt="SCG Green"
-             onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
-        <div class="logo-placeholder" style="display:none">SCG GREEN</div>
+    <div class="title">
+      <h1 contenteditable="true">สรุปงาน AM บดซีเมนต์</h1>
+      <p contenteditable="true">CEMENT MILL AM DAILY REPORT</p>
+      <div class="date">
+        📅 <span id="reportDate" contenteditable="true"></span>
       </div>
-    </section>
+    </div>
 
-    <section class="summary">
-      <div class="summary-card">
-        <div class="summary-icon">📋</div>
-        <div>
-          <div class="summary-label">งานทั้งหมด</div>
-          <div class="summary-value" id="totalJobs">0 งาน</div>
-        </div>
+    <div class="logo">
+      <img src="images/scg_green.png" alt="SCG Green"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='block';">
+      <div class="logo-placeholder" style="display:none">SCG GREEN</div>
+    </div>
+  </section>
+
+  <section class="summary">
+    <div class="summary-card">
+      <div class="summary-icon">📋</div>
+      <div>
+        <div class="summary-label">งานทั้งหมด</div>
+        <div class="summary-value" id="totalJobs">0 งาน</div>
       </div>
+    </div>
 
-      <div class="summary-card">
-        <div class="summary-icon">⏱</div>
-        <div>
-          <div class="summary-label">งานที่ทำ</div>
-          <div class="summary-value" id="doneJobs">0 งาน</div>
-        </div>
+    <div class="summary-card">
+      <div class="summary-icon">⏱</div>
+      <div>
+        <div class="summary-label">งานที่ทำ</div>
+        <div class="summary-value" id="doneJobs">0 งาน</div>
       </div>
+    </div>
 
-      <div class="summary-card">
-        <div class="summary-icon" style="background:#fff0f0">⚠️</div>
-        <div>
-          <div class="summary-label">ยังไม่สำเร็จ</div>
-          <div class="summary-value" style="color:var(--danger)" id="notDoneJobs">0 งาน</div>
-        </div>
+    <div class="summary-card">
+      <div class="summary-icon" style="background:#fff0f0">⚠️</div>
+      <div>
+        <div class="summary-label">ยังไม่สำเร็จ</div>
+        <div class="summary-value" style="color:var(--danger)" id="notDoneJobs">0 งาน</div>
       </div>
+    </div>
 
-      <div class="summary-card">
-        <div class="summary-icon">🌱</div>
-        <div>
-          <div class="summary-label">เสร็จ 100%</div>
-          <div class="summary-value" id="fullJobs">0 งาน</div>
-        </div>
+    <div class="summary-card">
+      <div class="summary-icon">🌱</div>
+      <div>
+        <div class="summary-label">เสร็จ 100%</div>
+        <div class="summary-value" id="fullJobs">0 งาน</div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="job-list" id="jobList"></section>
+  <section class="job-list" id="jobList"></section>
 
-    <section class="section">
-      <div class="section-title">
-        <span>👷 ทีมผู้ปฏิบัติงาน</span>
-        <button class="add-person" onclick="openOperatorForm()">＋ เพิ่มคน</button>
-      </div>
-      <div class="operator-list" id="operatorList"></div>
-    </section>
+  <section class="section">
+    <div class="section-title">
+      <span>👷 ทีมผู้ปฏิบัติงาน</span>
+      <button class="add-person" onclick="openOperatorForm()">＋ เพิ่มคน</button>
+    </div>
+    <div class="operator-list" id="operatorList"></div>
+  </section>
 
-    <section class="section safety">
-      <div class="safety-grid">
-        <div class="safety-title" contenteditable="true">Safety Focus</div>
-        <div class="safety-item" contenteditable="true">⛑ สวม PPE ทุกครั้ง</div>
-        <div class="safety-item" contenteditable="true">🔒 Lockout / Tagout</div>
-        <div class="safety-item" contenteditable="true">🔎 ตรวจสอบพื้นที่ก่อนทำ</div>
-        <div class="safety-item" contenteditable="true">👥 ทำงานเป็นทีม</div>
-        <div class="safety-item" contenteditable="true">⓪ Zero Accident</div>
-      </div>
-    </section>
-  </main>
+  <section class="section safety">
+    <div class="safety-grid">
+      <div class="safety-title" contenteditable="true">Safety Focus</div>
+      <div class="safety-item" contenteditable="true">⛑ สวม PPE ทุกครั้ง</div>
+      <div class="safety-item" contenteditable="true">🔒 Lockout / Tagout</div>
+      <div class="safety-item" contenteditable="true">🔎 ตรวจสอบพื้นที่ก่อนทำ</div>
+      <div class="safety-item" contenteditable="true">👥 ทำงานเป็นทีม</div>
+      <div class="safety-item" contenteditable="true">⓪ Zero Accident</div>
+    </div>
+  </section>
+
+</main>
 </div>
 
 <!-- Job Modal -->
@@ -888,13 +854,7 @@ input:focus, textarea:focus, select:focus {
 
       <div>
         <label for="jobStatus">สถานะ</label>
-        <select id="jobStatus">
-          <option value="0%">ยังไม่เริ่ม</option>
-          <option value="25%">25%</option>
-          <option value="50%">50%</option>
-          <option value="75%">75%</option>
-          <option value="100%" selected>100%</option>
-        </select>
+        <input id="jobStatus" placeholder="0-100%" value="100%">
       </div>
     </div>
 
@@ -912,30 +872,26 @@ input:focus, textarea:focus, select:focus {
     <div class="photo-form">
       <div class="photo-input">
         <img id="preview0">
-        <div>รูปที่ 1</div>
+        รูปที่ 1
         <input type="file" accept="image/*" onchange="readPhoto(this,0)">
-        <button type="button" class="photo-remove" onclick="removePhoto(0)">ลบรูป</button>
       </div>
 
       <div class="photo-input">
         <img id="preview1">
-        <div>รูปที่ 2</div>
+        รูปที่ 2
         <input type="file" accept="image/*" onchange="readPhoto(this,1)">
-        <button type="button" class="photo-remove" onclick="removePhoto(1)">ลบรูป</button>
       </div>
 
       <div class="photo-input">
         <img id="preview2">
-        <div>รูปที่ 3</div>
+        รูปที่ 3
         <input type="file" accept="image/*" onchange="readPhoto(this,2)">
-        <button type="button" class="photo-remove" onclick="removePhoto(2)">ลบรูป</button>
       </div>
 
       <div class="photo-input">
         <img id="preview3">
-        <div>รูปที่ 4</div>
+        รูปที่ 4
         <input type="file" accept="image/*" onchange="readPhoto(this,3)">
-        <button type="button" class="photo-remove" onclick="removePhoto(3)">ลบรูป</button>
       </div>
     </div>
 
@@ -968,108 +924,9 @@ let jobs = [];
 let operators = [];
 let photos = ["", "", "", ""];
 
-const JOB_KEY = "am_daily_jobs_v3";
-const OPERATOR_KEY = "am_daily_operators_v3";
+const JOB_KEY = "am_daily_jobs_v2";
+const OPERATOR_KEY = "am_daily_operators_v2";
 
-/* =========================
-   SWEETALERT2 HELPER
-========================= */
-const AppAlert = {
-  toast(icon, title) {
-    return Swal.fire({
-      toast: true,
-      position: "top-end",
-      icon,
-      title,
-      showConfirmButton: false,
-      timer: 2200,
-      timerProgressBar: true
-    });
-  },
-
-  success(title, text = "") {
-    return Swal.fire({
-      icon: "success",
-      title,
-      text,
-      confirmButtonText: "ตกลง",
-      confirmButtonColor: "#16803c"
-    });
-  },
-
-  error(title, text = "กรุณาลองใหม่อีกครั้ง") {
-    return Swal.fire({
-      icon: "error",
-      title,
-      text,
-      confirmButtonText: "ตกลง",
-      confirmButtonColor: "#d64545"
-    });
-  },
-
-  warning(title, text = "") {
-    return Swal.fire({
-      icon: "warning",
-      title,
-      text,
-      confirmButtonText: "ตกลง",
-      confirmButtonColor: "#d88900"
-    });
-  },
-
-  info(title, text = "") {
-    return Swal.fire({
-      icon: "info",
-      title,
-      text,
-      confirmButtonText: "ตกลง",
-      confirmButtonColor: "#168bd0"
-    });
-  },
-
-  loading(title = "กำลังประมวลผล...") {
-    Swal.fire({
-      title,
-      allowOutsideClick: false,
-      allowEscapeKey: false,
-      showConfirmButton: false,
-      didOpen: () => Swal.showLoading()
-    });
-  },
-
-  close() {
-    Swal.close();
-  },
-
-  async confirm({
-    title = "ยืนยันการทำรายการ",
-    text = "",
-    icon = "warning",
-    confirmText = "ยืนยัน",
-    cancelText = "ยกเลิก",
-    confirmColor = "#d64545",
-    cancelColor = "#64748b"
-  } = {}) {
-    const result = await Swal.fire({
-      icon,
-      title,
-      text,
-      showCancelButton: true,
-      confirmButtonText: confirmText,
-      cancelButtonText: cancelText,
-      confirmButtonColor: confirmColor,
-      cancelButtonColor: cancelColor,
-      reverseButtons: true,
-      focusCancel: true
-    });
-
-    return result.isConfirmed;
-  }
-};
-
-/* =========================
-   UTILS
-========================= */
 function createId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
@@ -1104,48 +961,21 @@ function nl2br(value) {
 function getPercent(status) {
   const text = String(status || "").trim().toLowerCase();
 
-  if (text.includes("เสร็จ") || text.includes("complete") || text.includes("done")) {
+  if (
+    text.includes("เสร็จ") ||
+    text.includes("complete") ||
+    text.includes("done")
+  ) {
     return 100;
   }
 
   const number = parseInt(text.replace(/[^\d]/g, ""), 10);
-  return Number.isNaN(number) ? 0 : Math.max(0, Math.min(100, number));
+
+  return Number.isNaN(number)
+    ? 0
+    : Math.max(0, Math.min(100, number));
 }
 
-function formatBytes(bytes) {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
-}
-
-function dataUrlSize(dataUrl) {
-  const base64 = dataUrl.split(",")[1] || "";
-  return Math.ceil(base64.length * 0.75);
-}
-
-function getStorageSize(value) {
-  return new Blob([JSON.stringify(value)]).size;
-}
-
-function checkStorageSize() {
-  const payload = { jobs, operators };
-  const size = getStorageSize(payload);
-  const maxSafeSize = 4 * 1024 * 1024;
-
-  if (size > maxSafeSize) {
-    AppAlert.warning(
-      "ข้อมูลมีขนาดใหญ่เกินไป",
-      `ขนาดปัจจุบันประมาณ ${formatBytes(size)} กรุณาลบงานเก่าหรือรูปภาพบางรายการ`
-    );
-    return false;
-  }
-
-  return true;
-}
-
-/* =========================
-   STORAGE
-========================= */
 function loadData() {
   try {
     jobs = JSON.parse(localStorage.getItem(JOB_KEY) || "[]");
@@ -1165,25 +995,10 @@ function loadData() {
 }
 
 function saveData() {
-  if (!checkStorageSize()) {
-    throw new Error("storage too large");
-  }
-
-  try {
-    localStorage.setItem(JOB_KEY, JSON.stringify(jobs));
-    localStorage.setItem(OPERATOR_KEY, JSON.stringify(operators));
-  } catch {
-    AppAlert.error(
-      "บันทึกข้อมูลไม่สำเร็จ",
-      "พื้นที่จัดเก็บอาจเต็ม กรุณาลบรูปหรืองานบางรายการ"
-    );
-    throw new Error("save failed");
-  }
+  localStorage.setItem(JOB_KEY, JSON.stringify(jobs));
+  localStorage.setItem(OPERATOR_KEY, JSON.stringify(operators));
 }
 
-/* =========================
-   RENDER
-========================= */
 function renderOperators() {
   const list = document.getElementById("operatorList");
 
@@ -1234,7 +1049,7 @@ function renderJobs(list = jobs) {
     if (validPhotos.length === 1) {
       photoHTML = `
         <div class="photos single">
-          <div class="photo" onclick="previewPhoto('${validPhotos[0]}')">
+          <div class="photo">
             <img src="${validPhotos[0]}" alt="รูปงาน">
           </div>
         </div>
@@ -1243,7 +1058,7 @@ function renderJobs(list = jobs) {
       photoHTML = `
         <div class="photos">
           ${validPhotos.slice(0, 4).map(photo => `
-            <div class="photo" onclick="previewPhoto('${photo}')">
+            <div class="photo">
               <img src="${photo}" alt="รูปงาน">
             </div>
           `).join("")}
@@ -1298,7 +1113,8 @@ function updateSummary(list = jobs) {
 
   document.getElementById("totalJobs").textContent = `${list.length} งาน`;
   document.getElementById("doneJobs").textContent = `${done} งาน`;
-  document.getElementById("notDoneJobs").textContent = `${list.length - done} งาน`;
+  document.getElementById("notDoneJobs").textContent =
+    `${list.length - done} งาน`;
   document.getElementById("fullJobs").textContent = `${full} งาน`;
 }
 
@@ -1312,13 +1128,11 @@ function filterJobs() {
   }
 
   const filtered = jobs.filter(job => toDateInput(job.date) === value);
+
   renderJobs(filtered);
   updateSummary(filtered);
 }
 
-/* =========================
-   JOB FORM
-========================= */
 function openJobForm() {
   clearJobForm();
   document.getElementById("jobModalTitle").textContent = "เพิ่มรายการงาน";
@@ -1364,6 +1178,7 @@ function editJob(id) {
   document.getElementById("jobPurpose").value = job.purpose;
 
   photos = [...(job.photos || [])];
+
   while (photos.length < 4) photos.push("");
   photos = photos.slice(0, 4);
 
@@ -1371,36 +1186,11 @@ function editJob(id) {
   document.getElementById("jobOverlay").classList.add("show");
 }
 
-function validateJobForm() {
-  const code = document.getElementById("jobCode").value.trim();
-  const machine = document.getElementById("jobMachine").value.trim();
-  const detail = document.getElementById("jobDetail").value.trim();
-
-  if (!code) {
-    AppAlert.warning("กรุณาระบุรหัสงาน");
-    return false;
-  }
-
-  if (!machine) {
-    AppAlert.warning("กรุณาระบุเครื่อง / ตำแหน่ง");
-    return false;
-  }
-
-  if (!detail) {
-    AppAlert.warning("กรุณาระบุรายละเอียดงาน");
-    return false;
-  }
-
-  return true;
-}
-
 function saveJob() {
-  if (!validateJobForm()) return;
-
-  const code = document.getElementById("jobCode").value.trim();
+  const code = document.getElementById("jobCode").value.trim() || "-";
   const status = document.getElementById("jobStatus").value.trim() || "0%";
-  const machine = document.getElementById("jobMachine").value.trim();
-  const detail = document.getElementById("jobDetail").value.trim();
+  const machine = document.getElementById("jobMachine").value.trim() || "-";
+  const detail = document.getElementById("jobDetail").value.trim() || "-";
   const purpose = document.getElementById("jobPurpose").value.trim() || "-";
   const editId = document.getElementById("editId").value;
 
@@ -1423,49 +1213,27 @@ function saveJob() {
     jobs.push(job);
   }
 
-  try {
-    saveData();
-    filterJobs();
-    closeJobForm();
-    AppAlert.toast("success", editId ? "แก้ไขงานเรียบร้อย" : "เพิ่มงานเรียบร้อย");
-  } catch {}
+  saveData();
+  renderJobs();
+  updateSummary();
+  closeJobForm();
 }
 
-async function deleteJob(id) {
+function deleteJob(id) {
   const job = jobs.find(item => item.id === id);
+
   if (!job) return;
 
-  const confirmed = await AppAlert.confirm({
-    title: "ลบรายการงาน",
-    text: `ต้องการลบงาน ${job.code} ใช่หรือไม่?`,
-    icon: "warning",
-    confirmText: "ลบรายการ",
-    cancelText: "ยกเลิก",
-    confirmColor: "#d64545"
-  });
-
-  if (!confirmed) return;
+  if (!confirm(`ต้องการลบงาน ${job.code} ใช่หรือไม่?`)) return;
 
   jobs = jobs.filter(item => item.id !== id);
 
-  try {
-    saveData();
-    filterJobs();
-    AppAlert.toast("success", "ลบรายการงานแล้ว");
-  } catch {}
+  saveData();
+  filterJobs();
 }
 
-async function resetData() {
-  const confirmed = await AppAlert.confirm({
-    title: "เริ่มวันใหม่",
-    text: "ต้องการลบข้อมูลงานทั้งหมดใช่หรือไม่?",
-    icon: "warning",
-    confirmText: "ลบข้อมูล",
-    cancelText: "ยกเลิก",
-    confirmColor: "#d64545"
-  });
-
-  if (!confirmed) return;
+function resetData() {
+  if (!confirm("ต้องการลบข้อมูลงานทั้งหมดใช่หรือไม่?")) return;
 
   jobs = [];
   localStorage.removeItem(JOB_KEY);
@@ -1473,139 +1241,67 @@ async function resetData() {
 
   renderJobs();
   updateSummary();
-
-  AppAlert.toast("success", "ล้างข้อมูลงานเรียบร้อยแล้ว");
 }
 
-/* =========================
-   IMAGE HANDLING
-========================= */
-function validateImageFile(file) {
-  const maxOriginalSize = 10 * 1024 * 1024;
-
-  if (!file) {
-    AppAlert.warning("กรุณาเลือกไฟล์รูปภาพ");
-    return false;
-  }
+function validateImage(file) {
+  if (!file) return false;
 
   if (!file.type.startsWith("image/")) {
-    AppAlert.warning("ไฟล์ไม่ถูกต้อง", "กรุณาเลือกไฟล์รูปภาพเท่านั้น");
+    alert("กรุณาเลือกไฟล์รูปภาพเท่านั้น");
     return false;
   }
 
-  if (file.size > maxOriginalSize) {
-    AppAlert.warning("ไฟล์ต้นฉบับใหญ่เกินไป", "กรุณาใช้ไฟล์ไม่เกิน 10 MB");
+  if (file.size > 2 * 1024 * 1024) {
+    alert("รูปภาพต้องมีขนาดไม่เกิน 2 MB");
     return false;
   }
 
   return true;
 }
 
-function compressImage(file, options = {}) {
-  const {
-    maxWidth = 1000,
-    maxHeight = 1000,
-    quality = 0.72,
-    outputType = "image/webp"
-  } = options;
-
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = event => {
-      const image = new Image();
-
-      image.onload = () => {
-        let width = image.width;
-        let height = image.height;
-
-        const scale = Math.min(
-          maxWidth / width,
-          maxHeight / height,
-          1
-        );
-
-        width = Math.round(width * scale);
-        height = Math.round(height * scale);
-
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-
-        const context = canvas.getContext("2d", { alpha: false });
-        context.fillStyle = "#ffffff";
-        context.fillRect(0, 0, width, height);
-        context.drawImage(image, 0, 0, width, height);
-
-        let result = "";
-
-        if (outputType === "image/webp") {
-          result = canvas.toDataURL("image/webp", quality);
-          if (!result.startsWith("data:image/webp")) {
-            result = canvas.toDataURL("image/jpeg", quality);
-          }
-        } else {
-          result = canvas.toDataURL("image/jpeg", quality);
-        }
-
-        resolve({
-          dataUrl: result,
-          width,
-          height,
-          originalSize: file.size,
-          compressedSize: dataUrlSize(result)
-        });
-      };
-
-      image.onerror = () => reject(new Error("invalid image"));
-      image.src = event.target.result;
-    };
-
-    reader.onerror = () => reject(new Error("read failed"));
-    reader.readAsDataURL(file);
-  });
-}
-
-async function readPhoto(input, index) {
+function readPhoto(input, index) {
   const file = input.files?.[0];
 
-  if (!validateImageFile(file)) {
+  if (!validateImage(file)) {
     input.value = "";
     return;
   }
 
-  AppAlert.loading("กำลังปรับขนาดรูปภาพ...");
+  const reader = new FileReader();
 
-  try {
-    const result = await compressImage(file, {
-      maxWidth: 1000,
-      maxHeight: 1000,
-      quality: 0.72,
-      outputType: "image/webp"
-    });
+  reader.onload = event => {
+    const image = new Image();
 
-    const maxCompressedSize = 350 * 1024;
+    image.onload = () => {
+      const max = 900;
+      let width = image.width;
+      let height = image.height;
 
-    if (result.compressedSize > maxCompressedSize) {
-      AppAlert.close();
-      AppAlert.warning(
-        "รูปยังมีขนาดใหญ่เกินไป",
-        `ขนาดหลังบีบอัดประมาณ ${formatBytes(result.compressedSize)} กรุณาเลือกรูปที่เล็กลง`
-      );
-      input.value = "";
-      return;
-    }
+      if (width > height && width > max) {
+        height *= max / width;
+        width = max;
+      }
 
-    photos[index] = result.dataUrl;
-    updatePhotoPreview();
+      if (height >= width && height > max) {
+        width *= max / height;
+        height = max;
+      }
 
-    AppAlert.close();
-    AppAlert.toast("success", "เพิ่มรูปภาพเรียบร้อย");
-  } catch {
-    AppAlert.close();
-    AppAlert.error("ไม่สามารถประมวลผลรูปภาพได้");
-    input.value = "";
-  }
+      const canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+
+      const context = canvas.getContext("2d");
+      context.drawImage(image, 0, 0, width, height);
+
+      photos[index] = canvas.toDataURL("image/jpeg", .75);
+      updatePhotoPreview();
+    };
+
+    image.src = event.target.result;
+  };
+
+  reader.readAsDataURL(file);
 }
 
 function updatePhotoPreview() {
@@ -1622,32 +1318,6 @@ function updatePhotoPreview() {
   });
 }
 
-function removePhoto(index) {
-  photos[index] = "";
-
-  const inputs = document.querySelectorAll(".photo-input input");
-  if (inputs[index]) {
-    inputs[index].value = "";
-  }
-
-  updatePhotoPreview();
-  AppAlert.toast("success", `ลบรูปที่ ${index + 1} แล้ว`);
-}
-
-function previewPhoto(photo) {
-  Swal.fire({
-    imageUrl: photo,
-    imageAlt: "รูปภาพงาน",
-    showConfirmButton: false,
-    showCloseButton: true,
-    width: 900,
-    background: "#fff"
-  });
-}
-
-/* =========================
-   OPERATOR
-========================= */
 function openOperatorForm() {
   document.getElementById("operatorName").value = "";
   document.getElementById("operatorOverlay").classList.add("show");
@@ -1668,7 +1338,7 @@ function addOperator() {
   const name = document.getElementById("operatorName").value.trim();
 
   if (!name) {
-    AppAlert.warning("กรุณาระบุชื่อผู้ปฏิบัติงาน");
+    alert("กรุณาระบุชื่อผู้ปฏิบัติงาน");
     return;
   }
 
@@ -1678,62 +1348,32 @@ function addOperator() {
     fixed: false
   });
 
-  try {
-    saveData();
-    renderOperators();
-    closeOperatorForm();
-    AppAlert.toast("success", "เพิ่มผู้ปฏิบัติงานเรียบร้อย");
-  } catch {}
+  saveData();
+  renderOperators();
+  closeOperatorForm();
 }
 
-async function removeOperator(id) {
-  const operator = operators.find(item => item.id === id);
-  if (!operator) return;
+function removeOperator(id) {
+  if (!confirm("ต้องการลบผู้ปฏิบัติงานนี้ใช่หรือไม่?")) return;
 
-  const confirmed = await AppAlert.confirm({
-    title: "ลบผู้ปฏิบัติงาน",
-    text: `ต้องการลบ ${operator.name} ใช่หรือไม่?`,
-    icon: "warning",
-    confirmText: "ลบรายชื่อ",
-    cancelText: "ยกเลิก",
-    confirmColor: "#d64545"
-  });
+  operators = operators.filter(operator => operator.id !== id);
 
-  if (!confirmed) return;
-
-  operators = operators.filter(item => item.id !== id);
-
-  try {
-    saveData();
-    renderOperators();
-    AppAlert.toast("success", "ลบผู้ปฏิบัติงานแล้ว");
-  } catch {}
+  saveData();
+  renderOperators();
 }
 
-/* =========================
-   EXPORT / PRINT
-========================= */
 function printReport() {
-  AppAlert.info(
-    "กำลังเปิดหน้าพิมพ์",
-    "คุณสามารถบันทึกเป็น PDF A4 แนวนอนได้จากหน้าต่างพิมพ์"
-  ).then(() => {
-    window.print();
-  });
+  window.print();
 }
 
 async function downloadImage() {
   const report = document.getElementById("report");
 
-  AppAlert.loading("กำลังสร้างภาพรายงาน...");
-
   try {
-    report.classList.add("export-mode");
-
     const clone = report.cloneNode(true);
-    clone.classList.add("export-mode");
-    clone.querySelectorAll("[contenteditable='true']").forEach(el => {
-      el.removeAttribute("contenteditable");
+
+    clone.querySelectorAll(".job-actions,.add-person").forEach(element => {
+      element.remove();
     });
 
     clone.style.position = "fixed";
@@ -1745,30 +1385,32 @@ async function downloadImage() {
 
     document.body.appendChild(clone);
 
-    const width = clone.scrollWidth;
-    const height = clone.scrollHeight;
-
     const svg = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
+      <svg xmlns="http://www.w3.org/2000/svg"
+           width="${clone.offsetWidth}"
+           height="${clone.offsetHeight}">
         <foreignObject width="100%" height="100%">
           ${new XMLSerializer().serializeToString(clone)}
         </foreignObject>
       </svg>
     `;
 
-    const blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
-    const objectUrl = URL.createObjectURL(blob);
+    const blob = new Blob([svg], {
+      type: "image/svg+xml;charset=utf-8"
+    });
+
+    const url = URL.createObjectURL(blob);
     const image = new Image();
 
     image.onload = () => {
       const canvas = document.createElement("canvas");
-      canvas.width = width * 2;
-      canvas.height = height * 2;
+      canvas.width = image.width * 2;
+      canvas.height = image.height * 2;
 
       const context = canvas.getContext("2d");
       context.scale(2, 2);
       context.fillStyle = "#f7fff8";
-      context.fillRect(0, 0, width, height);
+      context.fillRect(0, 0, image.width, image.height);
       context.drawImage(image, 0, 0);
 
       const link = document.createElement("a");
@@ -1776,43 +1418,34 @@ async function downloadImage() {
       link.href = canvas.toDataURL("image/png");
       link.click();
 
-      URL.revokeObjectURL(objectUrl);
+      URL.revokeObjectURL(url);
       clone.remove();
-      report.classList.remove("export-mode");
-
-      AppAlert.close();
-      AppAlert.toast("success", "ดาวน์โหลดภาพสำเร็จ");
     };
 
     image.onerror = () => {
       clone.remove();
-      URL.revokeObjectURL(objectUrl);
-      report.classList.remove("export-mode");
-      AppAlert.close();
-      AppAlert.error("ไม่สามารถสร้างภาพรายงานได้");
+      URL.revokeObjectURL(url);
+      alert("ไม่สามารถสร้างภาพรายงานได้ กรุณาใช้คำสั่งพิมพ์แทน");
     };
 
-    image.src = objectUrl;
+    image.src = url;
   } catch {
-    report.classList.remove("export-mode");
-    AppAlert.close();
-    AppAlert.error("ไม่สามารถสร้างภาพรายงานได้");
+    alert("ไม่สามารถสร้างภาพรายงานได้ กรุณาลองใหม่อีกครั้ง");
   }
 }
 
 function saveToSheet() {
-  AppAlert.info(
-    "ฟังก์ชันนี้ยังไม่ได้เชื่อมต่อ",
-    "กรุณาเชื่อมต่อกับระบบจัดเก็บข้อมูลขององค์กรในขั้นตอนถัดไป"
+  alert(
+    "ฟังก์ชันนี้พร้อมสำหรับเชื่อมต่อระบบจัดเก็บข้อมูลขององค์กร " +
+    "กรุณาเชื่อมต่อผ่าน Backend ที่ได้รับอนุญาต"
   );
 }
 
-/* =========================
-   INIT
-========================= */
 function init() {
   loadData();
+
   document.getElementById("reportDate").textContent = todayText();
+
   renderJobs();
   updateSummary();
   renderOperators();
@@ -1820,5 +1453,6 @@ function init() {
 
 init();
 </script>
+
 </body>
 </html>
