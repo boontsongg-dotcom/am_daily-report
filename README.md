@@ -1,1 +1,1278 @@
 # am_daily-report
+
+
+
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AM Daily Report CRUD (Eco Infographic)</title>
+  
+  <!-- Google Fonts: Noto Sans Thai -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===============================
+       ECO FRIENDLY INFOGRAPHIC THEME
+       =============================== */
+    :root {
+      --eco-green: #2e7d32;
+      --eco-green-light: #e8f5e9;
+      --eco-green-soft: #f1f8e9;
+      --eco-mint: #dff5e1;
+      --eco-blue: #e3f2fd;
+      --eco-text: #1f2933;
+      --eco-muted: #607d68;
+      --eco-border: #c8e6c9;
+      --eco-card: #ffffff;
+      --eco-warning: #fff8e1;
+      --eco-danger: #ffebee;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Noto Sans Thai', Tahoma, sans-serif; 
+      background: #eef9f0; 
+      color: var(--eco-text);
+    }
+
+    /* ===================== LOADING OVERLAY ===================== */
+    .loader-overlay {
+      position: fixed; inset: 0; background: rgba(255,255,255,0.85); backdrop-filter: blur(4px);
+      z-index: 10000; display: none; align-items: center; justify-content: center; flex-direction: column;
+      color: var(--eco-green); font-weight: 700; font-size: 16px;
+    }
+    .spinner {
+      width: 48px; height: 48px; border: 5px solid var(--eco-green-light); border-top: 5px solid var(--eco-green);
+      border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* ===================== TOOLBAR & SEARCH ===================== */
+    .controls-container { width: calc(100% - 24px); max-width: 840px; margin: 16px auto; }
+    .search-box { margin-bottom: 12px; }
+    .search-box input {
+      width: 100%; padding: 12px 16px; border: 1px solid var(--eco-border); border-radius: 24px;
+      font-family: 'Noto Sans Thai', sans-serif; font-size: 14px; outline: none; transition: all 0.3s ease;
+      box-shadow: 0 2px 6px rgba(46,125,50,0.05);
+      color: var(--eco-text); cursor: pointer;
+    }
+    .search-box input:focus { border-color: var(--eco-green); box-shadow: 0 4px 12px rgba(46,125,50,0.15); }
+    .toolbar {
+      background: #ffffff; padding: 12px; border-radius: 16px; display: flex;
+      gap: 8px; justify-content: center; flex-wrap: wrap; box-shadow: 0 4px 16px rgba(46,125,50,0.06);
+    }
+    button { font-family: inherit; border-radius: 999px; }
+    .toolbar button, .form-panel button {
+      border: none; color: white; padding: 10px 14px; 
+      font-weight: 600; cursor: pointer; font-size: 13px; flex: 1 1 auto;
+      min-width: 78px; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .toolbar button:hover, .form-panel button:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.15); filter: brightness(1.05); }
+    .toolbar button:active, .form-panel button:active { transform: translateY(0); }
+
+    .btn-blue   { background: #0ea5e9; } 
+    .btn-green  { background: var(--eco-green); } 
+    .btn-orange { background: #f59e0b; } 
+    .btn-red    { background: #ef4444; } 
+    .btn-gray   { background: #64748b; }
+
+    /* ===================== FORM OVERLAY ===================== */
+    .form-overlay {
+      position: fixed; inset: 0; background: rgba(15,23,42,0.6); backdrop-filter: blur(2px);
+      display: none; align-items: center; justify-content: center; z-index: 9999; padding: 16px;
+    }
+    .form-overlay.show { display: flex; }
+    .form-panel {
+      width: 100%; max-width: 430px; max-height: 92vh; overflow-y: auto;
+      background: #ffffff; border-radius: 20px; padding: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2); font-size: 13px;
+      animation: popupIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes popupIn { from { opacity: 0; transform: translateY(20px) scale(0.95); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .form-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .form-header h3 { margin: 0; color: var(--eco-green); font-size: 18px; font-weight: 700; }
+    .close-btn {
+      width: 32px; height: 32px; border: none; border-radius: 50%;
+      background: var(--eco-green-light); color: var(--eco-green); font-size: 20px; line-height: 1; cursor: pointer; transition: 0.2s;
+    }
+    .close-btn:hover { background: #ef4444; color: white; transform: rotate(90deg); }
+    
+    .form-panel input, .form-panel textarea {
+      width: 100%; padding: 10px 12px; margin: 6px 0; border: 1px solid var(--eco-border); border-radius: 10px;
+      font-family: inherit; font-size: 13.5px; transition: 0.2s;
+    }
+    .form-panel input:focus, .form-panel textarea:focus { border-color: var(--eco-green); outline: none; box-shadow: 0 0 0 3px var(--eco-mint); }
+    .form-row { display: grid; grid-template-columns: 1fr 95px; gap: 8px; }
+    .form-buttons { display: flex; gap: 8px; margin-top: 16px; }
+
+    .photo-form-title { margin: 12px 0 6px; font-weight: 600; color: var(--eco-muted); }
+    .photo-form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .photo-form-box {
+      border: 1.5px dashed var(--eco-border); border-radius: 12px; padding: 8px;
+      background: var(--eco-green-soft); text-align: center; font-size: 11px; color: var(--eco-muted); transition: 0.2s;
+    }
+    .photo-form-box:hover { border-color: var(--eco-green); background: var(--eco-green-light); }
+    .photo-form-box img {
+      width: 100%; height: 50px; object-fit: cover; display: none;
+      border-radius: 8px; margin-bottom: 6px; background: #e2e8f0;
+    }
+
+    /* ===================== REPORT VIEWPORT (ECO THEME) ===================== */
+    .report-viewport { width: 100%; display: flex; justify-content: center; padding: 0 8px 32px; overflow-x: auto; }
+    
+    #report {
+      width: 100%;
+      max-width: 840px; 
+      min-width: 320px;
+      font-family: "Noto Sans Thai", sans-serif;
+      background-color: #f7fff8;
+      background-image: 
+        url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20,20 C40,0 60,20 40,40 C20,60 0,40 20,20 Z' fill='%232e7d32' fill-opacity='0.04' /%3E%3Cpath d='M70,70 C90,50 110,70 90,90 C70,110 50,90 70,70 Z' fill='%232e7d32' fill-opacity='0.03' /%3E%3Cpath d='M80,20 C100,10 100,30 80,40 C60,50 60,30 80,20 Z' fill='%234caf50' fill-opacity='0.03' /%3E%3Cpath d='M20,80 C10,100 30,100 40,80 C50,60 30,60 20,80 Z' fill='%234caf50' fill-opacity='0.03' /%3E%3C/svg%3E"),
+        linear-gradient(135deg, rgba(255,255,255,0.85) 0%, rgba(238,249,240,0.85) 50%, rgba(248,250,252,0.85) 100%);
+      color: var(--eco-text);
+      border-radius: 18px;
+      padding: 22px;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 12px 32px rgba(46, 125, 50, 0.1);
+    }
+
+    #report::before {
+      content: "🌱";
+      position: absolute;
+      right: 24px;
+      top: 18px;
+      font-size: 42px;
+      opacity: 0.15;
+      pointer-events: none;
+    }
+
+    [contenteditable="true"] { outline: 1px dashed transparent; border-radius: 4px; transition: 0.2s; }
+    [contenteditable="true"]:focus { outline-color: var(--eco-green); background: rgba(255,255,255,0.8); }
+
+    /* ===================== EXPORT MODE ===================== */
+    .export-mode .job-actions,
+    .export-mode .operator-add-btn,
+    .export-mode .op-del {
+      display: none !important;
+    }
+
+    /* ===================== HEADER ===================== */
+    .header {
+      background: linear-gradient(90deg, #ffffff 0%, var(--eco-green-light) 100%);
+      border: 1px solid var(--eco-border);
+      border-left: 8px solid var(--eco-green);
+      border-radius: 18px;
+      padding: 14px 18px;
+      margin-bottom: 14px;
+      box-shadow: 0 6px 18px rgba(46, 125, 50, 0.08);
+      display: grid;
+      grid-template-columns: 110px 1fr 110px; 
+      gap: 24px; align-items: center; 
+      position: relative; z-index: 2;
+    }
+    
+    .logo-box { 
+      display: flex; align-items: center; justify-content: center; 
+      background: #ffffff;
+      padding: 6px; 
+      border-radius: 8px; 
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+      width: 110px; 
+      height: 54px; 
+    }
+    
+    .logo-box img { 
+      max-width: 100%; 
+      max-height: 100%; 
+      width: auto; 
+      height: auto; 
+      display: block; 
+    }
+    
+    .header-top-row {
+      display: flex; align-items: center; width: 100%; margin-bottom: 4px;
+    }
+    .title h1 { 
+      margin: 0; font-size: 26px; line-height: 1.1; 
+      color: var(--eco-green); font-weight: 800; letter-spacing: -0.3px; 
+    }
+    .title h1::before {
+      content: "Eco Infographic • ";
+      font-size: 0.65em;
+      color: #43a047;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 2px;
+    }
+    
+    .title p { margin: 0 0 6px; font-size: 11px; font-weight: 600; color: var(--eco-muted); }
+    
+    .date { 
+      display: inline-block; 
+      background: var(--eco-green); 
+      color: #ffffff; 
+      border-radius: 16px; 
+      padding: 6px 16px; 
+      font-size: 13px; 
+      font-weight: 700; 
+      box-shadow: 0 4px 6px rgba(46,125,50,0.2); 
+      white-space: nowrap;
+    }
+    .date svg {
+      vertical-align: middle;
+      margin-right: 4px;
+      margin-bottom: 2px;
+    }
+    #reportDate {
+      display: inline-block;
+      vertical-align: middle;
+      min-width: 75px; 
+    }
+
+    /* ===================== ECO SUMMARY ===================== */
+    .eco-summary {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 12px 0 14px;
+      position: relative; z-index: 2;
+    }
+    .eco-summary-card {
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--eco-border);
+      border-radius: 16px;
+      padding: 10px 12px;
+      box-shadow: 0 5px 14px rgba(46, 125, 50, 0.05);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .eco-summary-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--eco-green-light); color: var(--eco-green);
+      display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
+    }
+    .eco-summary-label { font-size: 10px; color: var(--eco-muted); line-height: 1.2; font-weight: 600;}
+    .eco-summary-value { font-size: 16px; font-weight: 800; color: var(--eco-green); line-height: 1.2; margin-top: 2px;}
+
+    /* ===================== CONTENT / SECTIONS ===================== */
+    .content { position: relative; z-index: 2; }
+
+    .section {
+      background: rgba(255, 255, 255, 0.95);
+      border: 1px solid var(--eco-border);
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 5px 14px rgba(46, 125, 50, 0.05);
+    }
+    .section-title {
+      color: var(--eco-green);
+      font-weight: 800; font-size: 14px;
+      border-bottom: 2px solid var(--eco-mint);
+      padding-bottom: 6px;
+      margin: 0 0 10px 0;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    /* ===================== JOB CARDS ===================== */
+    #jobList {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); 
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .empty-job {
+      grid-column: 1 / -1; background: #ffffff; border: 2px dashed var(--eco-border); border-radius: 16px;
+      padding: 24px; text-align: center; color: var(--eco-muted); font-size: 14px; font-weight: 600;
+    }
+
+    .job-card {
+      background: var(--eco-card);
+      border: 1px solid var(--eco-border);
+      border-left: 6px solid var(--eco-green);
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: 0 6px 16px rgba(46, 125, 50, 0.05);
+      position: relative;
+      display: flex; flex-direction: column; 
+    }
+    
+    .job-card::before {
+      content: "AM";
+      position: absolute;
+      right: 12px; top: 12px;
+      background: var(--eco-green-light); color: var(--eco-green);
+      border: 1px solid var(--eco-border); border-radius: 999px;
+      padding: 2px 8px; font-size: 9px; font-weight: 800;
+    }
+
+    .job-code {
+      display: flex; align-items: center; justify-content: space-between; 
+      margin-bottom: 6px; padding-right: 36px;
+    }
+    .job-title { font-weight: 800; color: #1b5e20; font-size: 13.5px; margin: 0; line-height: 1.2; }
+    
+    .job-actions { display: flex; gap: 4px; position: absolute; right: 12px; top: 35px;}
+    .job-actions button {
+      color: #fff; border: none; font-size: 9px;
+      padding: 3px 8px; cursor: pointer; font-weight: 600; transition: 0.2s;
+    }
+    .edit-job { background: #f59e0b; } .edit-job:hover { background: #d97706; }
+    .delete-job { background: #ef4444; } .delete-job:hover { background: #dc2626; }
+    
+    .job-body { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .job-text { font-size: 11px; line-height: 1.45; color: #374151; }
+    .job-text b { color: var(--eco-green); font-weight: 700; }
+    
+    .status-row { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+    .progress { flex: 1; height: 8px; background: var(--eco-green-light); border-radius: 20px; overflow: hidden; border: 1px solid var(--eco-border); }
+    .progress div { height: 100%; background: var(--eco-green); border-radius: 20px; transition: width 0.5s ease; }
+    
+    .status-badge { 
+      padding: 3px 9px; border-radius: 999px; font-size: 9px; font-weight: 700; 
+      background: var(--eco-green-light); color: var(--eco-green); border: 1px solid var(--eco-border);
+    }
+    .status-badge.todo { background-color: var(--eco-danger); color: #d32f2f; border-color: #ffcdd2;} 
+
+    /* ระบบจัดการรูปภาพ (ปกติ vs รูปเดียวตรงกลาง) */
+    .photos { 
+      display: grid; 
+      grid-template-columns: repeat(2, 1fr); 
+      gap: 6px; 
+      margin-top: auto; 
+    }
+    
+    .photos.single-photo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 6px;
+    }
+    .photos.single-photo .photo-box {
+      width: 70%;
+      max-width: 220px;
+    }
+
+    .photo-box {
+      border-radius: 8px; 
+      background: var(--eco-green-soft); 
+      border: 1px solid var(--eco-border);
+      overflow: hidden; 
+      position: relative; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+      aspect-ratio: 4 / 3; 
+      font-size: 9px; 
+      color: var(--eco-muted); 
+      text-align: center; 
+      font-weight: 600;
+    }
+    .photo-box img { max-width: 100%; max-height: 100%; width: auto; height: auto; display: block; object-fit: contain; }
+
+    /* ===================== OPERATOR ===================== */
+    .operator-add-btn {
+      background: var(--eco-green); color: #fff; border: none; border-radius: 999px;
+      font-size: 10px; padding: 4px 10px; cursor: pointer; font-weight: 600; transition: 0.2s;
+    }
+    .operator-add-btn:hover { filter: brightness(1.1); }
+    .operator-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .operator-item {
+      display: inline-flex; align-items: center; background: #ffffff;
+      padding: 5px 12px; border-radius: 20px; border: 1px solid var(--eco-border); gap: 6px; 
+      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+    }
+    .operator-item .op-icon { font-size: 12px; color: var(--eco-green); }
+    .operator-item .op-name { font-size: 11px; color: var(--eco-text); font-weight: 700; white-space: nowrap; }
+    .operator-item .op-del {
+      background: var(--eco-danger); color: #d32f2f; border: none; border-radius: 50%;
+      font-size: 8px; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: 0.2s; margin-left: 4px;
+    }
+    .operator-item .op-del:hover { background: #d32f2f; color: white; }
+
+    /* ===================== SAFETY ===================== */
+    .safety-grid { 
+      display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: nowrap;
+    }
+    .safety-title-main { 
+      font-size: 16px; line-height: 1.1; font-weight: 900; color: var(--eco-green);
+      white-space: nowrap; border-right: 1.5px solid var(--eco-border); padding-right: 12px;
+    }
+    .safety-item { 
+      display: flex; align-items: center; gap: 6px; text-align: left; 
+      font-size: 9.5px; line-height: 1.2; font-weight: 700; 
+      background: var(--eco-green-soft); padding: 5px 8px; border-radius: 8px;
+      border: 1px solid var(--eco-border); flex: 1; justify-content: center; color: var(--eco-text);
+    }
+    .safety-icon {
+      width: 24px; height: 24px; border-radius: 50%; background: var(--eco-green-light);
+      color: var(--eco-green); display: grid; place-items: center; font-size: 12px; flex-shrink: 0;
+    }
+
+    #report * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+    /* ===================== RESPONSIVE MEDIA QUERIES ===================== */
+    @media (max-width: 768px) {
+      #report { padding: 14px; }
+      .header { grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 12px; padding: 16px; }
+      .header-top-row { justify-content: center; }
+      .title h1 { font-size: 22px; }
+      .eco-summary { grid-template-columns: repeat(2, 1fr); gap: 8px;}
+      #jobList { grid-template-columns: 1fr; }
+      .safety-grid { flex-direction: column; align-items: stretch; gap: 6px; }
+      .safety-title-main { border-right: none; border-bottom: 1px solid var(--eco-border); padding-bottom: 4px; text-align: center; }
+      .safety-item { justify-content: flex-start; padding: 6px 10px; }
+    }
+
+    /* ===================== PRINT ===================== */
+    @media print {
+      @page { size: A4 landscape; margin: 10mm; }
+      body { background: white; }
+      .controls-container, .form-overlay, .loader-overlay { display: none !important; }
+      .report-viewport { padding: 0; }
+      #report { box-shadow: none; margin: 0 auto; border-radius: 0; width: 100% !important; max-width: none !important; min-height: 594px;}
+      
+      .job-actions, .operator-add-btn, .op-del { display: none !important; }
+      [contenteditable="true"] { outline: none !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== LOADING OVERLAY ========== -->
+  <div class="loader-overlay" id="loaderOverlay">
+    <div class="spinner"></div>
+    <div id="loaderText">กำลังประมวลผล...</div>
+  </div>
+
+  <!-- ========== CONTROLS (SEARCH & TOOLBAR) ========== -->
+  <div class="controls-container">
+    <div class="search-box">
+      <input type="date" id="searchInput" onchange="filterJobs()" title="เลือกวันที่เพื่อค้นหางาน">
+    </div>
+    <div class="toolbar">
+      <button class="btn-green" onclick="openCreateForm()">+ เพิ่มงาน</button>
+      <button class="btn-red" onclick="resetAllData()">เริ่มวันใหม่</button>
+      <button class="btn-orange" onclick="downloadReportImage()">ดาวน์โหลดภาพ</button>
+      <button class="btn-blue" onclick="downloadReportPDF()">PDF (A4 แนวนอน)</button>
+      <button class="btn-green" style="background-color:#059669;" onclick="saveToGoogleSheet()">☁️ บันทึกลง Sheet</button>
+    </div>
+  </div>
+
+  <!-- ========== FORM OVERLAY (JOB) ========== -->
+  <div class="form-overlay" id="formOverlay" onclick="closeFormByBackdrop(event)">
+    <section class="form-panel" onclick="event.stopPropagation()">
+      <div class="form-header">
+        <h3 id="formTitle">เพิ่มรายการงาน</h3>
+        <button class="close-btn" onclick="closeForm()">×</button>
+      </div>
+      <input type="hidden" id="editId">
+      <div class="form-row">
+        <input id="newCode" placeholder="รหัสงาน เช่น 3152">
+        <input id="newStatus" placeholder="สถานะ (0-100%)" value="100%">
+      </div>
+      <input id="newMachine" placeholder="เครื่อง/ตำแหน่ง">
+      <textarea id="newDetail" rows="3" placeholder="สรุปรายละเอียดงาน"></textarea>
+      <input id="newPurpose" placeholder="วัตถุประสงค์">
+      
+      <div class="photo-form-title">แนบรูปภาพงาน (สูงสุด 4 รูป)</div>
+      <div class="photo-form-grid">
+        <div class="photo-form-box"><img id="preview1"><div>+ รูปที่ 1</div><input type="file" accept="image/*" onchange="handleFormPhoto(this, 0)"></div>
+        <div class="photo-form-box"><img id="preview2"><div>+ รูปที่ 2</div><input type="file" accept="image/*" onchange="handleFormPhoto(this, 1)"></div>
+        <div class="photo-form-box"><img id="preview3"><div>+ รูปที่ 3</div><input type="file" accept="image/*" onchange="handleFormPhoto(this, 2)"></div>
+        <div class="photo-form-box"><img id="preview4"><div>+ รูปที่ 4</div><input type="file" accept="image/*" onchange="handleFormPhoto(this, 3)"></div>
+      </div>
+      <div class="form-buttons">
+        <button class="btn-green" onclick="saveJob()">บันทึกข้อมูล</button>
+        <button class="btn-gray" onclick="clearForm()">ล้างค่า</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- ========== FORM OVERLAY (OPERATOR) ========== -->
+  <div class="form-overlay" id="opFormOverlay" onclick="closeOpFormByBackdrop(event)">
+    <section class="form-panel" onclick="event.stopPropagation()">
+      <div class="form-header">
+        <h3>เพิ่มผู้ปฏิบัติงาน</h3>
+        <button class="close-btn" onclick="closeOpForm()">×</button>
+      </div>
+      <input id="opName" placeholder="ชื่อผู้ปฏิบัติงาน">
+      <div class="form-buttons">
+        <button class="btn-green" onclick="addOperator()">เพิ่มรายชื่อ</button>
+      </div>
+    </section>
+  </div>
+
+  <!-- ========== REPORT (ECO THEME) ========== -->
+  <div class="report-viewport">
+    <main id="report">
+
+      <!-- ===== HEADER ===== -->
+      <section class="header">
+        <div class="logo-box">
+          <img id="headerLogo" src="images/scg-logo.png" alt="SCG Logo" crossorigin="anonymous" onerror="this.style.display='none';">
+        </div>
+        
+        <div class="title">
+          <div class="header-top-row">
+            <h1 contenteditable="true">สรุปงาน AM บดซีเมนต์</h1>
+          </div>
+          <p contenteditable="true">CEMENT MILL AM DAILY REPORT</p>
+          
+          <div class="date">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <span contenteditable="true" id="reportDate"></span>
+          </div>
+        </div>
+
+        <div class="logo-box" contenteditable="true">
+          <img src="images/scg_green.png" alt="SCG GREEN" crossorigin="anonymous" onerror="this.style.display='none';">
+        </div>
+      </section>
+
+      <!-- ===== ECO SUMMARY ===== -->
+      <div class="eco-summary" id="ecoSummary">
+        <div class="eco-summary-card">
+          <div class="eco-summary-icon">📋</div>
+          <div>
+            <div class="eco-summary-label">งานทั้งหมด</div>
+            <div class="eco-summary-value" id="totalJobs">0 งาน</div>
+          </div>
+        </div>
+        <div class="eco-summary-card">
+          <div class="eco-summary-icon">⏱</div>
+          <div>
+            <div class="eco-summary-label">งานที่ทำ</div>
+            <div class="eco-summary-value" id="doneJobs">0 งาน</div>
+          </div>
+        </div>
+        <div class="eco-summary-card">
+          <div class="eco-summary-icon" style="background:var(--eco-danger); color:#d32f2f;">⚠️</div>
+          <div>
+            <div class="eco-summary-label">ไม่สำเร็จ</div>
+            <div class="eco-summary-value" style="color:#d32f2f;" id="notDoneJobs">0 งาน</div>
+          </div>
+        </div>
+        <div class="eco-summary-card">
+          <div class="eco-summary-icon">🌱</div>
+          <div>
+            <div class="eco-summary-label">เสร็จ 100%</div>
+            <div class="eco-summary-value" id="fullJobs">0 งาน</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== CONTENT ===== -->
+      <section class="content">
+
+        <!-- JOB LIST -->
+        <div id="jobList">
+          <div class="empty-job">ยังไม่มีรายการงาน<br>กดปุ่ม "+ เพิ่มงาน" ด้านบนเพื่อเริ่ม</div>
+        </div>
+
+        <!-- OPERATOR -->
+        <div class="section operator-section">
+          <div class="section-title">
+            <span>👷 ทีมผู้ปฏิบัติงาน</span>
+            <button class="operator-add-btn" onclick="openOpForm()">+ เพิ่มคน</button>
+          </div>
+          <div class="operator-list" id="operatorList"></div>
+        </div>
+
+        <!-- SAFETY -->
+        <section class="section safety-section">
+          <div class="safety-grid">
+            <div class="safety-title-main" contenteditable="true">Safety Focus</div>
+            <div class="safety-item"><div class="safety-icon">⛑</div><div contenteditable="true">สวม PPE ทุกครั้ง</div></div>
+            <div class="safety-item"><div class="safety-icon">🔒</div><div contenteditable="true">Lockout / Tagout</div></div>
+            <div class="safety-item"><div class="safety-icon">🔎</div><div contenteditable="true">ตรวจสอบพื้นที่ก่อนทำ</div></div>
+            <div class="safety-item"><div class="safety-icon">👥</div><div contenteditable="true">ทำงานเป็นทีม</div></div>
+            <div class="safety-item"><div class="safety-icon">0</div><div contenteditable="true">Zero Accident</div></div>
+          </div>
+        </section>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ========== Libraries ========== -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- ========== JAVASCRIPT ========== -->
+  <script>
+    let jobs = [];
+    let formPhotos = ["", "", "", ""];
+    let operators = [];
+
+    /* ========== CHUNK FUNCTION ========== */
+    function chunkJobs(list, size) {
+      const chunks = [];
+      for (let i = 0; i < list.length; i += size) {
+        chunks.push(list.slice(i, i + size));
+      }
+      return chunks;
+    }
+
+    /* ========== LOCAL STORAGE SYSTEM ========== */
+    function loadData() {
+      const savedJobs = localStorage.getItem("am_daily_jobs");
+      if (savedJobs) jobs = JSON.parse(savedJobs);
+
+      const savedOps = localStorage.getItem("am_daily_operators");
+      if (savedOps) {
+        operators = JSON.parse(savedOps);
+      } else {
+        operators = [
+          { id: "op1", name: "ธีระศักดิ์ บ.", fixed: true },
+          { id: "op2", name: "ช่างฟิตมิตรสกุณา", fixed: true },
+          { id: "op3", name: "ช่างฟิตบ้านแพรก", fixed: true }
+        ];
+      }
+    }
+    
+    function saveData() {
+      try {
+        localStorage.setItem("am_daily_jobs", JSON.stringify(jobs));
+        localStorage.setItem("am_daily_operators", JSON.stringify(operators));
+      } catch (e) {
+        alert("❌ ไม่สามารถบันทึกได้! พื้นที่ความจำเต็ม\n\nสาเหตุ: รูปภาพมีขนาดใหญ่เกินไป หรือจำนวนงานมากเกินไป\nวิธีแก้: ลบงานเก่าก่อน หรือกดเริ่มวันใหม่");
+        console.error("Storage Quota Exceeded:", e);
+        throw e;
+      }
+    }
+    
+    function resetAllData() {
+      if (!confirm("ต้องการลบข้อมูลงานทั้งหมดเพื่อเริ่มต้นวันใหม่ใช่หรือไม่? (ข้อมูลจะหายไปถาวร)")) return;
+      localStorage.removeItem("am_daily_jobs");
+      jobs = [];
+      document.getElementById('searchInput').value = "";
+      renderJobs();
+      applyFilterVisually();
+    }
+    
+    function createId() { return Date.now().toString() + Math.floor(Math.random() * 1000).toString(); }
+
+    /* ========== AUTO DATE ========== */
+    function setTodayDate() {
+      const now = new Date();
+      const dd = String(now.getDate()).padStart(2, "0");
+      const mm = String(now.getMonth() + 1).padStart(2, "0");
+      const yyyy = now.getFullYear();
+      document.getElementById("reportDate").innerText = dd + "/" + mm + "/" + yyyy;
+    }
+
+    /* ========== DATE FILTER ========== */
+    function filterJobs() {
+      applyFilterVisually();
+    }
+
+    function applyFilterVisually() {
+      const dateVal = document.getElementById("searchInput").value;
+      let searchDate = "";
+      if (dateVal) {
+        const [y, m, d] = dateVal.split("-");
+        searchDate = `${d}/${m}/${y}`;
+      }
+
+      const cards = document.querySelectorAll(".job-card");
+      let visibleJobs = [];
+
+      cards.forEach((card, index) => {
+        const jobDate = card.getAttribute("data-date");
+        if (!searchDate || searchDate === jobDate) {
+          card.style.display = "flex";
+          if (jobs[index]) visibleJobs.push(jobs[index]);
+        } else {
+          card.style.display = "none";
+        }
+      });
+
+      updateSummary(visibleJobs);
+    }
+
+    /* ========== OPERATOR CRUD ========== */
+    function renderOperators() {
+      const list = document.getElementById("operatorList");
+      let html = "";
+      operators.forEach((op) => {
+        const delBtn = op.fixed ? "" : `<button class="op-del" onclick="removeOperator('${op.id}')" title="ลบ">✕</button>`;
+        html += `
+          <div class="operator-item">
+            <span class="op-icon">👤</span>
+            <span class="op-name">${escapeHTML(op.name)}</span>
+            ${delBtn}
+          </div>`;
+      });
+      list.innerHTML = html;
+    }
+    
+    function openOpForm() {
+      document.getElementById("opName").value = "";
+      document.getElementById("opFormOverlay").classList.add("show");
+      setTimeout(() => document.getElementById("opName").focus(), 100);
+    }
+    
+    function closeOpForm() { document.getElementById("opFormOverlay").classList.remove("show"); }
+    function closeOpFormByBackdrop(event) { if (event.target.id === "opFormOverlay") closeOpForm(); }
+    
+    function addOperator() {
+      const name = document.getElementById("opName").value.trim();
+      if (!name) { alert("กรุณาระบุชื่อ"); return; }
+      operators.push({ id: createId(), name, fixed: false });
+      
+      try {
+        saveData(); 
+        renderOperators(); 
+        closeOpForm();
+      } catch (e) {}
+    }
+    
+    function removeOperator(id) {
+      if (!confirm("ต้องการลบผู้ปฏิบัติงานนี้ใช่หรือไม่?")) return;
+      operators = operators.filter(op => op.id !== id);
+      try {
+        saveData(); 
+        renderOperators(); 
+      } catch (e) {}
+    }
+
+    /* ========== JOB FORM ========== */
+    function openCreateForm() {
+      clearForm();
+      document.getElementById("formTitle").innerText = "เพิ่มรายการงาน";
+      document.getElementById("editId").value = "";
+      document.getElementById("formOverlay").classList.add("show");
+      setTimeout(() => document.getElementById("newCode").focus(), 100);
+    }
+    
+    function openEditForm(id) {
+      const job = jobs.find(item => item.id === id);
+      if (!job) return;
+      document.getElementById("formTitle").innerText = "แก้ไขรายการงาน";
+      document.getElementById("editId").value = job.id;
+      document.getElementById("newCode").value = job.code;
+      document.getElementById("newStatus").value = job.status;
+      document.getElementById("newMachine").value = job.machine;
+      document.getElementById("newDetail").value = job.detail;
+      document.getElementById("newPurpose").value = job.purpose;
+      
+      formPhotos = [...job.photos.slice(0, 4)];
+      while (formPhotos.length < 4) formPhotos.push("");
+      updateFormPhotoPreviews();
+      document.getElementById("formOverlay").classList.add("show");
+      setTimeout(() => document.getElementById("newCode").focus(), 100);
+    }
+    
+    function closeForm() { document.getElementById("formOverlay").classList.remove("show"); }
+    function closeFormByBackdrop(event) { if (event.target.id === "formOverlay") closeForm(); }
+    
+    function clearForm() {
+      document.getElementById("editId").value = "";
+      document.getElementById("newCode").value = "";
+      document.getElementById("newMachine").value = "";
+      document.getElementById("newDetail").value = "";
+      document.getElementById("newPurpose").value = "";
+      document.getElementById("newStatus").value = "100%";
+      formPhotos = ["", "", "", ""];
+      document.querySelectorAll(".photo-form-box input").forEach(input => input.value = "");
+      updateFormPhotoPreviews();
+    }
+    
+    function handleFormPhoto(input, index) {
+      const file = input.files && input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          const MAX_WIDTH = 800; 
+          const MAX_HEIGHT = 800;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_WIDTH) {
+              height *= MAX_WIDTH / width;
+              width = MAX_WIDTH;
+            }
+          } else {
+            if (height > MAX_HEIGHT) {
+              width *= MAX_HEIGHT / height;
+              height = MAX_HEIGHT;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+
+          formPhotos[index] = canvas.toDataURL('image/jpeg', 0.7);
+          updateFormPhotoPreviews();
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function updateFormPhotoPreviews() {
+      for (let i = 0; i < 4; i++) {
+        const img = document.getElementById("preview" + (i + 1));
+        if (formPhotos[i]) {
+          img.src = formPhotos[i]; img.style.display = "block";
+        } else {
+          img.removeAttribute("src"); img.style.display = "none";
+        }
+      }
+    }
+
+    /* ========== JOB CRUD ========== */
+    function saveJob() {
+      const editId = document.getElementById("editId").value;
+      const code    = document.getElementById("newCode").value.trim() || "-";
+      const status  = document.getElementById("newStatus").value.trim() || "0%";
+      const machine = document.getElementById("newMachine").value.trim() || "-";
+      const detail  = document.getElementById("newDetail").value.trim() || "-";
+      const purpose = document.getElementById("newPurpose").value.trim() || "-";
+      
+      const existingJob = jobs.find(item => item.id === editId);
+      const jobDate = existingJob ? (existingJob.date || document.getElementById("reportDate").innerText) : document.getElementById("reportDate").innerText;
+
+      const jobData = {
+        id: editId || createId(),
+        date: jobDate,
+        code, status, machine, detail, purpose, photos: [...formPhotos]
+      };
+      
+      const backupJobs = [...jobs];
+
+      if (editId) { jobs = jobs.map(item => item.id === editId ? jobData : item); } 
+      else { jobs.push(jobData); }
+      
+      try {
+        saveData();
+        renderJobs();
+        applyFilterVisually();
+        closeForm();
+        clearForm();
+      } catch (e) {
+        jobs = backupJobs;
+      }
+    }
+    
+    function deleteJob(id) {
+      if (!confirm("ต้องการลบงานนี้ใช่หรือไม่?")) return;
+      jobs = jobs.filter(item => item.id !== id);
+      try {
+        saveData(); 
+        renderJobs(); 
+        applyFilterVisually(); 
+      } catch (e) {}
+    }
+
+    /* ========== HELPERS ========== */
+    function escapeHTML(text) {
+      return String(text).replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#039;");
+    }
+    function nl2br(text) { return escapeHTML(text).replace(/\n/g, "<br>"); }
+    function getPercent(status) {
+      const value = parseInt(String(status).replace("%", "")) || 0;
+      return Math.max(0, Math.min(100, value));
+    }
+
+    /* ========== RENDER JOBS (จัดรูปภาพกึ่งกลางเมื่อมี 1 รูป) ========== */
+    function renderJobs() {
+      const jobList = document.getElementById("jobList");
+
+      if (jobs.length === 0) {
+        jobList.innerHTML = `<div class="empty-job">ยังไม่มีรายการงาน<br>กดปุ่ม "+ เพิ่มงาน" ด้านบนเพื่อเริ่ม</div>`;
+        return;
+      }
+
+      let html = "";
+      jobs.forEach((job) => {
+        const percent = getPercent(job.status);
+        
+        let badgeClass = "todo";
+        if (percent >= 100) badgeClass = "done";
+        else if (percent > 0) badgeClass = "progress";
+
+        // กรองเฉพาะรูปที่มีอยู่จริง
+        const validPhotos = (job.photos || []).filter(photo => photo && photo.trim() !== "");
+        let photosContainerHTML = "";
+
+        if (validPhotos.length === 1) {
+          photosContainerHTML = `
+            <div class="photos single-photo">
+              <div class="photo-box"><img src="${validPhotos[0]}"></div>
+            </div>`;
+        } else if (validPhotos.length > 1) {
+          const photoItems = validPhotos.slice(0, 4).map(photo => `<div class="photo-box"><img src="${photo}"></div>`).join("");
+          photosContainerHTML = `<div class="photos">${photoItems}</div>`;
+        }
+
+        const jobDate = job.date || document.getElementById("reportDate").innerText;
+
+        html += `
+          <article class="job-card" data-status="${percent}" data-date="${jobDate}">
+            <div class="job-code">
+              <h4 class="job-title">${escapeHTML(job.code)} 
+                <span style="font-size:10px; color:var(--eco-muted); font-weight:normal; margin-left:4px; display:inline-flex; align-items:center; gap:3px;">
+                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                  ${jobDate}
+                </span>
+              </h4>
+              <div class="job-actions">
+                <button class="edit-job" onclick="openEditForm('${job.id}')">แก้ไข</button>
+                <button class="delete-job" onclick="deleteJob('${job.id}')">ลบ</button>
+              </div>
+            </div>
+            <div class="job-body">
+              <div class="job-text">
+                <div><b>ตำแหน่ง:</b> ${escapeHTML(job.machine)}</div>
+                <div><b>สรุปงาน:</b> ${nl2br(job.detail)}</div>
+                <div><b>เป้าหมาย:</b> ${escapeHTML(job.purpose)}</div>
+                <div class="status-row">
+                  <div class="progress"><div style="width:${percent}%"></div></div>
+                  <span class="status-badge ${badgeClass}">${escapeHTML(job.status)}</span>
+                </div>
+              </div>
+              ${photosContainerHTML}
+            </div>
+          </article>`;
+      });
+      jobList.innerHTML = html;
+    }
+
+    function updateSummary(listToUse = jobs) {
+      const total = listToUse.length;
+      let done = 0, full = 0;
+      listToUse.forEach(job => {
+        const p = getPercent(job.status);
+        if (p > 0) done++;
+        if (p >= 100) full++;
+      });
+      document.getElementById("totalJobs").innerText = total + " งาน";
+      document.getElementById("doneJobs").innerText = done + " งาน";
+      document.getElementById("notDoneJobs").innerText = (total - done) + " งาน";
+      document.getElementById("fullJobs").innerText = full + " งาน";
+    }
+
+    /* ===================== DOWNLOAD IMAGE ===================== */
+    async function downloadReportImage() {
+      const loader = document.getElementById("loaderOverlay");
+      document.getElementById("loaderText").innerText = "กำลังสร้างรูปภาพ...";
+      loader.style.display = "flex";
+
+      await new Promise(resolve => setTimeout(resolve, 200));
+
+      const report = document.getElementById("report");
+      report.classList.add("export-mode");
+
+      const originalSearch = document.getElementById("searchInput").value;
+
+      let jobsToExport = jobs;
+      if (originalSearch) {
+        const [y, m, d] = originalSearch.split("-");
+        const searchDate = `${d}/${m}/${y}`;
+        jobsToExport = jobs.filter(j => (j.date || document.getElementById("reportDate").innerText) === searchDate);
+      }
+      
+      const originalJobs = [...jobs];
+      document.getElementById("searchInput").value = ""; 
+
+      const editables = report.querySelectorAll("[contenteditable='true']");
+      editables.forEach(el => {
+        el.setAttribute("data-editable", "true");
+        el.removeAttribute("contenteditable");
+        el.style.outline = "none";
+      });
+
+      try {
+        const jobsPerImage = 4;
+        const jobPages = jobsToExport.length > 0 ? chunkJobs(jobsToExport, jobsPerImage) : [[]];
+
+        const now = new Date();
+        const dateStr = now.getFullYear() + "-"
+          + String(now.getMonth() + 1).padStart(2, "0") + "-"
+          + String(now.getDate()).padStart(2, "0");
+
+        for (let i = 0; i < jobPages.length; i++) {
+          document.getElementById("loaderText").innerText =
+            "กำลังสร้างรูปภาพหน้า " + (i + 1) + " จาก " + jobPages.length + "...";
+
+          jobs = jobPages[i];
+          renderJobs();
+          updateSummary(jobsToExport); 
+
+          await new Promise(resolve => setTimeout(resolve, 300));
+
+          const canvas = await html2canvas(report, {
+            scale: 3,
+            useCORS: true,
+            allowTaint: false,
+            backgroundColor: "#f7fff8", 
+            logging: false,
+            width: 840,
+            windowWidth: 840
+          });
+
+          const link = document.createElement("a");
+          if (jobPages.length === 1) {
+            link.download = "AM-Daily-Report-Eco-" + dateStr + ".png";
+          } else {
+            link.download = "AM-Daily-Report-Eco-" + dateStr + "-page-" + String(i + 1).padStart(2, "0") + ".png";
+          }
+
+          link.href = canvas.toDataURL("image/png");
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
+
+      } catch (err) {
+        alert("ไม่สามารถสร้างภาพได้ กรุณาลองใหม่อีกครั้ง");
+      } finally {
+        jobs = originalJobs;
+        document.getElementById("searchInput").value = originalSearch;
+        renderJobs();
+        applyFilterVisually(); 
+
+        const restoreEditables = report.querySelectorAll("[data-editable='true']");
+        restoreEditables.forEach(el => {
+          el.setAttribute("contenteditable", "true");
+          el.removeAttribute("data-editable");
+          el.style.outline = "";
+        });
+
+        report.classList.remove("export-mode");
+        loader.style.display = "none";
+      }
+    }
+
+    /* ===================== DOWNLOAD PDF ===================== */
+    async function downloadReportPDF() {
+      const loader = document.getElementById("loaderOverlay");
+      document.getElementById("loaderText").innerText = "กำลังสร้างไฟล์ PDF...";
+      loader.style.display = "flex";
+      
+      await new Promise(resolve => setTimeout(resolve, 200)); 
+
+      const report = document.getElementById("report");
+      report.classList.add("export-mode");
+
+      const originalSearch = document.getElementById("searchInput").value;
+
+      let jobsToExport = jobs;
+      if (originalSearch) {
+        const [y, m, d] = originalSearch.split("-");
+        const searchDate = `${d}/${m}/${y}`;
+        jobsToExport = jobs.filter(j => (j.date || document.getElementById("reportDate").innerText) === searchDate);
+      }
+      
+      const originalJobs = [...jobs];
+      document.getElementById("searchInput").value = ""; 
+      
+      jobs = jobsToExport;
+      renderJobs();
+      updateSummary(jobsToExport);
+
+      const editables = report.querySelectorAll("[contenteditable='true']");
+      editables.forEach(el => {
+        el.setAttribute("data-editable", "true");
+        el.removeAttribute("contenteditable");
+        el.style.outline = "none";
+      });
+
+      try {
+        const canvas = await html2canvas(report, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: false,
+          backgroundColor: "#f7fff8", 
+          logging: false,
+          width: 840,
+          windowWidth: 840
+        });
+
+        const imgData = canvas.toDataURL("image/jpeg", 0.85);
+
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF({
+          orientation: 'landscape',
+          unit: 'mm',
+          format: 'a4'
+        });
+
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        
+        const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
+        heightLeft -= pdfHeight;
+
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, 'JPEG', 0, position, pdfWidth, imgHeight);
+          heightLeft -= pdfHeight;
+        }
+
+        const now = new Date();
+        const dateStr = now.getFullYear() + "-"
+          + String(now.getMonth() + 1).padStart(2, "0") + "-"
+          + String(now.getDate()).padStart(2, "0");
+
+        pdf.save("AM-Daily-Report-Eco-" + dateStr + ".pdf");
+
+      } catch (err) {
+        console.error(err);
+        alert("ไม่สามารถสร้าง PDF ได้ กรุณาลองใหม่อีกครั้ง");
+      } finally {
+        jobs = originalJobs;
+        document.getElementById("searchInput").value = originalSearch;
+        renderJobs();
+        applyFilterVisually();
+
+        const restoreEditables = report.querySelectorAll("[data-editable='true']");
+        restoreEditables.forEach(el => {
+          el.setAttribute("contenteditable", "true");
+          el.removeAttribute("data-editable");
+          el.style.outline = "";
+        });
+
+        report.classList.remove("export-mode");
+        loader.style.display = "none"; 
+      }
+    }
+
+    /* ===================== SAVE TO GOOGLE SHEET ===================== */
+    async function saveToGoogleSheet() {
+      const loader = document.getElementById("loaderOverlay");
+      document.getElementById("loaderText").innerText = "กำลังอัปโหลดข้อมูลและรูปภาพลง Cloud...";
+      loader.style.display = "flex";
+
+      await new Promise(resolve => setTimeout(resolve, 200));
+
+      const report = document.getElementById("report");
+      report.classList.add("export-mode");
+
+      const originalSearch = document.getElementById("searchInput").value;
+
+      let jobsToExport = jobs;
+      if (originalSearch) {
+        const [y, m, d] = originalSearch.split("-");
+        const searchDate = `${d}/${m}/${y}`;
+        jobsToExport = jobs.filter(j => (j.date || document.getElementById("reportDate").innerText) === searchDate);
+      }
+      
+      const originalJobs = [...jobs];
+      document.getElementById("searchInput").value = ""; 
+      
+      jobs = jobsToExport;
+      renderJobs();
+      updateSummary(jobsToExport);
+
+      const editables = report.querySelectorAll("[contenteditable='true']");
+      editables.forEach(el => {
+        el.setAttribute("data-editable", "true");
+        el.removeAttribute("contenteditable");
+        el.style.outline = "none";
+      });
+
+      try {
+        const canvas = await html2canvas(report, {
+          scale: 2, 
+          useCORS: true,
+          allowTaint: false,
+          backgroundColor: "#f7fff8",
+          logging: false,
+          width: 840,
+          windowWidth: 840
+        });
+        
+        const base64Image = canvas.toDataURL("image/jpeg", 0.85);
+
+        const dateStr = originalSearch ? `${originalSearch.split('-')[2]}/${originalSearch.split('-')[1]}/${originalSearch.split('-')[0]}` : document.getElementById("reportDate").innerText;
+        const opNames = operators.map(op => op.name).join(", ") || "-";
+        
+        let doneCount = 0;
+        jobsToExport.forEach(job => { if (getPercent(job.status) > 0) doneCount++; });
+        
+        const jobsSummary = jobsToExport.map((j, i) => `${i+1}. [${j.code}] ${j.machine} - ${j.status}`).join("\n") || "ไม่มีรายการงาน";
+
+        const payload = {
+          date: dateStr,
+          totalJobs: jobsToExport.length,
+          doneJobs: doneCount,
+          operators: opNames,
+          jobsSummary: jobsSummary,
+          imageBase64: base64Image
+        };
+
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzGfPiHWfQJnmpq9z7pr_ZhF5zz33ScZZ8vZvpY_Nli4_GCMScjyfCgBZesjZbMKzXQ/exec";
+        
+        const response = await fetch(WEB_APP_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+        
+        if (result.status === "success") {
+          alert("✅ บันทึกข้อมูลและรูปภาพลง Google Sheet สำเร็จ!");
+        } else {
+          alert("❌ เกิดข้อผิดพลาดจากเซิร์ฟเวอร์:\n" + result.message);
+        }
+
+      } catch (err) {
+        console.error(err);
+        alert("❌ ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้\nกรุณาตรวจสอบอินเทอร์เน็ตหรือ Web App URL");
+      } finally {
+        jobs = originalJobs;
+        document.getElementById("searchInput").value = originalSearch;
+        renderJobs();
+        applyFilterVisually();
+
+        const restoreEditables = report.querySelectorAll("[data-editable='true']");
+        restoreEditables.forEach(el => {
+          el.setAttribute("contenteditable", "true");
+          el.removeAttribute("data-editable");
+          el.style.outline = "";
+        });
+
+        report.classList.remove("export-mode");
+        loader.style.display = "none"; 
+      }
+    }
+
+    /* ========== INIT ========== */
+    loadData();
+    setTodayDate();
+    renderJobs();
+    applyFilterVisually();
+    renderOperators();
+  </script>
+
+</body>
+</html>
